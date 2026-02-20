@@ -16,17 +16,62 @@
         }
 
         .navbar-custom{
-            background: linear-gradient(135deg,#6a1b9a,#8e24aa);
+            background:#6a1b9a;
+            min-height: 110px;
+            padding-top: 0;
+            padding-bottom: 0;
+            display:flex;
+            align-items:center;
+        }
+
+        .navbar-custom .container{
+            height:110px;
+            display:flex;
+            align-items:center;
+        }
+
+        .navbar-brand{
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing:.5px;
+        }
+
+        .navbar-nav{
+            align-items:center;
+        }
+
+        .navbar-nav .nav-item{
+            display:flex;
+            align-items:center;
+        }
+
+        .navbar-custom .nav-link{
+            color:rgba(255,255,255,.90);
+            font-size:1rem;
+            padding:8px 14px !important;
         }
 
         .navbar-custom .nav-link{
             color:rgba(255,255,255,.85);
             transition:.2s;
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: .3px;
         }
 
         .navbar-custom .nav-link:hover{
             color:#fff;
             transform:translateY(-1px);
+        }
+        
+        .navbar .container-fluid{
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+
+        .btn-outline-light{
+            padding:6px 14px;
+            font-size:.9rem;
         }
 
         .card-soft{
@@ -38,6 +83,9 @@
         footer{
             background:#6a1b9a;
             color:white;
+            padding-top:18px !important;
+            padding-bottom:18px !important;
+            font-size:.9rem;
         }
     </style>
 </head>
@@ -79,21 +127,35 @@
                         </li>
                     @endif
                 @endauth
+                @auth
+                <li class="nav-item">
+                    <form class="d-flex ms-3" action="{{ route('buscar') }}" method="GET">
+                        <div class="input-group">
+                            <input 
+                                type="text"
+                                name="q"
+                                class="form-control form-control-sm border-0"
+                                placeholder="Buscar legajo"
+                                style="width:230px;height:38px;"
+                            >
+                            <button class="btn btn-outline-light" style="height:38px;">
+                                Buscar
+                            </button>
+                        </div>
+                    </form>
+                </li>
+                @endauth
             </ul>
+
 
             @auth
                 <div class="d-flex align-items-center gap-3">
-                    <span class="text-white small">
-                        <i class="bi bi-person-circle"></i>
-                        {{ auth()->user()->name }}
-                    </span>
 
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button class="btn btn-outline-light btn-sm">
-                            <i class="bi bi-box-arrow-right"></i> Salir
-                        </button>
-                    </form>
+                    <form method="POST" action="#">
+                <button class="btn btn-dark">
+                    Salir
+                </button>
+            </form>
                 </div>
             @else
                 <a href="{{ route('login') }}" class="btn btn-outline-light btn-sm">

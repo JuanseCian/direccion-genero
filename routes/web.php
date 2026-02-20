@@ -37,6 +37,10 @@ Route::middleware(['auth','admin'])->group(function () {
 
 });
 
+//busqueda
+Route::get('/buscar', function(){
+    return "busqueda";
+})->name('buscar')->middleware('auth');
 
 require __DIR__.'/auth.php';
 //rutas home
