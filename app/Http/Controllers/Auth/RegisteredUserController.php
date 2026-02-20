@@ -44,6 +44,7 @@ class RegisteredUserController extends Controller
             'apellido' => $request->apellido,
             'email' => $request->email ?? null,
             'password' => Hash::make($request->password),
+            'rol_id' => 3
         ]);
 
 
@@ -51,6 +52,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        return redirect()->route('home');
     }
 }

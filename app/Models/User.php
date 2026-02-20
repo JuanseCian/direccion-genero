@@ -49,4 +49,25 @@ class User extends Authenticatable
     {
         return 'username';
     }
+
+    public function rol()
+    {
+        return $this->belongsTo(Role::class,'rol_id');
+    }
+
+    public function esAdmin()
+    {
+        return $this->rol_id == 2;
+    }
+
+    public function esProgramador()
+    {
+        return $this->rol_id == 4;
+    }
+
+    public function estaActivo()
+    {
+        return $this->rol_id != 3;
+    }
+    
 }
