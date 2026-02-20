@@ -47,11 +47,12 @@ class RegisteredUserController extends Controller
             'rol_id' => 3
         ]);
 
-
         event(new Registered($user));
 
-        Auth::login($user);
+        // Auth::login($user);
 
-        return redirect()->route('home');
+        return redirect()
+            ->route('login')
+            ->with('success','Cuenta creada correctamente 🎉 Ya podés iniciar sesión');
     }
 }

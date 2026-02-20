@@ -47,3 +47,5 @@ require __DIR__.'/auth.php';
 require __DIR__.'/home.php';
 //rutas manuales
 require __DIR__.'/manuales.php';
+//rutas admin
+require __DIR__.'/admin.php';

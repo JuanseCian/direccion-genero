@@ -16,7 +16,7 @@
         }
 
         .navbar-custom{
-            background:#6a1b9a;
+            background: #7973cf;
             min-height: 110px;
             padding-top: 0;
             padding-bottom: 0;
@@ -34,6 +34,8 @@
             font-size: 1.35rem;
             font-weight: 700;
             letter-spacing:.5px;
+            margin-left:4px; 
+            padding-left:0;
         }
 
         .navbar-nav{
@@ -81,8 +83,9 @@
         }
 
         footer{
-            background:#6a1b9a;
+            background: #7973cf;
             color:white;
+            height: 90px;
             padding-top:18px !important;
             padding-bottom:18px !important;
             font-size:.9rem;
@@ -92,7 +95,7 @@
 <body class="d-flex flex-column min-vh-100">
 
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
-    <div class="container">
+    <div class="container-fluid px-4">
         <a class="navbar-brand fw-bold" href="{{ route('home') }}">
             Dirección de Género
         </a>
@@ -129,14 +132,14 @@
                 @endauth
                 @auth
                 <li class="nav-item">
-                    <form class="d-flex ms-3" action="{{ route('buscar') }}" method="GET">
+                    <form class="d-flex ms-4" action="{{ route('buscar') }}" method="GET">
                         <div class="input-group">
                             <input 
                                 type="text"
                                 name="q"
                                 class="form-control form-control-sm border-0"
                                 placeholder="Buscar legajo"
-                                style="width:230px;height:38px;"
+                                style="width:320px;height:38px;"
                             >
                             <button class="btn btn-outline-light" style="height:38px;">
                                 Buscar
@@ -151,11 +154,12 @@
             @auth
                 <div class="d-flex align-items-center gap-3">
 
-                    <form method="POST" action="#">
-                <button class="btn btn-dark">
-                    Salir
-                </button>
-            </form>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button class="btn btn-dark">
+                            Salir
+                        </button>
+                    </form>
                 </div>
             @else
                 <a href="{{ route('login') }}" class="btn btn-outline-light btn-sm">

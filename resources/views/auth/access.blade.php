@@ -11,7 +11,7 @@
     <title>Genero - Acceso</title>
     <style>
         body { 
-            background-image: url('{{ asset('assets/img/fondo_entramados.jpeg') }}'); 
+            background-color: #7973cf;
             background-repeat: no-repeat;
             background-size: cover;
             background-attachment: fixed;
@@ -159,7 +159,7 @@
                                             </button>
                                         </div>
                                         <div id="passwordAlert" class="alert alert-warning position-absolute d-none"
-                                            style="top: 0; left: 105%; width: 260px; font-size: 0.8rem;">
+                                            style="top: 0; right: 105%; width: 260px; font-size: 0.8rem;">
                                             <strong>La contraseña debe tener:</strong>
                                             <ul class="mb-0 ps-3">
                                                 <li id="a-length" class="text-danger">✖ Mínimo 8 caracteres</li>
@@ -173,9 +173,13 @@
                                     <div class="col-6">
                                         <div class="input-group">
                                             <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Confirmar" required>
+                                            
                                             <button class="btn btn-outline-secondary toggle-password" type="button" data-target="password_confirmation">
                                                 <i class="bi bi-eye"></i>
                                             </button>
+                                            <div id="matchAlert" class="alert alert-danger py-1 mt-1 d-none" style="font-size: 0.8rem;">
+                                                Las contraseñas no coinciden
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-12"><input type="email" name="email" class="form-control" placeholder="Email" required></div>
@@ -297,6 +301,7 @@ if(passwordInput){
         }
     });
 }
+
 </script>
 
 <script>
@@ -370,5 +375,55 @@ document.querySelectorAll('.toggle-password').forEach(btn => {
 });
 </script>
 
+<script>
+const confirmInput = document.getElementById('password_confirmation');
+const matchAlert = document.getElementById('matchAlert');
+
+function validateMatch() {
+    if (!passInput || !confirmInput) return;
+
+    if (confirmInput.value === "") {
+        matchAlert.classList.add('d-none');
+        return;
+    }
+
+    if (passInput.value !== confirmInput.value) {
+        matchAlert.classList.remove('d-none');
+        confirmInput.classList.add('is-invalid');
+    } else {
+        matchAlert.classList.add('d-none');
+        confirmInput.classList.remove('is-invalid');
+        confirmInput.classList.add('is-valid');
+    }
+}
+
+if(confirmInput){
+    confirmInput.addEventListener('input', validateMatch);
+    passInput.addEventListener('input', validateMatch);
+}
+
+document.querySelector('form[action="{{ route('register') }}"]')
+    .addEventListener('submit', function(e){
+        if (passInput.value !== confirmInput.value) {
+            e.preventDefault();
+            matchAlert.classList.remove('d-none');
+            confirmInput.focus();
+        }
+});
+</script>
+
+@if ($errors->any())
+<script>
+Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: 'error',
+    title: 'No se pudo registrar',
+    html: `{!! implode('<br>', $errors->all()) !!}`,
+    showConfirmButton: false,
+    timer: 5000
+});
+</script>
+@endif
 </body>
 </html>
