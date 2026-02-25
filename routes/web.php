@@ -49,3 +49,10 @@ require __DIR__.'/home.php';
 require __DIR__.'/manuales.php';
 //rutas admin
 require __DIR__.'/admin.php';
+
+//rutas genero
+require __DIR__.'/genero.php';
+//rutas masculinidades
+require __DIR__.'/masculinidades.php';
+//rutas ive
+require __DIR__.'/ive.php';

@@ -94,8 +94,7 @@
         }
 
         .dropdown-genero .nav-ive{
-            background:#f1f1f1;
-            color:#6c63ff;
+            color: #6c63ff;
         }
 
         .dropdown-genero .dropdown-item:hover{
@@ -109,8 +108,7 @@
         }
 
         .nav-ive{
-            background: #f1f1f1;
-            color:#6c63ff !important;
+            color: #6c63ff !important;
         }
 
         .nav-diversidad{
@@ -199,24 +197,34 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle nav-diversidad"
                     href="#"
-                    id="dropdownGenero"
+                    id="dropdownAreas"
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false">
-                        <i class="bi bi-gender-ambiguous"></i> Género y Diversidad
+
+                        <i class="bi bi-grid"></i> Áreas
                     </a>
 
                     <ul class="dropdown-menu dropdown-genero">
+
                         <li>
-                            <a class="dropdown-item nav-masculinidades" href="#">
+                            <a class="dropdown-item nav-diversidad" href="{{ route('genero.index') }}">
+                                <i class="bi bi-gender-ambiguous"></i> Género
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item nav-masculinidades" href="{{ route('masculinidades.index') }}">
                                 <i class="bi bi-people"></i> Masculinidades
                             </a>
                         </li>
+
                         <li>
-                            <a class="dropdown-item nav-ive" href="#">
+                            <a class="dropdown-item nav-ive" href="{{ route('ive.index') }}">
                                 <i class="bi bi-heart-pulse"></i> IVE
                             </a>
                         </li>
+
                     </ul>
                 </li>
 
