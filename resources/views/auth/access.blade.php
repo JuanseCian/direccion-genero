@@ -11,7 +11,7 @@
     <title>Genero - Acceso</title>
     <style>
         body { 
-            background-color: #7973cf;
+            background-color: rgb(121, 115, 207);
             background-repeat: no-repeat;
             background-size: cover;
             background-attachment: fixed;
@@ -56,7 +56,7 @@
 
         .background-image {
             background-image: 
-                linear-gradient(rgba(31, 61, 73, 0.75), rgba(42, 94, 115, 0.85)),
+                linear-gradient(rgba(60, 55, 127, 0.75), rgba(164, 159, 215, 0.85)),
                 url('{{ asset('assets/img/fondo-03.png') }}');
             background-size: cover;
             background-position: center;
@@ -96,11 +96,12 @@
                 <div class="card border-0">
                     <div class="row g-0">
                         <div class="col-md-6 background-image d-none d-md-block">
-                             <div class="d-flex align-items-center justify-content-center h-100 p-5 text-white">
+                            <div class="d-flex align-items-center justify-content-center h-100 p-5 text-white">
                                 <div>
-                                    <img src="{{ asset('assets/img/entramados_horizontal.png') }}" class="img-fluid mb-4">
+                                <h2 class="h3">Dirección de Género</h2>
+                                    
                                 </div>
-                             </div>
+                            </div>
                         </div>
                         <div class="col-md-6 p-4 p-xl-5 bg-white">
                             <h3>Iniciar Sesión</h3>
@@ -205,15 +206,15 @@
         <div class="row align-items-center">
         <div class="col-md-3 text-center text-md-start">
         <a href="https://www.sannicolasciudad.gob.ar/" target="_blank">
-        <img src="./assets/img/escudo-6bf53e62ccbff61affd77071b53a840f39442aaa4d88138b7128bc4cb3d29389.png" alt="Logo Footer" width="150" class="footer-logo">
+        <img src="./assets/img/municipalidad_logo.png" alt="Logo Footer" width="150" class="footer-logo">
         </a>
         </div>
         <div class="col-md-9 text-center text-md-end">
             <p class="mb-0">
-            <i class="fas fa-map-marker-alt"></i> Colon N° 000<br>
+            <i class="fas fa-map-marker-alt"></i> Almte. Brown y José Luis Lazarte<br>
             San Nicolás de Los Arroyos, Provincia de Buenos Aires<br>
             <a href="mailto:entramados.sannicolas@gmail.com" class="text-white text-decoration-none">
-                <i class="fas fa-envelope"></i> entramados.sannicolas@gmail.com
+                <i class="fas fa-envelope"></i>denunciasviolenciasn@gmail.com
             </a>
             </p>
         </div>

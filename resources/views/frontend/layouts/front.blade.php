@@ -49,8 +49,14 @@
 
         .navbar-custom .nav-link{
             color:rgba(255,255,255,.90);
-            font-size:1rem;
-            padding:8px 14px !important;
+            padding:10px 18px !important;   
+            font-size: .95rem;
+            font-weight: 500;
+            letter-spacing: .3px;
+            border-radius: 10px;            
+            display: flex;
+            align-items: center;
+            gap: 6px;  
         }
 
         .navbar-custom .nav-link{
@@ -64,6 +70,90 @@
         .navbar-custom .nav-link:hover{
             color:#fff;
             transform:translateY(-1px);
+        }
+        
+        .dropdown-genero{
+            border:none;
+            border-radius:12px;
+            box-shadow:0 8px 20px rgba(0,0,0,.12);
+            padding:8px;
+        }
+
+        .dropdown-genero .dropdown-item{
+            border-radius:8px;
+            padding:8px 14px;
+            display:flex;
+            align-items:center;
+            gap:6px;
+            font-weight:500;
+        }
+
+        .dropdown-genero .nav-masculinidades{
+            background:white;
+            color:#6c63ff;
+        }
+
+        .dropdown-genero .nav-ive{
+            background:#f1f1f1;
+            color:#6c63ff;
+        }
+
+        .dropdown-genero .dropdown-item:hover{
+            background:#e9e9e9;
+        }
+
+
+        .nav-masculinidades{
+            background: white;
+            color:#6c63ff !important;
+        }
+
+        .nav-ive{
+            background: #f1f1f1;
+            color:#6c63ff !important;
+        }
+
+        .nav-diversidad{
+            background: white;
+            color:#6c63ff !important;
+        }
+
+        .nav-destacado{
+            padding:12px 22px !important;
+            font-size:1.05rem;
+            font-weight:600;
+            border-radius:12px;
+            display:flex;
+            align-items:center;
+            gap:8px;
+}
+
+        .nav-destacado:hover{
+            background:rgba(255,255,255,.15);
+            transform:translateY(-2px);
+        }
+
+        .nav-admin{
+            padding:12px 22px !important;
+            font-size:1.05rem;
+            font-weight:700;
+            border-radius:12px;
+            background: #682d98; 
+            color: #ffffff !important;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+
+        .nav-admin:hover{
+            background: #894fb8;
+        }
+
+        .nav-masculinidades:hover,
+        .nav-ive:hover,
+        .nav-diversidad:hover{
+            background:#e9e9e9;
+            transform:translateY(-2px);
         }
         
         .navbar .container-fluid{
@@ -106,25 +196,47 @@
 
         <div class="collapse navbar-collapse" id="navGenero">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Masculinidades</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle nav-diversidad"
+                    href="#"
+                    id="dropdownGenero"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                        <i class="bi bi-gender-ambiguous"></i> Género y Diversidad
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-genero">
+                        <li>
+                            <a class="dropdown-item nav-masculinidades" href="#">
+                                <i class="bi bi-people"></i> Masculinidades
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item nav-ive" href="#">
+                                <i class="bi bi-heart-pulse"></i> IVE
+                            </a>
+                        </li>
+                    </ul>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link" href="#">IVE</a>
+                    <a class="nav-link nav-destacado" href="#">
+                        <i class="bi bi-bar-chart"></i> Estadísticas
+                    </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Género y Diversidad</a>
-                </li>
+                
+                
                 @auth
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('manuales') }}">
+                        <a class="nav-link nav-destacado" href="{{ route('manuales') }}">
                             <i class="bi bi-journal-text"></i> Manuales
                         </a>
                     </li>
 
                     @if(auth()->user()->esAdmin())
                         <li class="nav-item">
-                            <a class="nav-link text-warning fw-bold" href="{{ route('admin.panel') }}">
+                            <a class="nav-link nav-admin" href="{{ route('admin.panel') }}">
                                 <i class="bi bi-shield-lock"></i> Panel Administrador
                             </a>
                         </li>
