@@ -49,10 +49,20 @@ require __DIR__.'/home.php';
 require __DIR__.'/manuales.php';
 //rutas admin
 require __DIR__.'/admin.php';
-
 //rutas genero
 require __DIR__.'/genero.php';
 //rutas masculinidades
 require __DIR__.'/masculinidades.php';
 //rutas ive
 require __DIR__.'/ive.php';
+//rutas personas
+require __DIR__.'/personas.php';
+
+
+//Rutas de Back/para admin
+//rutas barrio
+require __DIR__.'/barrio.php';
+//rutas localidad
+require __DIR__.'/localidades.php';
+//rutas zona barrio
+require __DIR__.'/zonas.php';
