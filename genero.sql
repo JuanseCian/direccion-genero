@@ -817,3 +817,30 @@ ALTER TABLE `barrio`
   ADD CONSTRAINT `barrio_id_localidad_foreign` FOREIGN KEY (`id_localidad`) REFERENCES `localidad` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `barrio_zona_barrio_id_foreign` FOREIGN KEY (`zona_barrio_id`) REFERENCES `zona_barrio` (`id`) ON DELETE SET NULL;
 COMMIT;
+
+ALTER TABLE personas
+DROP COLUMN barrio,
+ADD COLUMN provincia_id BIGINT UNSIGNED NULL AFTER domicilio,
+ADD COLUMN localidad_id BIGINT UNSIGNED NULL AFTER provincia_id,
+ADD COLUMN barrio_id BIGINT UNSIGNED NULL AFTER localidad_id;
+
+ALTER TABLE personas
+ADD CONSTRAINT fk_personas_provincia
+    FOREIGN KEY (provincia_id)
+    REFERENCES provincia(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
+
+ALTER TABLE personas
+ADD CONSTRAINT fk_personas_localidad
+    FOREIGN KEY (localidad_id)
+    REFERENCES localidad(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
+
+ALTER TABLE personas
+ADD CONSTRAINT fk_personas_barrio
+    FOREIGN KEY (barrio_id)
+    REFERENCES barrio(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
