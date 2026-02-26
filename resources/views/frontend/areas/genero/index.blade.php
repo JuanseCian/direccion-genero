@@ -39,17 +39,17 @@ Ingresar
 </div>
 </div>
 
-<div class="col-md-4">
-<div class="card card-soft p-3 text-center">
+    <div class="col-md-4">
+        <div class="card card-soft p-3 text-center">
 
-<h5>Nuevo Legajo</h5>
+            <h5>Nuevo Legajo</h5>
 
-<a href="#" class="btn btn-success">
-Crear
-</a>
+            <a href="#" class="btn btn-success">
+            Crear
+            </a>
 
-</div>
-</div>
+        </div>
+    </div>
 
 </div>
 

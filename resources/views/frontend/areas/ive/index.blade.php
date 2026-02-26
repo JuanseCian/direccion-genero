@@ -7,7 +7,7 @@
 <div class="card card-soft p-4">
 
 <h2>
-<i class="bi bi-heart-pulse"></i>
+    i class="bi bi-heart-pulse"></i>
 IVE
 </h2>
 
