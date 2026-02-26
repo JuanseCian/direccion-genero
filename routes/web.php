@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,36 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::redirect('/', '/login');
+
+Route::middleware('auth')->get('/home', function () {
+    return 'Login funcionando ✔';
+})->name('home');
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+//panel de admin
+Route::middleware(['auth','admin'])->group(function () {
+
+    Route::view('/admin/panel', 'admin.panel')->name('admin.panel');
+
+});
+
+//busqueda
+Route::get('/buscar', function(){
+    return "busqueda";
+})->name('buscar')->middleware('auth');
+
+require __DIR__.'/auth.php';
+//rutas home
+require __DIR__.'/home.php';
+//rutas manuales
+require __DIR__.'/manuales.php';

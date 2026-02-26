@@ -18,7 +18,9 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
+        'nombre',
+        'apellido',
         'email',
         'password',
     ];
@@ -42,4 +44,30 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function username()
+    {
+        return 'username';
+    }
+
+    public function rol()
+    {
+        return $this->belongsTo(Role::class,'rol_id');
+    }
+
+    public function esAdmin()
+    {
+        return $this->rol_id == 2;
+    }
+
+    public function esProgramador()
+    {
+        return $this->rol_id == 4;
+    }
+
+    public function estaActivo()
+    {
+        return $this->rol_id != 3;
+    }
+    
 }
