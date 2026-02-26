@@ -818,6 +818,47 @@ ALTER TABLE `barrio`
   ADD CONSTRAINT `barrio_zona_barrio_id_foreign` FOREIGN KEY (`zona_barrio_id`) REFERENCES `zona_barrio` (`id`) ON DELETE SET NULL;
 COMMIT;
 
+--
+-- Estructura de tabla para la tabla `zona_barrio`
+--
+
+CREATE TABLE `zona_barrio` (
+  `id` bigint UNSIGNED NOT NULL,
+  `nombre` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `zona_barrio`
+--
+
+INSERT INTO `zona_barrio` (`id`, `nombre`) VALUES
+(4, 'CENTRO'),
+(5, 'DELEGACIONES'),
+(1, 'NORTE'),
+(3, 'OESTE'),
+(2, 'SUR');
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `zona_barrio`
+--
+ALTER TABLE `zona_barrio`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `zona_barrio_nombre_unique` (`nombre`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `zona_barrio`
+--
+ALTER TABLE `zona_barrio`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+COMMIT;
 ALTER TABLE personas
 DROP COLUMN barrio,
 ADD COLUMN provincia_id BIGINT UNSIGNED NULL AFTER domicilio,
