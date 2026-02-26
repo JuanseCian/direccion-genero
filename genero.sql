@@ -46,7 +46,16 @@ CREATE TABLE roles (
     created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
+INSERT INTO areas (nombre) VALUES
+('direccion_genero'),
+('masculinidades'),
+('ive'),
+('admin');
 
+INSERT INTO roles (nombre) VALUES
+('admin'),
+('coordinador'),
+('usuario');
 CREATE TABLE usuarios (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
@@ -65,7 +74,57 @@ CREATE TABLE usuarios (
         ON DELETE RESTRICT
         ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+CREATE TABLE adjuntos (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 
+    entidad_tipo VARCHAR(50) NOT NULL,
+    entidad_id BIGINT UNSIGNED NOT NULL,
+
+    nombre_original VARCHAR(255) NOT NULL,
+    nombre_guardado VARCHAR(255) NOT NULL,
+    ruta VARCHAR(500) NOT NULL,
+    tipo_mime VARCHAR(100),
+    tamaño BIGINT,
+
+    confidencial BOOLEAN NOT NULL DEFAULT 0,
+
+    hash_sha256 VARCHAR(64),
+
+    subido_por BIGINT UNSIGNED NOT NULL,
+
+    eliminado_logico BOOLEAN NOT NULL DEFAULT 0,
+    fecha_eliminacion TIMESTAMP NULL,
+
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+
+    INDEX idx_entidad (entidad_tipo, entidad_id),
+    INDEX idx_confidencial (confidencial),
+    INDEX idx_eliminado (eliminado_logico),
+
+    FOREIGN KEY (subido_por)
+        REFERENCES usuarios(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+CREATE TABLE adjuntos_descargas (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    adjunto_id BIGINT UNSIGNED NOT NULL,
+    usuario_id BIGINT UNSIGNED NOT NULL,
+
+    fecha_descarga TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ip VARCHAR(45),
+
+    FOREIGN KEY (adjunto_id)
+        REFERENCES adjuntos(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
 CREATE TABLE niveles_estudio (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL UNIQUE
@@ -120,6 +179,117 @@ CREATE TABLE personas (
 
 ALTER TABLE personas
 ADD CONSTRAINT unique_personas_dni UNIQUE (dni);
+
+
+CREATE TABLE estados_civiles (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE
+) ENGINE=InnoDB;
+
+INSERT INTO estados_civiles (nombre) VALUES
+('Soltero'),
+('Casado'),
+('Unido de hecho'),
+('Separado de hecho');
+
+
+CREATE TABLE programas_asistencia (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL UNIQUE
+) ENGINE=InnoDB;
+
+INSERT INTO programas_asistencia (nombre) VALUES
+('AUH'),
+('Alimentar'),
+('Fondo de desempleo'),
+('Cuota de alimentos');
+
+
+CREATE TABLE direccion_genero_casos (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    persona_id BIGINT UNSIGNED NOT NULL,
+
+    estado_civil_id BIGINT UNSIGNED,
+    genero VARCHAR(100),
+
+    provincia_id BIGINT UNSIGNED,
+    localidad_id BIGINT UNSIGNED,
+    barrio_id BIGINT UNSIGNED,
+
+    nivel_estudio_id BIGINT UNSIGNED,
+    trabaja BOOLEAN NOT NULL DEFAULT 0,
+
+    organizacion_social BOOLEAN NOT NULL DEFAULT 0,
+    organizacion_social_detalle VARCHAR(255),
+
+    observaciones TEXT,
+
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (persona_id)
+        REFERENCES personas(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (estado_civil_id)
+        REFERENCES estados_civiles(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (provincia_id)
+        REFERENCES provincia(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (localidad_id)
+        REFERENCES localidad(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (barrio_id)
+        REFERENCES barrio(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (nivel_estudio_id)
+        REFERENCES niveles_estudio(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+CREATE TABLE direccion_genero_caso_programa (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    caso_id BIGINT UNSIGNED NOT NULL,
+    programa_id BIGINT UNSIGNED NOT NULL,
+
+    FOREIGN KEY (caso_id)
+        REFERENCES direccion_genero_casos(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (programa_id)
+        REFERENCES programas_asistencia(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+CREATE TABLE direccion_genero_grupo_conviviente (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    caso_id BIGINT UNSIGNED NOT NULL,
+    nombre VARCHAR(150) NOT NULL,
+    apellido VARCHAR(150) NOT NULL,
+    dni VARCHAR(20),
+    telefono VARCHAR(50),
+    vinculo VARCHAR(100),
+
+    FOREIGN KEY (caso_id)
+        REFERENCES direccion_genero_casos(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 CREATE TABLE ive_casos (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
