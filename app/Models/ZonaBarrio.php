@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ZonaBarrio extends Model
 {
-    protected $table = 'zona_barrio'; // IMPORTANTE
+    protected $table = 'zona_barrio';
 
     protected $fillable = [
         'nombre'

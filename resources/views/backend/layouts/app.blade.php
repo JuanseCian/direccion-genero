@@ -58,6 +58,7 @@
 
         <div class="submenu" id="submenuUbicaciones">
 
+            <a href="#">Provincias</a>
             <a href="{{ route('localidades.index') }}">Localidades</a>
             <a href="{{ route('barrios.index') }}">Barrios</a>
             <a href="{{ route('zonas.index') }}">Zonas</a>

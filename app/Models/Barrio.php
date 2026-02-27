@@ -19,7 +19,7 @@ class Barrio extends Model
 
     public function localidad()
     {
-        return $this->belongsTo(Localidad::class);
+        return $this->belongsTo(Localidad::class, 'localidad_id');
     }
 
     public function zona()

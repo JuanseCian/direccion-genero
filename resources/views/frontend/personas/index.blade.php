@@ -33,7 +33,7 @@
             <th>Apellido</th>
             <th>Nombre</th>
             <th>Teléfono</th>
-            <th></th>
+            <th>Barrio</th>
             </tr>
 
         </thead>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Provincia;
 use App\Models\Localidad;
 
 class LocalidadController extends Controller
@@ -20,14 +21,17 @@ class LocalidadController extends Controller
 
     public function create()
     {
-        return view('backend.localidades.create');
+        $provincias = Provincia::all();
+        return view('backend.localidades.create', compact('provincias'));
     }
 
 
     public function store(Request $request)
     {
         $request->validate([
-            'nombre'=>'required'
+            'nombre'=>'required',
+            'codigo_postal'=>'required',
+            'provincia_id'=>'required'
         ]);
 
         Localidad::create($request->all());
@@ -40,9 +44,9 @@ class LocalidadController extends Controller
     public function edit($id)
     {
         $localidad = Localidad::findOrFail($id);
+        $provincias = Provincia::all();
 
-        return view('backend.localidades.edit',
-        compact('localidad'));
+        return view('backend.localidades.edit', compact('localidad', 'provincias'));
     }
 
 

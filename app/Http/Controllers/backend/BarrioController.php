@@ -12,8 +12,8 @@ class BarrioController extends Controller
 
     public function index()
     {
+        $barrios = Barrio::with('localidad')->orderBy('nombre')->get();
 
-    $barrios = Barrio::orderBy('nombre')->get();
         return view('backend.barrios.index',compact('barrios'));
 
     }
@@ -60,15 +60,18 @@ class BarrioController extends Controller
     {
 
         $request->validate([
-            'nombre'=>'required'
+            'nombre'=>'required',
+            'localidad_id' => 'required',
+            'zona_barrio_id' => 'required'
 
         ]);
 
         $barrio = Barrio::findOrFail($id);
 
         $barrio->update([
-            'nombre'=>$request->nombre
-
+            'nombre'=>$request->nombre,
+            'localidad_id' => $request->localidad_id,
+            'zona_barrio_id' => $request->zona_barrio_id
         ]);
 
 
@@ -84,7 +87,7 @@ class BarrioController extends Controller
         Barrio::destroy($id);
 
         return redirect()
-        ->route('backend.barrios.index')
+        ->route('barrios.index')
         ->with('success','Barrio eliminado');
 
     }

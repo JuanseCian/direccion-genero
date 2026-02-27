@@ -2,70 +2,71 @@
 
 @section('content')
 
-<div class="card shadow-sm p-4">
+<div class="card shadow-sm border-0">
 
-<div class="d-flex justify-content-between mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center text-white" 
+         style="background:#5651A0; border-radius:8px 8px 0 0;">
+        
+        <h5 class="mb-0">
+            <i class="bi bi-layers"></i> Zonas de Barrio
+        </h5>
 
-<h4>Zonas de Barrio</h4>
+        <a href="{{ route('zonas.create') }}" class="btn btn-light btn-sm">
+            <i class="bi bi-plus-lg"></i> Nueva Zona
+        </a>
+    </div>
 
-<a href="{{ route('zonas.create') }}"
-class="btn btn-primary">
+    <div class="card-body bg-light">
 
-Nueva Zona
+        <table class="table align-middle table-hover bg-white rounded shadow-sm overflow-hidden">
+            
+            <thead style="background:#ecebfa;">
+                <tr>
+                    <th>Nombre de la Zona</th>
+                    <th width="220" class="text-center">Acciones</th>
+                </tr>
+            </thead>
 
-</a>
+            <tbody>
+                @foreach($zonas as $zona)
+                <tr>
+                    <td class="fw-bold">{{ $zona->nombre }}</td>
+                    <td class="text-center">
 
-</div>
+                        <a href="{{ route('zonas.edit', $zona->id) }}" 
+                           class="btn btn-primary btn-sm me-2 shadow-sm">
+                           <i class="bi bi-pencil-square"></i>
+                           Editar
+                        </a>
 
-<table class="table table-hover">
+                        <form method="POST" 
+                              action="{{ route('zonas.destroy', $zona->id) }}" 
+                              style="display:inline"
+                              onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta zona?')">
+                            
+                            @csrf
+                            @method('DELETE')
 
-<tr>
+                            <button class="btn btn-danger btn-sm shadow-sm">
+                                <i class="bi bi-trash"></i>
+                                Borrar
+                            </button>
+                        </form>
 
-<th>ID</th>
-<th>Nombre</th>
-<th width="200">Acciones</th>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
 
-</tr>
+        </table>
 
-@foreach($zonas as $zona)
+        @if($zonas->isEmpty())
+            <div class="text-center py-4">
+                <p class="text-muted">No hay zonas registradas aún.</p>
+            </div>
+        @endif
 
-<tr>
-
-<td>{{ $zona->id }}</td>
-
-<td>{{ $zona->nombre }}</td>
-
-<td>
-
-<a href="{{ route('zonas.edit',$zona->id) }}"
-class="btn btn-warning btn-sm">
-
-Editar
-
-</a>
-
-<form method="POST"
-action="{{ route('zonas.destroy',$zona->id) }}"
-style="display:inline">
-
-@csrf
-@method('DELETE')
-
-<button class="btn btn-danger btn-sm">
-
-Eliminar
-
-</button>
-
-</form>
-
-</td>
-
-</tr>
-
-@endforeach
-
-</table>
+    </div>
 
 </div>
 

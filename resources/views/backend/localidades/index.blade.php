@@ -2,49 +2,69 @@
 
 @section('content')
 
-<div class="card shadow-sm p-4">
+<div class="card shadow-sm border-0">
 
-    <div class="d-flex justify-content-between mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center text-white" 
+         style="background:#5651A0; border-radius:8px 8px 0 0;">
+        
+        <h5 class="mb-0">
+            <i class="bi bi-geo-alt"></i> Localidades
+        </h5>
 
-        <h4>Localidades</h4>
-
-        <a href="{{ route('localidades.create') }}"
-        class="btn btn-primary"> Nueva Localidad </a>
-
+        <a href="{{ route('localidades.create') }}" class="btn btn-light btn-sm">
+            <i class="bi bi-plus-lg"></i> Nueva Localidad
+        </a>
     </div>
 
-    <table class="table table-hover align-middle">
+    <div class="card-body bg-light">
 
-        <tr>
+        <table class="table align-middle table-hover bg-white rounded shadow-sm overflow-hidden">
+            
+            <thead style="background:#ecebfa;">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Código Postal</th>
+                    <th>Provincia</th>
+                    <th width="220" class="text-center">Acciones</th>
+                </tr>
+            </thead>
 
-            <th>ID</th>
-            <th>Nombre</th>
-            <th width="200">Acciones</th>
+            <tbody>
+                @foreach($localidades as $localidad)
+                <tr>
+                    <td>{{ $localidad->nombre }}</td>
+                    <td>{{ $localidad->codigo_postal }}</td>
+                    <td>{{ $localidad->provincia->nombre ?? 'Sin Provincia' }}</td>
+                    <td class="text-center">
 
-        </tr>
+                        <a href="{{ route('localidades.edit', $localidad->id) }}" 
+                           class="btn btn-primary btn-sm me-2">
+                           <i class="bi bi-pencil-square"></i>
+                           Editar
+                        </a>
 
-        @foreach($localidades as $localidad)
+                        <form method="POST" 
+                              action="{{ route('localidades.destroy', $localidad->id) }}" 
+                              style="display:inline"
+                              onsubmit="return confirm('¿Estás seguro de eliminar esta localidad?')">
+                            
+                            @csrf
+                            @method('DELETE')
 
-        <tr>
-            <td>{{ $localidad->id }}</td>
-            <td>{{ $localidad->nombre }}</td>
-            <td>
+                            <button class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash"></i>
+                                Borrar
+                            </button>
+                        </form>
 
-                <a href="{{ route('localidades.edit',$localidad->id) }}" class="btn btn-warning btn-sm"> Editar </a>
-                <form method="POST" action="{{ route('localidades.destroy',$localidad->id) }}" style="display:inline">
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
 
-                    @csrf
-                    @method('DELETE')
+        </table>
 
-                    <button class="btn btn-danger btn-sm"> Eliminar </button>
-
-                </form>
-            </td>
-        </tr>
-
-        @endforeach
-
-    </table>
+    </div>
 
 </div>
 
