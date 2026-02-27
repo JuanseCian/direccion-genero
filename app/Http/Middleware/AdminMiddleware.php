@@ -11,23 +11,20 @@ class AdminMiddleware
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        return $next($request);
-    }
 
-    class AdminMiddleware
-    {
-        public function handle(Request $request, Closure $next)
-        {
-            if (!Auth::check() || !Auth::user()->esAdmin()) {
-                abort(403, 'No tenés permisos para entrar acá');
-            }
-
-            return $next($request);
+        if (!Auth::check()) {
+            return redirect()->route('login');
         }
+
+        if (Auth::user()->rol_id != 2) {
+
+            abort(403,'No tenés permisos para entrar acá');
+
+        }
+
+        return $next($request);
     }
 }

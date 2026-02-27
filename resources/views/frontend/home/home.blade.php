@@ -4,7 +4,15 @@
 
 @section('content')
 
-<!-- BIENVENIDA + BOTONES PERSONAS -->
+@php
+$user = auth()->user();
+
+$esAdmin = $user->rol_id == 2;
+
+$tieneGenero = $esAdmin || $user->areas->contains('nombre','direccion_genero');
+$tieneMasc = $esAdmin || $user->areas->contains('nombre','masculinidades');
+$tieneIVE = $esAdmin || $user->areas->contains('nombre','ive');
+@endphp
 
 <div class="card card-soft p-4 mb-4">
 
@@ -59,30 +67,34 @@
 
     <div class="col-lg-4 col-md-6 mb-4">
 
-        <a href="{{ route('genero.index') }}"
-           class="text-decoration-none">
+        @if($tieneGenero)
+        <a href="{{ route('genero.index') }}" class="text-decoration-none">
+        @endif
 
-            <div class="card card-soft p-4 h-100 area-card area-genero">
+        <div class="card card-soft p-4 h-100 area-card area-genero
+        {{ !$tieneGenero ? 'bloqueado' : '' }}">
 
-                <i class="bi bi-gender-ambiguous area-icon"></i>
-
-                <h4 class="mt-3">
-
-                    Género y Diversidad
-
-                </h4>
-
-                <p class="text-muted">
-
-                    Gestión de legajos e intervenciones
-
-                </p>
-
+            <div class="liston">
+                Solo personal autorizado
             </div>
 
-        </a>
+            <i class="bi bi-gender-ambiguous area-icon"></i>
 
-    </div>
+            <h4 class="mt-3">
+                Género y Diversidad
+            </h4>
+
+            <p class="text-muted">
+                Gestión de legajos e intervenciones
+            </p>
+
+        </div>
+
+        @if($tieneGenero)
+        </a>
+        @endif
+
+        </div>
 
 
 
@@ -90,59 +102,65 @@
 
     <div class="col-lg-4 col-md-6 mb-4">
 
-        <a href="{{ route('masculinidades.index') }}"
-           class="text-decoration-none">
+        @if($tieneMasc)
+        <a href="{{ route('masculinidades.index') }}" class="text-decoration-none">
+        @endif
 
-            <div class="card card-soft p-4 h-100 area-card area-masc">
+        <div class="card card-soft p-4 h-100 area-card area-masc
+        {{ !$tieneMasc ? 'bloqueado' : '' }}">
 
-                <i class="bi bi-people area-icon"></i>
-
-                <h4 class="mt-3">
-
-                    Masculinidades
-
-                </h4>
-
-                <p class="text-muted">
-
-                    Seguimiento de casos
-
-                </p>
-
+            <div class="liston">
+                Solo personal autorizado
             </div>
 
+            <i class="bi bi-people area-icon"></i>
+
+            <h4 class="mt-3">
+                Masculinidades
+            </h4>
+
+            <p class="text-muted">
+                Seguimiento de casos
+            </p>
+
+        </div>
+
+        @if($tieneMasc)
         </a>
+        @endif
 
     </div>
-
-
 
     <!-- IVE -->
 
     <div class="col-lg-4 col-md-6 mb-4">
 
-        <a href="{{ route('ive.index') }}"
-           class="text-decoration-none">
+        @if($tieneIVE)
+        <a href="{{ route('ive.index') }}" class="text-decoration-none">
+        @endif
 
-            <div class="card card-soft p-4 h-100 area-card area-ive">
+        <div class="card card-soft p-4 h-100 area-card area-ive
+        {{ !$tieneIVE ? 'bloqueado' : '' }}">
 
-                <i class="bi bi-heart-pulse area-icon"></i>
-
-                <h4 class="mt-3">
-
-                    IVE
-
-                </h4>
-
-                <p class="text-muted">
-
-                    Atención y acompañamiento
-
-                </p>
-
+            <div class="liston">
+                Solo personal autorizado
             </div>
 
+            <i class="bi bi-heart-pulse area-icon"></i>
+
+            <h4 class="mt-3">
+                IVE
+            </h4>
+
+            <p class="text-muted">
+                Atención y acompañamiento
+            </p>
+
+        </div>
+
+        @if($tieneIVE)
         </a>
+        @endif
 
     </div>
 
@@ -223,7 +241,104 @@ color:white;
 color:white !important;
 
 }
+.area-icon{
+font-size:55px;
+color:#6c63ff;
+}
 
+.area-card{
+transition:.25s;
+cursor:pointer;
+border-radius:14px;
+position:relative;
+overflow:hidden;
+}
+
+
+/* EFECTOS NORMALES */
+
+.area-genero:hover{
+transform:translateY(-6px);
+box-shadow:0 10px 25px rgba(0,0,0,.12);
+background:#b8b3f5;
+color:white;
+}
+
+.area-masc:hover{
+transform:translateY(-6px);
+box-shadow:0 10px 25px rgba(0,0,0,.12);
+background:#7ec8ff;
+color:white;
+}
+
+.area-ive:hover{
+transform:translateY(-6px);
+box-shadow:0 10px 25px rgba(0,0,0,.12);
+background:#63c97a;
+color:white;
+}
+
+.area-card:hover h4,
+.area-card:hover p{
+color:white !important;
+}
+
+
+/* BLOQUEADO */
+
+.bloqueado{
+opacity:0.9;
+cursor:not-allowed;
+}
+
+/* HOVER BLOQUEADO */
+
+.bloqueado:hover{
+background:#ff5c5c;
+color:white;
+transform:translateY(-4px);
+}
+
+/* LISTON */
+
+.liston{
+
+position:absolute;
+
+top:50%;
+
+left:-40%;
+
+width:180%;
+
+text-align:center;
+
+background:#8b0000;
+
+color:white;
+
+font-weight:bold;
+
+padding:10px;
+
+transform:rotate(-25deg);
+
+opacity:0;
+
+transition:.3s;
+
+font-size:14px;
+
+}
+
+
+/* APARECE SOLO EN HOVER */
+
+.bloqueado:hover .liston{
+
+opacity:1;
+
+}
 </style>
 
 

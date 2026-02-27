@@ -60,6 +60,15 @@ class User extends Authenticatable
         return $this->rol_id == 2;
     }
 
+    public function tieneArea($areaNombre)
+    {
+        if ($this->esAdmin()) {
+            return true;
+        }
+
+        return $this->areas()->where('nombre',$areaNombre)->exists();
+    }
+
     public function esProgramador()
     {
         return $this->rol_id == 4;
@@ -70,4 +79,8 @@ class User extends Authenticatable
         return $this->rol_id != 3;
     }
     
+    public function areas()
+    {
+        return $this->belongsToMany(Area::class);
+    }
 }

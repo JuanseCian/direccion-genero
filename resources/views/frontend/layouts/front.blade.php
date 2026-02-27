@@ -244,7 +244,7 @@
 
                     @if(auth()->user()->esAdmin())
                         <li class="nav-item">
-                            <a class="nav-link nav-admin" href="{{ route('admin.panel') }}">
+                            <a class="nav-link nav-admin" href="{{ route('admin.users.index') }}">
                                 <i class="bi bi-shield-lock"></i> Panel Administrador
                             </a>
                         </li>

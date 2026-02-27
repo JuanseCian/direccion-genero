@@ -5,7 +5,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'activo'])->group(function () {
 
     Route::get('/home', function () {
         return view('frontend.home.home');

@@ -16,22 +16,22 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
 
-Route::middleware('auth')->get('/home', function () {
+Route::middleware(['auth','activo'])->get('/home', function () {
     return 'Login funcionando ✔';
 })->name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth','activo','verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth','activo'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 //panel de admin
-Route::middleware(['auth','admin'])->group(function () {
+Route::middleware(['auth','activo','admin'])->group(function () {
 
     Route::view('/admin/panel', 'admin.panel')->name('admin.panel');
 
@@ -40,7 +40,7 @@ Route::middleware(['auth','admin'])->group(function () {
 //busqueda
 Route::get('/buscar', function(){
     return "busqueda";
-})->name('buscar')->middleware('auth');
+})->name('buscar')->middleware(['auth','activo']);
 
 require __DIR__.'/auth.php';
 
@@ -54,9 +54,18 @@ require __DIR__.'/admin.php';
 //rutas genero
 require __DIR__.'/genero.php';
 //rutas masculinidades
-require __DIR__.'/masculinidades.php';
+Route::middleware(['auth','activo','area:direccion_genero'])->group(function () {
+
+    require __DIR__.'/genero.php';
+    require __DIR__.'/masculinidades.php';
+
+});
 //rutas ive
-require __DIR__.'/ive.php';
+Route::middleware(['auth','activo','area:ive'])->group(function () {
+
+    require __DIR__.'/ive.php';
+
+});
 //rutas personas
 require __DIR__.'/personas.php';
 

@@ -35,7 +35,7 @@
 
     <div class="section">Gestión</div>
 
-    <a href="#">
+    <a href="{{ route('admin.users.index') }}">
         <i class="bi bi-people-fill"></i>
         <span class="menu-text">Panel de Usuarios</span>
     </a>
