@@ -4,54 +4,62 @@
 
 @section('content')
 
-<div class="card card-soft p-4">
+<div class="card card-soft p-4 shadow-sm border-0">
 
-<h2>
-<i class="bi bi-gender-ambiguous"></i>
-Género 
-</h2>
-
-<hr>
-
-<div class="row">
-
-<div class="col-md-4">
-<div class="card card-soft p-3 text-center">
-
-<h5>Legajos</h5>
-
-<a href="#" class="btn btn-primary">
-Ingresar
-</a>
-
-</div>
-</div>
-
-<div class="col-md-4">
-<div class="card card-soft p-3 text-center">
-
-<h5>Estadísticas</h5>
-
-<a href="#" class="btn btn-primary">
-Ingresar
-</a>
-
-</div>
-</div>
-
-    <div class="col-md-4">
-        <div class="card card-soft p-3 text-center">
-
-            <h5>Nuevo Legajo</h5>
-
-            <a href="#" class="btn btn-success">
-            Crear
-            </a>
-
-        </div>
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="mb-0" style="color: #5651A0;">
+            <i class="bi bi-gender-ambiguous"></i>
+            Área de Género 
+        </h2>
+        <span class="badge rounded-pill px-3 py-2" style="background: #ecebfa; color: #5651A0;">
+            Gestión de Casos
+        </span>
     </div>
 
-</div>
+    <hr class="my-4" style="opacity: 0.1;">
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card card-soft p-4 text-center border-0 shadow-sm h-100">
+                <div class="mb-3">
+                    <i class="bi bi-folder2-open" style="font-size: 2.5rem; color: #5651A0;"></i>
+                </div>
+                <h5 class="fw-bold">Legajos Existentes</h5>
+                <p class="text-muted small">Consulte, edite o realice el seguimiento de los casos actuales.</p>
+                <a href="{{ route('backend.genero.listado') }}" class="btn text-white w-100 mt-auto" style="background: #5651A0;">
+                    Ver Listado
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-soft p-4 text-center border-0 shadow-sm h-100">
+                <div class="mb-3">
+                    <i class="bi bi-graph-up-arrow" style="font-size: 2.5rem; color: #5651A0;"></i>
+                </div>
+                <h5 class="fw-bold">Estadísticas</h5>
+                <p class="text-muted small">Visualice reportes técnicos y métricas del área de género.</p>
+                <a href="#" class="btn btn-outline-secondary w-100 mt-auto">
+                    Ver Reportes
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-soft p-4 text-center border-0 shadow-sm h-100" style="background: #fdfdfd;">
+                <div class="mb-3">
+                    <i class="bi bi-person-plus-fill" style="font-size: 2.5rem; color: #198754;"></i>
+                </div>
+                <h5 class="fw-bold">Nuevo Legajo</h5>
+                <p class="text-muted small">Inicie la carga de un nuevo caso de violencia de género.</p>
+                <a href="{{ route('genero.create') }}" class="btn btn-success w-100 mt-auto shadow-sm">
+                    <i class="bi bi-plus-lg"></i> Crear Legajo
+                </a>
+            </div>
+        </div>
+
+    </div>
 
 </div>
 

@@ -58,7 +58,7 @@
 
         <div class="submenu" id="submenuUbicaciones">
 
-            <a href="#">Provincias</a>
+            <a href="{{ route('provincias.index') }}">Provincias</a>
             <a href="{{ route('localidades.index') }}">Localidades</a>
             <a href="{{ route('barrios.index') }}">Barrios</a>
             <a href="{{ route('zonas.index') }}">Zonas</a>
@@ -67,6 +67,16 @@
 
     </div>
 
+    <a href="{{ route('backend.estado-civil.index') }}">
+        <i class="bi bi-people"></i>
+        <span class="menu-text">Estados Civiles</span>
+    </a>
+    
+    <a href="{{ route('backend.nivel-estudio.index') }}">
+        <i class="bi bi-mortarboard"></i>
+        <span class="menu-text">Niveles de Estudio</span>
+    </a>
+    
     <a href="#">
         <i class="bi bi-person-badge"></i>
         <span class="menu-text">Encargado</span>

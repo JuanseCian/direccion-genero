@@ -47,6 +47,16 @@
                 <input type="date" name="fecha_nacimiento" class="form-control" required>
 
             </div>
+            
+            <div class="col-md-3">
+
+                <label class="form-label">Sexo</label>
+                <select name="sexo" class="form-control" required>
+                    <option value="">Seleccione</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                </select>
+            </div>
 
         </div>
 

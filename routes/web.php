@@ -43,6 +43,8 @@ Route::get('/buscar', function(){
 })->name('buscar')->middleware('auth');
 
 require __DIR__.'/auth.php';
+
+//Rutas de Front/para usuarios comunes o administradores
 //rutas home
 require __DIR__.'/home.php';
 //rutas manuales
@@ -59,10 +61,17 @@ require __DIR__.'/ive.php';
 require __DIR__.'/personas.php';
 
 
-//Rutas de Back/para admin
+
+//Rutas de Back/para administradores
 //rutas barrio
 require __DIR__.'/barrio.php';
 //rutas localidad
 require __DIR__.'/localidades.php';
 //rutas zona barrio
 require __DIR__.'/zonas.php';
+//rutas provincia
+require __DIR__.'/provincia.php';
+//rutas estado civil
+require __DIR__.'/estado-civil.php';
+//rutas nivel estudio
+require __DIR__.'/nivel-estudio.php';
