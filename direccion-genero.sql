@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 27, 2026 at 02:26 AM
+-- Generation Time: Feb 27, 2026 at 02:47 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -223,6 +223,14 @@ CREATE TABLE `direccion_genero_casos` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `direccion_genero_casos`
+--
+
+INSERT INTO `direccion_genero_casos` (`id`, `persona_id`, `estado_civil_id`, `genero`, `provincia_id`, `localidad_id`, `barrio_id`, `nivel_estudio_id`, `trabaja`, `organizacion_social`, `organizacion_social_detalle`, `observaciones`, `created_at`, `updated_at`) VALUES
+(1, 2, 2, 'Therian', 1, 5, 30, 2, 1, 1, 'asas', 'asas', '2026-02-27 16:53:01', '2026-02-27 16:53:01'),
+(4, 2, 4, 'MUJER', 1, 5, 71, 2, 1, 1, 'sas', 'as', '2026-02-27 16:55:44', '2026-02-27 16:55:44');
 
 -- --------------------------------------------------------
 
@@ -771,7 +779,9 @@ CREATE TABLE `niveles_estudio` (
 
 INSERT INTO `niveles_estudio` (`id`, `nombre`) VALUES
 (1, 'Primaria'),
+(5, 'Primario Incompleto'),
 (2, 'Secundaria'),
+(6, 'Secundario Incompleto'),
 (3, 'Terciario'),
 (4, 'Universidad');
 
@@ -818,6 +828,7 @@ CREATE TABLE `personas` (
   `apellido` varchar(150) NOT NULL,
   `fecha_nacimiento` date NOT NULL,
   `dni` varchar(20) NOT NULL,
+  `sexo` enum('Masculino','Femenino','Otro') NOT NULL,
   `domicilio` varchar(255) DEFAULT NULL,
   `provincia_id` bigint UNSIGNED DEFAULT NULL,
   `localidad_id` bigint UNSIGNED DEFAULT NULL,
@@ -834,8 +845,10 @@ CREATE TABLE `personas` (
 -- Dumping data for table `personas`
 --
 
-INSERT INTO `personas` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `dni`, `domicilio`, `provincia_id`, `localidad_id`, `barrio_id`, `telefono`, `nivel_estudio_id`, `trabaja`, `grupo_sanguineo`, `created_at`, `updated_at`) VALUES
-(1, 'Juan Segundo', 'Cian', '2003-11-05', '45032239', 'Almafuerte 748', NULL, NULL, 34, '03364318066', NULL, 1, 'O-', '2026-02-27 05:16:27', '2026-02-27 05:16:27');
+INSERT INTO `personas` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `dni`, `sexo`, `domicilio`, `provincia_id`, `localidad_id`, `barrio_id`, `telefono`, `nivel_estudio_id`, `trabaja`, `grupo_sanguineo`, `created_at`, `updated_at`) VALUES
+(1, 'Juan Segundo', 'Cian', '2003-11-05', '45032239', 'Masculino', 'Almafuerte 748', NULL, NULL, 34, '03364318066', NULL, 1, 'O-', '2026-02-27 05:16:27', '2026-02-27 05:16:27'),
+(2, 'pas', 'ala', '2001-12-04', '555', 'Femenino', NULL, NULL, NULL, 99, NULL, NULL, 0, 'A+', '2026-02-27 16:00:41', '2026-02-27 16:00:41'),
+(3, 'mirta', 'gomez', '1990-02-08', '27272', 'Femenino', 'qr3427223', NULL, NULL, 2, '231341`', NULL, 1, 'AB+', '2026-02-27 17:29:39', '2026-02-27 17:29:39');
 
 -- --------------------------------------------------------
 
@@ -1374,7 +1387,7 @@ ALTER TABLE `barrio`
 -- AUTO_INCREMENT for table `direccion_genero_casos`
 --
 ALTER TABLE `direccion_genero_casos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `direccion_genero_caso_programa`
@@ -1398,7 +1411,7 @@ ALTER TABLE `espacios_grupales`
 -- AUTO_INCREMENT for table `estados_civiles`
 --
 ALTER TABLE `estados_civiles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -1488,7 +1501,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `niveles_estudio`
 --
 ALTER TABLE `niveles_estudio`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -1500,7 +1513,7 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `personas`
 --
 ALTER TABLE `personas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `programas_asistencia`
@@ -1512,7 +1525,7 @@ ALTER TABLE `programas_asistencia`
 -- AUTO_INCREMENT for table `provincia`
 --
 ALTER TABLE `provincia`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `redes_contencion`
