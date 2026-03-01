@@ -83,8 +83,13 @@
     </a>
 
     <a href="#">
-        <i class="bi bi-gender-ambiguous"></i>
-        <span class="menu-text">Género</span>
+        <i class="bi bi-people-fill"></i>
+        <span class="menu-text">Espacios Grupales</span>
+    </a>
+
+    <a href="{{ route('medidas-cautelares.index') }}">
+        <i class="bi bi-shield-lock"></i>
+        <span class="menu-text">Medidas Cautelares</span>
     </a>
 
     <a href="{{ route('home') }}">

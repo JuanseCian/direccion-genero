@@ -88,3 +88,5 @@ require __DIR__.'/nivel-estudio.php';
 require __DIR__.'/encargado.php';
 //rutas espacios grupales
 require __DIR__.'/espaciogrupal.php';
+//rutas medidas cautelares
+require __DIR__.'/medidas-cautelares.php';
