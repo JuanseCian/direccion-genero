@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 27, 2026 at 09:25 PM
+-- Generation Time: Mar 01, 2026 at 03:50 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -264,16 +264,17 @@ CREATE TABLE `direccion_genero_casos` (
   `amenaza_tipo_arma` varchar(100) DEFAULT NULL,
   `fecha_ultima_denuncia` date DEFAULT NULL,
   `medida_proteccion` varchar(150) DEFAULT NULL,
-  `boton_panico_numero` varchar(50) DEFAULT NULL
+  `boton_panico_numero` varchar(50) DEFAULT NULL,
+  `encargado_id` bigint UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `direccion_genero_casos`
 --
 
-INSERT INTO `direccion_genero_casos` (`id`, `persona_id`, `estado_civil_id`, `genero`, `provincia_id`, `localidad_id`, `barrio_id`, `nivel_estudio_id`, `trabaja`, `organizacion_social`, `organizacion_social_detalle`, `observaciones`, `created_at`, `updated_at`, `estado_id`, `nivel_riesgo_id`, `situacion_sanitaria`, `situacion_habitacional`, `servicios_luz`, `servicios_cable`, `servicios_gas_natural`, `servicios_agua_potable`, `servicios_internet`, `tipo_violencia`, `denuncio_antes`, `denuncio_antes_detalle`, `amenaza_con_arma`, `amenaza_tipo_arma`, `fecha_ultima_denuncia`, `medida_proteccion`, `boton_panico_numero`) VALUES
-(1, 2, 2, 'Therian', 1, 5, 30, 2, 1, 1, 'asas', 'asas', '2026-02-27 16:53:01', '2026-02-27 16:53:01', 1, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL),
-(4, 2, 4, 'MUJER', 1, 5, 71, 2, 1, 1, 'sas', 'as', '2026-02-27 16:55:44', '2026-02-27 16:55:44', 1, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `direccion_genero_casos` (`id`, `persona_id`, `estado_civil_id`, `genero`, `provincia_id`, `localidad_id`, `barrio_id`, `nivel_estudio_id`, `trabaja`, `organizacion_social`, `organizacion_social_detalle`, `observaciones`, `created_at`, `updated_at`, `estado_id`, `nivel_riesgo_id`, `situacion_sanitaria`, `situacion_habitacional`, `servicios_luz`, `servicios_cable`, `servicios_gas_natural`, `servicios_agua_potable`, `servicios_internet`, `tipo_violencia`, `denuncio_antes`, `denuncio_antes_detalle`, `amenaza_con_arma`, `amenaza_tipo_arma`, `fecha_ultima_denuncia`, `medida_proteccion`, `boton_panico_numero`, `encargado_id`) VALUES
+(11, 2, 4, 'MUJER', NULL, 185, NULL, 1, 1, 0, NULL, 'a', '2026-03-01 06:16:04', '2026-03-01 06:17:33', 1, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, 3),
+(12, 5, 2, 'Therian', NULL, 36, NULL, 1, 1, 0, NULL, 's', '2026-03-01 06:34:31', '2026-03-01 06:34:42', 1, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, 3);
 
 -- --------------------------------------------------------
 
@@ -367,6 +368,61 @@ CREATE TABLE `direccion_genero_red_contencion` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `encargados`
+--
+
+CREATE TABLE `encargados` (
+  `id` bigint UNSIGNED NOT NULL,
+  `nombre` varchar(150) NOT NULL,
+  `apellido` varchar(150) NOT NULL,
+  `telefono` varchar(50) DEFAULT NULL,
+  `email` varchar(150) DEFAULT NULL,
+  `cargo` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `encargados`
+--
+
+INSERT INTO `encargados` (`id`, `nombre`, `apellido`, `telefono`, `email`, `cargo`, `created_at`, `updated_at`) VALUES
+(1, 'rober', 'a', NULL, NULL, NULL, '2026-03-01 05:39:09', '2026-03-01 05:39:09'),
+(2, 'flor', 'a', NULL, NULL, NULL, '2026-03-01 05:39:24', '2026-03-01 05:39:24'),
+(3, 'marga', 'a', NULL, NULL, NULL, '2026-03-01 05:39:35', '2026-03-01 05:39:35'),
+(4, 'jenny', 'a', NULL, NULL, NULL, '2026-03-01 05:39:41', '2026-03-01 05:39:41');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `encargado_area`
+--
+
+CREATE TABLE `encargado_area` (
+  `id` bigint UNSIGNED NOT NULL,
+  `encargado_id` bigint UNSIGNED NOT NULL,
+  `area_id` bigint UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `encargado_area`
+--
+
+INSERT INTO `encargado_area` (`id`, `encargado_id`, `area_id`) VALUES
+(13, 1, 1),
+(14, 1, 2),
+(15, 2, 1),
+(16, 2, 2),
+(17, 2, 3),
+(18, 2, 4),
+(19, 3, 1),
+(20, 3, 2),
+(21, 3, 3),
+(22, 4, 3);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `espacios_grupales`
 --
 
@@ -437,8 +493,17 @@ CREATE TABLE `ive_casos` (
   `interrupcion_previa` tinyint(1) NOT NULL DEFAULT '0',
   `alta` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `encargado_id` bigint UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `ive_casos`
+--
+
+INSERT INTO `ive_casos` (`id`, `persona_id`, `fum`, `eco_semanas`, `obra_social`, `cantidad_hijos`, `interrupcion_previa`, `alta`, `created_at`, `updated_at`, `encargado_id`) VALUES
+(3, 4, '2026-03-05', 2, 0, 1, 0, NULL, '2026-03-01 06:37:27', '2026-03-01 06:37:27', NULL),
+(4, 3, '2026-03-03', 4, 0, 1, 0, NULL, '2026-03-01 06:46:25', '2026-03-01 06:47:47', 4);
 
 -- --------------------------------------------------------
 
@@ -737,7 +802,8 @@ CREATE TABLE `masculinidades_casos` (
   `asistencia_dispositivo` int DEFAULT '0',
   `observaciones` text,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `encargado_id` bigint UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -952,7 +1018,9 @@ CREATE TABLE `personas` (
 INSERT INTO `personas` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `dni`, `sexo`, `domicilio`, `provincia_id`, `localidad_id`, `barrio_id`, `telefono`, `nivel_estudio_id`, `trabaja`, `grupo_sanguineo`, `created_at`, `updated_at`) VALUES
 (1, 'Juan Segundo', 'Cian', '2003-11-05', '45032239', 'Masculino', 'Almafuerte 748', NULL, NULL, 34, '03364318066', NULL, 1, 'O-', '2026-02-27 05:16:27', '2026-02-27 05:16:27'),
 (2, 'pas', 'ala', '2001-12-04', '555', 'Femenino', NULL, NULL, NULL, 99, NULL, NULL, 0, 'A+', '2026-02-27 16:00:41', '2026-02-27 16:00:41'),
-(3, 'mirta', 'gomez', '1990-02-08', '27272', 'Femenino', 'qr3427223', NULL, NULL, 2, '231341`', NULL, 1, 'AB+', '2026-02-27 17:29:39', '2026-02-27 17:29:39');
+(3, 'mirta', 'gomez', '1990-02-08', '27272', 'Femenino', 'qr3427223', NULL, NULL, 2, '231341`', NULL, 1, 'AB+', '2026-02-27 17:29:39', '2026-02-27 17:29:39'),
+(4, 'Hernan', 'Vilchez', '2026-02-09', '123|', 'Femenino', '21', NULL, NULL, 98, '23', NULL, 0, 'A-', '2026-02-28 22:44:41', '2026-02-28 22:44:41'),
+(5, 'AA', 'NO SE', '2025-11-30', '4444', 'Femenino', 'Almafuerte 748', NULL, NULL, NULL, '03364870710', NULL, 1, 'A+', '2026-03-01 05:56:24', '2026-03-01 05:56:24');
 
 -- --------------------------------------------------------
 
@@ -1216,7 +1284,8 @@ ALTER TABLE `direccion_genero_casos`
   ADD KEY `provincia_id` (`provincia_id`),
   ADD KEY `localidad_id` (`localidad_id`),
   ADD KEY `barrio_id` (`barrio_id`),
-  ADD KEY `nivel_estudio_id` (`nivel_estudio_id`);
+  ADD KEY `nivel_estudio_id` (`nivel_estudio_id`),
+  ADD KEY `fk_genero_encargado` (`encargado_id`);
 
 --
 -- Indexes for table `direccion_genero_caso_programa`
@@ -1255,6 +1324,20 @@ ALTER TABLE `direccion_genero_red_contencion`
   ADD KEY `caso_id` (`caso_id`);
 
 --
+-- Indexes for table `encargados`
+--
+ALTER TABLE `encargados`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `encargado_area`
+--
+ALTER TABLE `encargado_area`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `encargado_id` (`encargado_id`),
+  ADD KEY `area_id` (`area_id`);
+
+--
 -- Indexes for table `espacios_grupales`
 --
 ALTER TABLE `espacios_grupales`
@@ -1280,7 +1363,8 @@ ALTER TABLE `failed_jobs`
 --
 ALTER TABLE `ive_casos`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `persona_id` (`persona_id`);
+  ADD KEY `persona_id` (`persona_id`),
+  ADD KEY `fk_ive_encargado` (`encargado_id`);
 
 --
 -- Indexes for table `ive_caso_red`
@@ -1323,7 +1407,8 @@ ALTER TABLE `masculinidades_casos`
   ADD KEY `situacion_habitacional_id` (`situacion_habitacional_id`),
   ADD KEY `nivel_estudio_id` (`nivel_estudio_id`),
   ADD KEY `situacion_sanitaria_id` (`situacion_sanitaria_id`),
-  ADD KEY `espacio_grupal_id` (`espacio_grupal_id`);
+  ADD KEY `espacio_grupal_id` (`espacio_grupal_id`),
+  ADD KEY `fk_masculinidad_encargado` (`encargado_id`);
 
 --
 -- Indexes for table `masculinidades_caso_medida`
@@ -1499,6 +1584,12 @@ ALTER TABLE `barrio`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 
 --
+-- AUTO_INCREMENT for table `direccion_genero_casos`
+--
+ALTER TABLE `direccion_genero_casos`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
 -- AUTO_INCREMENT for table `direccion_genero_caso_programa`
 --
 ALTER TABLE `direccion_genero_caso_programa`
@@ -1529,6 +1620,18 @@ ALTER TABLE `direccion_genero_red_contencion`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `encargados`
+--
+ALTER TABLE `encargados`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `encargado_area`
+--
+ALTER TABLE `encargado_area`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
 -- AUTO_INCREMENT for table `espacios_grupales`
 --
 ALTER TABLE `espacios_grupales`
@@ -1550,7 +1653,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `ive_casos`
 --
 ALTER TABLE `ive_casos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `ive_caso_red`
@@ -1640,7 +1743,7 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `personas`
 --
 ALTER TABLE `personas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `programas_asistencia`
@@ -1719,31 +1822,40 @@ ALTER TABLE `direccion_genero_casos`
   ADD CONSTRAINT `direccion_genero_casos_ibfks_3` FOREIGN KEY (`provincia_id`) REFERENCES `provincia` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `direccion_genero_casos_ibfks_4` FOREIGN KEY (`localidad_id`) REFERENCES `localidad` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `direccion_genero_casos_ibfks_5` FOREIGN KEY (`barrio_id`) REFERENCES `barrio` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `direccion_genero_casos_ibfks_6` FOREIGN KEY (`nivel_estudio_id`) REFERENCES `niveles_estudio` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `direccion_genero_casos_ibfks_6` FOREIGN KEY (`nivel_estudio_id`) REFERENCES `niveles_estudio` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_genero_encargado` FOREIGN KEY (`encargado_id`) REFERENCES `encargados` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `direccion_genero_caso_programa`
 --
 ALTER TABLE `direccion_genero_caso_programa`
-  ADD CONSTRAINT `direccion_genero_caso_programa_ibfk_1` FOREIGN KEY (`caso_id`) REFERENCES `direccion_genero_casos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `direccion_genero_caso_programa_ibfk_1` FOREIGN KEY (`caso_id`) REFERENCES `direccion_genero_casos` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `direccion_genero_caso_programa_ibfk_2` FOREIGN KEY (`programa_id`) REFERENCES `programas_asistencia` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Constraints for table `direccion_genero_grupo_conviviente`
 --
 ALTER TABLE `direccion_genero_grupo_conviviente`
-  ADD CONSTRAINT `direccion_genero_grupo_conviviente_ibfk_1` FOREIGN KEY (`caso_id`) REFERENCES `direccion_genero_casos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `direccion_genero_grupo_conviviente_ibfk_1` FOREIGN KEY (`caso_id`) REFERENCES `direccion_genero_casos` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `direccion_genero_red_contencion`
 --
 ALTER TABLE `direccion_genero_red_contencion`
-  ADD CONSTRAINT `direccion_genero_red_contencion_ibfk_1` FOREIGN KEY (`caso_id`) REFERENCES `direccion_genero_casos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `direccion_genero_red_contencion_ibfk_1` FOREIGN KEY (`caso_id`) REFERENCES `direccion_genero_casos` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `encargado_area`
+--
+ALTER TABLE `encargado_area`
+  ADD CONSTRAINT `encargado_area_ibfk_1` FOREIGN KEY (`encargado_id`) REFERENCES `encargados` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `encargado_area_ibfk_2` FOREIGN KEY (`area_id`) REFERENCES `areas` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `ive_casos`
 --
 ALTER TABLE `ive_casos`
+  ADD CONSTRAINT `fk_ive_encargado` FOREIGN KEY (`encargado_id`) REFERENCES `encargados` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `ive_casos_ibfk_1` FOREIGN KEY (`persona_id`) REFERENCES `personas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
@@ -1776,6 +1888,7 @@ ALTER TABLE `localidad`
 -- Constraints for table `masculinidades_casos`
 --
 ALTER TABLE `masculinidades_casos`
+  ADD CONSTRAINT `fk_masculinidad_encargado` FOREIGN KEY (`encargado_id`) REFERENCES `encargados` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `masculinidades_casos_ibfk_1` FOREIGN KEY (`persona_id`) REFERENCES `personas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `masculinidades_casos_ibfk_2` FOREIGN KEY (`victima_id`) REFERENCES `personas` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `masculinidades_casos_ibfk_3` FOREIGN KEY (`derivacion_id`) REFERENCES `masculinidades_derivaciones` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
