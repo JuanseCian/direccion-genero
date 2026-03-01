@@ -25,7 +25,7 @@
                 </div>
                 <h5 class="fw-bold">Legajos Existentes</h5>
                 <p class="text-muted small">Seguimiento de casos y participación en programas de masculinidad.</p>
-                <a href="#" class="btn text-white w-100 mt-auto" style="background: #5651A0;">
+                <a href="{{ route('masculinidades.listado') }}" class="btn text-white w-100 mt-auto" style="background: #5651A0;">
                     Ver Listado
                 </a>
             </div>
@@ -39,7 +39,7 @@
                 </div>
                 <h5 class="fw-bold">Estadísticas</h5>
                 <p class="text-muted small">Reportes de impacto y evolución del área de masculinidades.</p>
-                <a href="#" class="btn btn-outline-secondary w-100 mt-auto">
+                <a href="{{ route('masculinidades.listado') }}" class="btn btn-outline-secondary w-100 mt-auto">
                     Ver Reportes
                 </a>
             </div>
@@ -53,7 +53,7 @@
                 </div>
                 <h5 class="fw-bold">Nuevo Legajo</h5>
                 <p class="text-muted small">Inicie la carga de un nuevo legajo para el programa.</p>
-                <a href="#" class="btn btn-success w-100 mt-auto shadow-sm">
+                <a href="{{ route('masculinidades.create') }}" class="btn btn-success w-100 mt-auto shadow-sm">
                     <i class="bi bi-plus-lg"></i> Crear Legajo
                 </a>
             </div>

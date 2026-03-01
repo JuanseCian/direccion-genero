@@ -95,7 +95,6 @@
 
 
 <style>
-    /* Pulido visual para las celdas */
     .table thead th {
         font-weight: 600;
         color: #5651A0;
