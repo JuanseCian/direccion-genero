@@ -61,4 +61,51 @@ class MasculinidadesCasoController extends Controller
             MasculinidadesCaso::create($request->all());
             return redirect()->route('masculinidades.index')->with('success', 'Legajo creado correctamente');
     }
+
+        public function edit($id)
+    {
+        $caso = MasculinidadesCaso::findOrFail($id);
+        
+        $legajo = $caso;
+
+        $personas = Persona::where('sexo', 'Masculino')->get();
+        
+        $derivaciones = \DB::table('masculinidades_derivaciones')->get();
+        $situacionesHabitacionales = \DB::table('situaciones_habitacionales')->get();
+        $nivelesEstudio = \DB::table('niveles_estudio')->get();
+        $espaciosGrupales = \DB::table('espacios_grupales')->get();
+        $situacionesSanitarias = \DB::table('situaciones_sanitarias')->get();
+
+        $encargados = Encargado::whereHas('areas', function($q){
+            $q->where('areas.id', 4); // ID de Masculinidades
+        })->get();
+
+        return view('frontend.areas.masculinidades.edit', compact(
+            'caso', 
+            'legajo', 
+            'personas', 
+            'derivaciones', 
+            'situacionesHabitacionales', 
+            'nivelesEstudio', 
+            'espaciosGrupales',
+            'situacionesSanitarias',
+            'encargados'
+        ));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $caso = MasculinidadesCaso::findOrFail($id);
+        
+        $datos = $request->all();
+        $camposCheckbox = ['trabaja', 'consumo', 'desobediencia', 'reincidencia', 'terapia', 'red_contencion'];
+        
+        foreach ($camposCheckbox as $campo) {
+            $datos[$campo] = $request->has($campo) ? 1 : 0;
+        }
+
+        $caso->update($datos);
+
+        return redirect()->route('masculinidades.listado')->with('success', 'Legajo actualizado correctamente.');
+    }
 }

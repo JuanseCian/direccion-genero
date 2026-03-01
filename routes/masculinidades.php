@@ -11,5 +11,6 @@ Route::prefix('masculinidades')->group(function () {
     Route::post('/store', [MasculinidadesCasoController::class, 'store'])->name('masculinidades.store');
 
     Route::get('/edit/{id}', [MasculinidadesCasoController::class, 'edit'])->name('masculinidades.edit');
+    Route::put('/update/{id}', [MasculinidadesCasoController::class, 'update'])->name('masculinidades.update');
 
 });

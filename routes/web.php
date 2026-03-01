@@ -86,3 +86,5 @@ require __DIR__.'/estado-civil.php';
 require __DIR__.'/nivel-estudio.php';
 //rutas encargado
 require __DIR__.'/encargado.php';
+//rutas espacios grupales
+require __DIR__.'/espaciogrupal.php';
