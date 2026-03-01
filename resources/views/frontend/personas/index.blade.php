@@ -34,6 +34,7 @@
             <th>Nombre</th>
             <th>Teléfono</th>
             <th>Barrio</th>
+            <th>Áreas</th>
             </tr>
 
         </thead>
@@ -41,25 +42,49 @@
         <tbody>
 
         @foreach($personas as $p)
-        <tr>
+            <tr>
 
-            <td>{{ $p->dni }}</td>
+                <td>{{ $p->dni }}</td>
+                <td>{{ $p->apellido }}</td>
+                <td>{{ $p->nombre }}</td>
+                <td>{{ $p->telefono }}</td>
+                <td>{{ $p->barrio->nombre ?? '-' }}</td>
+                <td>
+                    <div class="d-flex gap-1 flex-wrap">
+                        {{-- Etiqueta IVE (Verde) --}}
+                        @if($p->casosIve->count() > 0)
+                            <span class="badge rounded-pill shadow-sm" style="background-color: #28a745; color: white;">
+                                IVE
+                            </span>
+                        @endif
 
-            <td>{{ $p->apellido }}</td>
+                        {{-- Etiqueta Género (Lila/Morado) --}}
+                        @if($p->casosGenero->count() > 0)
+                            <span class="badge rounded-pill shadow-sm" style="background-color: #6f42c1; color: white;">
+                                GÉNERO
+                            </span>
+                        @endif
 
-            <td>{{ $p->nombre }}</td>
+                        {{-- Etiqueta Masculinidades (Celeste) --}}
+                        {{-- @if($p->casosMasculinidades->count() > 0)
+                            <span class="badge rounded-pill shadow-sm" style="background-color: #0dcaf0; color: white;">
+                                <i class="bi bi-people me-1"></i> MASCULINIDADES
+                            </span>
+                        @endif --}}
 
-            <td>{{ $p->telefono }}</td>
-            
-            <td>{{ $p->barrio->nombre ?? '-' }}</td>
-
-            <td>
-                <a href="#"
-                class="btn btn-sm btn-secondary">
-                    Ver
-                </a>
-            </td>
-        </tr>
+                        {{-- Si no tiene ningún legajo --}}
+                        @if($p->casosIve->count() == 0 && $p->casosGenero->count() == 0)
+                            <span class="badge rounded-pill bg-light text-muted border">Sin Intervención</span>
+                        @endif
+                    </div>
+                </td>
+                <td>
+                    <a href="#"
+                    class="btn btn-sm btn-secondary">
+                        Ver
+                    </a>
+                </td>
+            </tr>
         @endforeach
 
         </tbody>

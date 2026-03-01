@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Backend\EstadoCivilController;
+use App\Http\Controllers\backend\EstadoCivilController;
 
 Route::group(['prefix' => 'backend', 'as' => 'backend.'], function () {
 

@@ -27,7 +27,7 @@
                 </div>
                 <h5 class="fw-bold">Legajos Existentes</h5>
                 <p class="text-muted small">Consulte, edite o realice el seguimiento de los casos actuales.</p>
-                <a href="{{ route('backend.genero.listado') }}" class="btn text-white w-100 mt-auto" style="background: #5651A0;">
+                <a href="{{ route('genero.listado') }}" class="btn text-white w-100 mt-auto" style="background: #5651A0;">
                     Ver Listado
                 </a>
             </div>

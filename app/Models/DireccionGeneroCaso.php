@@ -31,6 +31,8 @@ class DireccionGeneroCaso extends Model
         'organizacion_social',
         'organizacion_social_detalle',
 
+        'encargado_id',
+
         'observaciones'
     ];
 
@@ -73,6 +75,11 @@ class DireccionGeneroCaso extends Model
     public function barrio()
     {
         return $this->belongsTo(Barrio::class);
+    }
+
+    public function encargado()
+    {
+        return $this->belongsTo(Encargado::class,'encargado_id');
     }
 
 }

@@ -24,17 +24,30 @@
                         <i class="bi bi-person-badge me-2"></i>Identificación
                     </h5>
                     <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="persona_id" class="form-label fw-bold text-secondary">Persona (Solo Sexo Femenino)</label>
-                            <select name="persona_id" id="persona_id" class="form-select shadow-sm @error('persona_id') is-invalid @enderror" required>
-                                <option value="" selected disabled>Seleccione una persona...</option>
-                                @foreach($personas as $persona)
-                                    <option value="{{ $persona->id }}">
+                            <div id="alerta-vinculacion" class="alert alert-warning border-0 shadow-sm mb-3 d-none animate__animated animate__fadeIn">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-exclamation me-3 fs-3"></i>
+                                    <div>
+                                        <strong>Atención: Legajo en IVE Detectado</strong><br>
+                                        Esta persona ya posee un registro activo en la <strong>Dirección de IVE</strong>. 
+                                        Se recomienda realizar un abordaje integral entre ambas áreas.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Persona</label>
+                                <select name="persona_id" id="persona_id" class="form-select shadow-sm @error('persona_id') is-invalid @enderror" required>
+                                    <option value="" selected disabled>Seleccione una persona...</option>
+                                    @foreach($personas as $persona)
+                                    <option value="{{ $persona->id }}" 
+                                            data-vinculada="{{ in_array($persona->id, $idsIve) ? 'true' : 'false' }}">
                                         {{ $persona->apellido }}, {{ $persona->nombre }} (DNI {{ $persona->dni }})
+                                        {{ in_array($persona->id, $idsIve) ? ' ⚠️' : '' }}
                                     </option>
                                 @endforeach
-                            </select>
-                        </div>
+                                </select>
+                            </div>
                         <div class="col-md-6">
                             <label for="genero" class="form-label fw-bold text-secondary">Género autopercibido</label>
                             <input type="text" name="genero" id="genero" class="form-control shadow-sm" placeholder="Ej: Mujer Trans, No binario, etc.">
@@ -128,6 +141,16 @@
                         </div>
                     </div>
                 </div>
+                {{-- ENCARGADO DEL CASO --}}
+                <div class="mb-3">
+                    <label>Encargado</label>
+                    <select name="encargado_id" class="form-control">
+                        <option value="">Seleccionar Encargado</option>
+                        @foreach($encargados as $encargado)
+                        <option value="{{ $encargado->id }}"> {{ $encargado->apellido }} {{ $encargado->nombre }} </option>
+                        @endforeach
+                    </select>
+                </div>
 
                 {{-- OBSERVACIONES --}}
                 <div class="mb-4">
@@ -164,4 +187,23 @@
         border-radius: 15px;
     }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectPersona = document.getElementById('persona_id');
+    const alerta = document.getElementById('alerta-vinculacion');
+
+    selectPersona.addEventListener('change', function() {
+        // Obtenemos la opción seleccionada
+        const selectedOption = this.options[this.selectedIndex];
+        
+        // Verificamos el atributo data que pusimos en el PHP
+        if (selectedOption.dataset.vinculada === 'true') {
+            alerta.classList.remove('d-none'); // Mostramos la alerta
+        } else {
+            alerta.classList.add('d-none');    // La ocultamos si no aplica
+        }
+    });
+});
+</script>
 @endsection

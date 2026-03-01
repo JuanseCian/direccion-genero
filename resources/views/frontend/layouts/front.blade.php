@@ -220,7 +220,7 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item nav-ive" href="{{ route('ive.index') }}">
+                            <a class="dropdown-item nav-ive"  href="{{ route('frontend.areas.ive.index') }}">
                                 <i class="bi bi-heart-pulse"></i> IVE
                             </a>
                         </li>

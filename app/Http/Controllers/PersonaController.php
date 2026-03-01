@@ -9,11 +9,10 @@ use App\Models\Barrio;
 class PersonaController extends Controller
 {
 
-    public function index()
-    {
-        $personas = Persona::orderBy('apellido')->get();
 
-        return view('frontend.personas.index',compact('personas'));
+    public function index() {
+        $personas = Persona::with(['casosIve', 'casosGenero'])->get();
+        return view('frontend.personas.index', compact('personas'));
     }
 
 

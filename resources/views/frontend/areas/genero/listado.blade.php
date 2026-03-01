@@ -87,7 +87,12 @@
             </div>
         </div>
     </div>
+    
 </div>
+<a href="{{ route('frontend.areas.ive.index') }}" class="btn btn-light btn-sm shadow-sm">
+    <i class="bi bi-arrow-left"></i> Volver al Panel
+</a>
+
 
 <style>
     /* Pulido visual para las celdas */

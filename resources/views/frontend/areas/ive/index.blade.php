@@ -25,7 +25,7 @@
                 </div>
                 <h5 class="fw-bold">Registro Histórico</h5>
                 <p class="text-muted small">Acceda al listado de atenciones y acompañamientos realizados.</p>
-                <a href="#" class="btn text-white w-100 mt-auto" style="background: #5651A0;">
+                <a href="{{ route('frontend.areas.ive.listado') }}" class="btn text-white w-100 mt-auto" style="background: #5651A0;">
                     Ver Listado
                 </a>
             </div>
@@ -53,7 +53,7 @@
                 </div>
                 <h5 class="fw-bold">Nueva Atención</h5>
                 <p class="text-muted small">Registrar una nueva solicitud o consulta de interrupción.</p>
-                <a href="#" class="btn btn-success w-100 mt-auto shadow-sm">
+                <a href="{{ route('frontend.areas.ive.create') }}" class="btn btn-success w-100 mt-auto shadow-sm">
                     <i class="bi bi-plus-lg"></i> Iniciar Registro
                 </a>
             </div>

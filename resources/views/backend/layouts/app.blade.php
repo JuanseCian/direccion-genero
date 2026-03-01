@@ -77,7 +77,7 @@
         <span class="menu-text">Niveles de Estudio</span>
     </a>
     
-    <a href="#">
+    <a href="{{ route('backend.encargados.index') }}">
         <i class="bi bi-person-badge"></i>
         <span class="menu-text">Encargado</span>
     </a>

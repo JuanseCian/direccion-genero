@@ -33,22 +33,14 @@ $tieneIVE = $esAdmin || $user->areas->contains('nombre','ive');
 
         <div class="mt-2">
 
-            <a href="{{ route('personas.index') }}"
-               class="btn btn-primary btn-lg me-2">
+            <a href="{{ route('personas.index') }}" class="btn btn-primary btn-lg me-2">
 
-               <i class="bi bi-people"></i>
-               Personas
-
-            </a>
+               <i class="bi bi-people"></i> Personas </a>
 
 
-            <a href="{{ route('personas.create') }}"
-               class="btn btn-success btn-lg">
+                <a href="{{ route('personas.create') }}" class="btn btn-success btn-lg">
 
-               <i class="bi bi-person-plus"></i>
-               Nueva Persona
-
-            </a>
+                <i class="bi bi-person-plus"></i> Nueva Persona </a>
 
         </div>
 
@@ -136,7 +128,7 @@ $tieneIVE = $esAdmin || $user->areas->contains('nombre','ive');
     <div class="col-lg-4 col-md-6 mb-4">
 
         @if($tieneIVE)
-        <a href="{{ route('ive.index') }}" class="text-decoration-none">
+        <a href="{{ route('frontend.areas.ive.index') }}" class="text-decoration-none">
         @endif
 
         <div class="card card-soft p-4 h-100 area-card area-ive
@@ -175,169 +167,135 @@ $tieneIVE = $esAdmin || $user->areas->contains('nombre','ive');
 
 .area-icon{
 
-font-size:55px;
-color:#6c63ff;
+    font-size:55px;
+    color:#6c63ff;
 
 }
 
 
 .area-card{
-
-transition:.25s;
-cursor:pointer;
-border-radius:14px;
-
+    transition:.25s;
+    cursor:pointer;
+    border-radius:14px;
 }
 
 
 /* GENERO */
 
 .area-genero:hover{
-
-transform:translateY(-6px);
-
-box-shadow:0 10px 25px rgba(0,0,0,.12);
-
-background:#b8b3f5;
-
-color:white;
-
+    transform:translateY(-6px);
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+    background:#b8b3f5;
+    color:white;
 }
 
 
 /* MASCULINIDADES */
 
 .area-masc:hover{
-
-transform:translateY(-6px);
-
-box-shadow:0 10px 25px rgba(0,0,0,.12);
-
-background:#7ec8ff;
-
-color:white;
-
-}
+    transform:translateY(-6px);
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+    background:#7ec8ff;
+    color:white;
+    }
 
 
 /* IVE */
 
 .area-ive:hover{
-
-transform:translateY(-6px);
-
-box-shadow:0 10px 25px rgba(0,0,0,.12);
-
-background:#63c97a;
-
-color:white;
-
+    transform:translateY(-6px);
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+    background:#63c97a;
+    color:white;
 }
 
 
 .area-card:hover h4,
 .area-card:hover p{
-
-color:white !important;
+    color:white !important;
 
 }
 .area-icon{
-font-size:55px;
-color:#6c63ff;
+    font-size:55px;
+    color:#6c63ff;
 }
 
 .area-card{
-transition:.25s;
-cursor:pointer;
-border-radius:14px;
-position:relative;
-overflow:hidden;
+    transition:.25s;
+    cursor:pointer;
+    border-radius:14px;
+    position:relative;
+    overflow:hidden;
 }
 
 
 /* EFECTOS NORMALES */
 
 .area-genero:hover{
-transform:translateY(-6px);
-box-shadow:0 10px 25px rgba(0,0,0,.12);
-background:#b8b3f5;
-color:white;
+    transform:translateY(-6px);
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+    background:#b8b3f5;
+    color:white;
 }
 
 .area-masc:hover{
-transform:translateY(-6px);
-box-shadow:0 10px 25px rgba(0,0,0,.12);
-background:#7ec8ff;
-color:white;
+    transform:translateY(-6px);
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+    background:#7ec8ff;
+    color:white;
 }
 
 .area-ive:hover{
-transform:translateY(-6px);
-box-shadow:0 10px 25px rgba(0,0,0,.12);
-background:#63c97a;
-color:white;
+    transform:translateY(-6px);
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+    background:#63c97a;
+    color:white;
 }
 
 .area-card:hover h4,
 .area-card:hover p{
-color:white !important;
+    color:white !important;
 }
 
 
 /* BLOQUEADO */
 
 .bloqueado{
-opacity:0.9;
-cursor:not-allowed;
+    opacity:0.9;
+    cursor:not-allowed;
 }
 
 /* HOVER BLOQUEADO */
 
 .bloqueado:hover{
-background:#ff5c5c;
-color:white;
-transform:translateY(-4px);
+    background:#ff5c5c;
+    color:white;
+    transform:translateY(-4px);
 }
 
 /* LISTON */
 
 .liston{
-
-position:absolute;
-
-top:50%;
-
-left:-40%;
-
-width:180%;
-
-text-align:center;
-
-background:#8b0000;
-
-color:white;
-
-font-weight:bold;
-
-padding:10px;
-
-transform:rotate(-25deg);
-
-opacity:0;
-
-transition:.3s;
-
-font-size:14px;
-
+    position:absolute;
+    top:50%;
+    left:-40%;
+    width:180%;
+    text-align:center;
+    background:#8b0000;
+    color:white;
+    font-weight:bold;
+    padding:10px;
+    transform:rotate(-25deg);
+    opacity:0;
+    transition:.3s;
+    font-size:14px;
 }
 
 
 /* APARECE SOLO EN HOVER */
 
 .bloqueado:hover .liston{
-
-opacity:1;
-
+    opacity:1;
 }
 </style>
 

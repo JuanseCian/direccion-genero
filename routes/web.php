@@ -84,3 +84,5 @@ require __DIR__.'/provincia.php';
 require __DIR__.'/estado-civil.php';
 //rutas nivel estudio
 require __DIR__.'/nivel-estudio.php';
+//rutas encargado
+require __DIR__.'/encargado.php';

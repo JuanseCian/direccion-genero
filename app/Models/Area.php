@@ -14,4 +14,13 @@ class Area extends Model
         return $this->belongsToMany(User::class);
     }
 
+    public function encargados()
+    {
+        return $this->belongsToMany(
+            Encargado::class,
+            'encargado_area',
+            'area_id',
+            'encargado_id'
+        );
+    }
 }

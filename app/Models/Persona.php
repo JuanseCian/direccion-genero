@@ -26,4 +26,12 @@ class Persona extends Model
     {
         return $this->belongsTo(Barrio::class);
     }
+
+    public function casosIve() {
+        return $this->hasMany(IveCaso::class, 'persona_id');
+    }
+
+    public function casosGenero() {
+        return $this->hasMany(DireccionGeneroCaso::class, 'persona_id');
+    }
 }
