@@ -42,7 +42,7 @@
                         <form method="POST" 
                               action="{{ route('zonas.destroy', $zona->id) }}" 
                               style="display:inline"
-                              onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta zona?')">
+                              class="form-delete">
                             
                             @csrf
                             @method('DELETE')

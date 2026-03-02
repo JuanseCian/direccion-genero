@@ -19,12 +19,7 @@
 
     <div class="card-body bg-light">
 
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
+        
 
         <table class="table align-middle table-hover bg-white rounded shadow-sm overflow-hidden">
 
@@ -51,10 +46,11 @@
 
                         <form method="POST"
                               action="{{ route('medidas-cautelares.destroy', $medida->id) }}"
-                              style="display:inline">
+                              style="display:inline"
+                              class="d-inline form-delete">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-danger btn-sm" onclick="return confirm('¿Borrar esta medida?')">
+                            <button class="btn btn-danger btn-sm">
                                 <i class="bi bi-trash"></i>
                                 Borrar
                             </button>

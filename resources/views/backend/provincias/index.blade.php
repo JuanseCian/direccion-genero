@@ -28,7 +28,10 @@
                         <a href="{{ route('provincias.edit', $provincia->id) }}" class="btn btn-primary btn-sm me-2">
                            <i class="bi bi-pencil-square"></i> Editar
                         </a>
-                        <form method="POST" action="{{ route('provincias.destroy', $provincia->id) }}" style="display:inline" onsubmit="return confirm('¿Eliminar provincia?')">
+                        <form method="POST" 
+                            action="{{ route('provincias.destroy', $provincia->id) }}"
+                            style="display:inline" 
+                            class="form-delete">
                             @csrf @method('DELETE')
                             <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Borrar</button>
                         </form>

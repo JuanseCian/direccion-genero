@@ -60,7 +60,10 @@
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
 
-                                        <form method="POST" action="{{ route('backend.encargados.destroy', $encargado->id) }}" class="d-inline delete-form">
+                                        <form method="POST" 
+                                        action="{{ route('backend.encargados.destroy', $encargado->id) }}" 
+                                        style="display:inline"
+                                        class="d-inline form-delete" >
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-outline-danger btn-sm border-0 px-3 btn-delete" 

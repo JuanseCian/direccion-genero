@@ -65,7 +65,7 @@ class LocalidadController extends Controller
     {
         Localidad::destroy($id);
 
-        return back()->with('success','Localidad eliminada');
+        return back()->with('deleted','Localidad eliminada');
     }
 
 }

@@ -66,7 +66,8 @@
 
                         <form method="POST"
                               action="{{ route('backend.situaciones-habitacionales.destroy',$situacion->id) }}"
-                              style="display:inline">
+                              style="display:inline"
+                              class="d-inline form-delete">
 
                             @csrf
                             @method('DELETE')

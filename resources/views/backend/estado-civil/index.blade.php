@@ -38,7 +38,7 @@
                         <form method="POST" 
                               action="{{ route('backend.estado-civil.destroy', $estado->id) }}" 
                               style="display:inline"
-                              onsubmit="return confirm('¿Estás seguro de eliminar este registro?')">
+                              class="d-inline form-delete">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-danger btn-sm">

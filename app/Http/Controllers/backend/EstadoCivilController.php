@@ -38,7 +38,8 @@ class EstadoCivilController extends Controller
     }
 
     public function destroy(EstadoCivil $estadoCivil) {
+
         $estadoCivil->delete();
-        return redirect()->back()->with('success', 'Registro eliminado');
+        return redirect()->back()->with('deleted', 'Registro eliminado');
     }
 }

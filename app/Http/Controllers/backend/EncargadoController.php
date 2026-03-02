@@ -65,6 +65,7 @@ class EncargadoController extends Controller
 
     public function destroy(Encargado $encargado)
     {
+        $encargado = Encargado::findOrFail($encargado->id);
         $encargado->delete();
 
         $maxId = \DB::table('encargados')->max('id');
@@ -79,7 +80,7 @@ class EncargadoController extends Controller
         );
 
         return redirect()->back()
-        ->with('success','Encargado eliminado');
+        ->with('deleted','Encargado eliminado');
     }
 
 }

@@ -48,7 +48,10 @@ class MedidaCautelarController extends Controller
 
     public function destroy($id)
     {
-        MedidaCautelar::destroy($id);
-        return redirect()->route('medidas-cautelares.index')->with('success', 'Medida eliminada.');
+        $medida = MedidaCautelar::findOrFail($id);
+
+        $medida->delete();
+
+        return redirect()->route('medidas-cautelares.index')->with('deleted', 'Medida eliminada.');
     }
 }

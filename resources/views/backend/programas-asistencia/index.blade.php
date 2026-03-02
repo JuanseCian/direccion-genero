@@ -50,7 +50,8 @@
 
                         <form method="POST"
                               action="{{ route('backend.programas-asistencia.destroy',$programa->id) }}"
-                              style="display:inline">
+                              style="display:inline"
+                              class="d-inline form-delete">
 
                             @csrf
                             @method('DELETE')

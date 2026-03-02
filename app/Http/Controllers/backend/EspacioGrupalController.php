@@ -34,7 +34,7 @@ class EspacioGrupalController extends Controller
     public function edit($id)
     {
         $espacio = EspacioGrupal::findOrFail($id);
-        return view('backend.espacios_grupales.edit', compact('espacio'));
+        return view('backend.espacios-grupales.edit', compact('espacio'));
     }
 
     public function update(Request $request, $id)
@@ -51,11 +51,15 @@ class EspacioGrupalController extends Controller
     public function destroy($id)
     {
         // Nota: La tabla masculinidades_casos tiene una FK a esta tabla
+        $espacio = EspacioGrupal::findOrFail($id);
+
+        $espacio->delete();
+
         try {
             EspacioGrupal::destroy($id);
             return redirect()->route('espacios-grupales.index')->with('success', 'Espacio eliminado.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'No se puede eliminar porque está asignado a un legajo.');
+            return redirect()->back()->with('deleted', 'No se puede eliminar porque está asignado a un legajo.');
         }
     }
 }

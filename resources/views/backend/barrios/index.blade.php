@@ -53,7 +53,8 @@
 
                         <form method="POST"
                               action="{{ route('barrios.destroy',$barrio->id) }}"
-                              style="display:inline">
+                              style="display:inline"
+                              class="form-delete">
 
                             @csrf
                             @method('DELETE')

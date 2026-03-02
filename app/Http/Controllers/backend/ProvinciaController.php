@@ -37,6 +37,7 @@ class ProvinciaController extends Controller
 
     public function destroy($id) {
         Provincia::findOrFail($id)->delete();
-        return redirect()->route('provincias.index');
+        return redirect()->route('provincias.index')
+                        ->with('deleted', 'Provincia eliminada.');
     }
 }

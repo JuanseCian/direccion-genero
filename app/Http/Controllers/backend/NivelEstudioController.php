@@ -36,6 +36,6 @@ class NivelEstudioController extends Controller
 
     public function destroy($id) {
         NivelEstudio::findOrFail($id)->delete();
-        return redirect()->route('backend.nivel-estudio.index')->with('success', 'Eliminado correctamente.');
+        return redirect()->route('backend.nivel-estudio.index')->with('deleted', 'Eliminado correctamente.');
     }
 }

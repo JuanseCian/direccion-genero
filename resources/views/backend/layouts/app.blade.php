@@ -21,7 +21,6 @@
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true,
-        // Esto asegura que el z-index se respete desde el JS también
         didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)

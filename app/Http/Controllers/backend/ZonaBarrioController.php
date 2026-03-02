@@ -66,7 +66,7 @@ class ZonaBarrioController extends Controller
 
         ZonaBarrio::destroy($id);
 
-        return back()->with('success','Zona eliminada');
+        return back()->with('deleted','Zona eliminada');
 
     }
 

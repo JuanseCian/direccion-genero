@@ -46,7 +46,7 @@
                         <form method="POST" 
                               action="{{ route('localidades.destroy', $localidad->id) }}" 
                               style="display:inline"
-                              onsubmit="return confirm('¿Estás seguro de eliminar esta localidad?')">
+                              class="form-delete">
                             
                             @csrf
                             @method('DELETE')

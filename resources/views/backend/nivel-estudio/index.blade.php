@@ -27,7 +27,7 @@
                         <a href="{{ route('backend.nivel-estudio.edit', $nivel->id) }}" class="btn btn-primary btn-sm me-2">
                            <i class="bi bi-pencil-square"></i> Editar
                         </a>
-                        <form method="POST" action="{{ route('backend.nivel-estudio.destroy', $nivel->id) }}" style="display:inline" onsubmit="return confirm('¿Eliminar este nivel?')">
+                        <form method="POST" action="{{ route('backend.nivel-estudio.destroy', $nivel->id) }}" style="display:inline" class="form-delete">
                             @csrf @method('DELETE')
                             <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Borrar</button>
                         </form>

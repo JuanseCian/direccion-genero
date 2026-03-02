@@ -30,8 +30,9 @@ class ProgramaAsistenciaController extends Controller
 
         ProgramaAsistencia::create($request->all());
 
-        return redirect()->route('backend.programas-asistencia.index')
-        ->with('success','Programa creado correctamente');
+        return redirect()
+            ->route('backend.programas-asistencia.index')
+            ->with('success','Programa creado correctamente');
     }
 
 
@@ -59,10 +60,12 @@ class ProgramaAsistenciaController extends Controller
 
     public function destroy($id)
     {
-        ProgramaAsistencia::destroy($id);
+        $programa = ProgramaAsistencia::findOrFail($id);
+
+        $programa->delete();
 
         return redirect()->route('backend.programas-asistencia.index')
-        ->with('success','Programa eliminado');
+        ->with('deleted','Programa eliminado correctamente');
     }
 
 }

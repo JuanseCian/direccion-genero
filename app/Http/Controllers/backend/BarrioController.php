@@ -88,7 +88,7 @@ class BarrioController extends Controller
 
         return redirect()
         ->route('barrios.index')
-        ->with('success','Barrio eliminado');
+        ->with('deleted','Barrio eliminado');
 
     }
 
