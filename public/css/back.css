@@ -153,9 +153,9 @@ body.sidebar-collapsed .menu-parent{
 
 body.sidebar-collapsed .menu-group:hover .submenu{
     display:block;
-    position:fixed;
+    position:absolute; 
     left:85px;
-    top:150px;
+    top:0; 
     background:white;
     border-radius:10px;
     box-shadow:0 10px 25px rgba(0,0,0,.25);
@@ -181,3 +181,51 @@ body.sidebar-collapsed .menu-group:hover .submenu{
     position:relative;
     z-index:1;
 }
+
+.submenu {
+    display: none;
+    padding-left: 40px;
+}
+
+.submenu.open {
+    display: block;
+}
+
+
+.sidebar-collapsed .submenu {
+    position: absolute;
+    left: 70px;
+    top: 0;
+    background: #e9e9e9;
+    border-radius: 12px;
+    padding: 15px;
+    width: 230px;       
+    box-shadow: 0px 8px 20px rgba(0,0,0,0.2);
+}
+
+.sidebar-collapsed .menu-group {
+    position: relative;
+}
+
+
+    .swal2-styled.swal2-confirm {
+        background-color: #5651a0 !important;
+        border-radius: 8px !important;
+    }
+    .swal2-popup {
+        border-radius: 15px !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .no-border {
+        border: none !important;
+    }
+
+    .swal2-container {
+        z-index: 3000 !important;
+    }
+
+    el texto del header si usas la posición top-end */
+    .swal2-top-end {
+        top: 10px !important;
+        right: 10px !important;
+    }

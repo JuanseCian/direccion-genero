@@ -12,12 +12,12 @@ class EspacioGrupalController extends Controller
     {
         // Trae Club, Agrupacion, Religion, etc.
         $espacios = EspacioGrupal::all();
-        return view('backend.espacios_grupales.index', compact('espacios'));
+        return view('backend.espacios-grupales.index', compact('espacios'));
     }
 
     public function create()
     {
-        return view('backend.espacios_grupales.create');
+        return view('backend.espacios-grupales.create');
     }
 
 

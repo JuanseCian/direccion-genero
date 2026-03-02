@@ -12,6 +12,53 @@
 </head>
 <body class="sidebar-collapsed">
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        // Esto asegura que el z-index se respete desde el JS también
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
+
+    @if(session('success'))
+        Toast.fire({
+            icon: 'success',
+            title: '{{ session("success") }}',
+            iconColor: '#5651a0',
+            background: '#ffffff',
+        });
+    @endif
+</script>
+
+@if(session('error'))
+<script>
+    Toast.fire({
+        icon: 'error',
+        title: '{{ session("error") }}',
+        background: '#fff5f5',
+    });
+</script>
+@endif
+
+@if(session('deleted'))
+<script>
+    Toast.fire({
+        icon: 'success',
+        title: 'Registro eliminado',
+        text: '{{ session("deleted") }}',
+        iconHtml: '<i class="bi bi-trash" style="font-size:20px; color:#dc3545"></i>',
+    });
+</script>
+@endif
+
 <header class="admin-header">
 
     <button id="toggleSidebar" class="btn btn-light btn-sm me-3">
@@ -82,15 +129,28 @@
         <span class="menu-text">Encargado</span>
     </a>
 
-    <a href="#">
-        <i class="bi bi-people-fill"></i>
-        <span class="menu-text">Espacios Grupales</span>
-    </a>
+    <div class="menu-group">
+        <a href="#" class="menu-parent ubicaciones-btn" onclick="toggleContencion(event)">
+            <i class="bi bi-heart-pulse"></i>
+            <span class="menu-text">Medidas de Contención</span>
+            <i class="bi bi-chevron-down collapse-arrow"></i>
+        </a>
 
-    <a href="{{ route('medidas-cautelares.index') }}">
-        <i class="bi bi-shield-lock"></i>
-        <span class="menu-text">Medidas Cautelares</span>
-    </a>
+
+        <div class="submenu" id="submenuContencion">
+
+            <a href="{{ route('medidas-cautelares.index') }}">Medidas Cautelares</a>
+            <a href="{{ route('espacios-grupales.index') }}">Espacios Grupales</a>
+            <a href="{{ route('backend.situaciones-habitacionales.index') }}">Situaciones Habitacionales</a>
+            <a href="{{ route('backend.programas-asistencia.index') }}">Programas de Asistencia</a>
+            <a href="{{ route('backend.situaciones-sanitarias.index') }}">Situaciones Sanitarias</a>
+            <a href="{{ route('backend.tipo-violencia.index') }}">Tipos de Violencia</a>
+
+        </div>
+
+    </div>
+    
+
 
     <a href="{{ route('home') }}">
         <i class="bi bi-house"></i>
@@ -130,6 +190,84 @@ document
 }
 
 </script>
+<script>
+function toggleContencion(e){
 
+    if(document.body.classList.contains('sidebar-collapsed'))
+        return;
+
+    e.preventDefault();
+
+    document
+    .getElementById('submenuContencion')
+    .classList.toggle('open');
+
+}
+</script>
+<script>
+function confirmDelete(form) {
+    Swal.fire({
+        title: '¿Confirmar eliminación?',
+        text: "Esta acción no se puede deshacer.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#5651a0',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Volver',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit(); // Si confirma, se envía el formulario
+        }
+    });
+
+    return false; // Evita el envío automático del formulario
+}
+</script>
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    document.querySelectorAll(".form-delete").forEach(function(form){
+
+        form.addEventListener("submit", function(e){
+
+            e.preventDefault();
+
+            Swal.fire({
+
+                title: '¿Estás seguro?',
+                text: "¿Estás seguro de eliminar este tipo de intervención?",
+                icon: 'warning',
+
+                showCancelButton: true,
+
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#5651a0',
+
+                confirmButtonText: '<i class="bi bi-trash"></i> Eliminar',
+                cancelButtonText: 'Cancelar',
+
+                reverseButtons: true,
+
+                width: 450,
+                padding: '2em',
+
+            }).then((result)=>{
+
+                if(result.isConfirmed){
+                    form.submit();
+                }
+
+            });
+
+        });
+
+    });
+
+});
+
+</script>
 </body>
 </html>

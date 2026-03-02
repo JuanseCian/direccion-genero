@@ -10,9 +10,26 @@ class PersonaController extends Controller
 {
 
 
-    public function index() {
-        $personas = Persona::with(['casosIve', 'casosGenero'])->get();
-        return view('frontend.personas.index', compact('personas'));
+    public function index(Request $request)
+    {
+
+        $buscar = $request->buscar;
+
+        $personas = \App\Models\Persona::query()
+            ->when($buscar, function ($query, $buscar) {
+                $query->where('dni', 'like', "%$buscar%")
+                    ->orWhere('nombre', 'like', "%$buscar%")
+                    ->orWhere('apellido', 'like', "%$buscar%");
+            })
+            ->orderBy('apellido')
+            ->paginate(10);
+
+
+        return view(
+            'frontend.personas.index',
+            compact('personas','buscar')
+        );
+
     }
 
 

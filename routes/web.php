@@ -38,9 +38,9 @@ Route::middleware(['auth','activo','admin'])->group(function () {
 });
 
 //busqueda
-Route::get('/buscar', function(){
-    return "busqueda";
-})->name('buscar')->middleware(['auth','activo']);
+Route::get('/buscar', [App\Http\Controllers\PersonaController::class, 'index'])
+    ->name('buscar')
+    ->middleware(['auth','activo']);
 
 require __DIR__.'/auth.php';
 
@@ -90,3 +90,11 @@ require __DIR__.'/encargado.php';
 require __DIR__.'/espaciogrupal.php';
 //rutas medidas cautelares
 require __DIR__.'/medidas-cautelares.php';
+//rutas programas de asistencia
+require __DIR__.'/programa-asistencia.php';
+//rutas situaciones habitacionales
+require __DIR__.'/situacion-habitacional.php';
+//rutas situaciones sanitarias
+require __DIR__.'/situacion-sanitaria.php';
+//rutas tipo de violencia
+require __DIR__.'/tipo-violencia.php';
