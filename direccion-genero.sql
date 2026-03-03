@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 01, 2026 at 03:50 AM
+-- Generation Time: Mar 03, 2026 at 01:55 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -98,14 +98,12 @@ CREATE TABLE `area_user` (
 --
 
 INSERT INTO `area_user` (`id`, `user_id`, `area_id`) VALUES
-(1, 2, 1),
-(2, 2, 2),
-(4, 3, 2),
-(5, 3, 3),
 (6, 1, 1),
 (7, 1, 2),
 (9, 1, 4),
-(10, 1, 3);
+(10, 1, 3),
+(15, 3, 1),
+(17, 3, 3);
 
 -- --------------------------------------------------------
 
@@ -274,7 +272,8 @@ CREATE TABLE `direccion_genero_casos` (
 
 INSERT INTO `direccion_genero_casos` (`id`, `persona_id`, `estado_civil_id`, `genero`, `provincia_id`, `localidad_id`, `barrio_id`, `nivel_estudio_id`, `trabaja`, `organizacion_social`, `organizacion_social_detalle`, `observaciones`, `created_at`, `updated_at`, `estado_id`, `nivel_riesgo_id`, `situacion_sanitaria`, `situacion_habitacional`, `servicios_luz`, `servicios_cable`, `servicios_gas_natural`, `servicios_agua_potable`, `servicios_internet`, `tipo_violencia`, `denuncio_antes`, `denuncio_antes_detalle`, `amenaza_con_arma`, `amenaza_tipo_arma`, `fecha_ultima_denuncia`, `medida_proteccion`, `boton_panico_numero`, `encargado_id`) VALUES
 (11, 2, 4, 'MUJER', NULL, 185, NULL, 1, 1, 0, NULL, 'a', '2026-03-01 06:16:04', '2026-03-01 06:17:33', 1, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, 3),
-(12, 5, 2, 'Therian', NULL, 36, NULL, 1, 1, 0, NULL, 's', '2026-03-01 06:34:31', '2026-03-01 06:34:42', 1, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, 3);
+(12, 5, 2, 'Therian', NULL, 36, NULL, 1, 1, 0, NULL, 's', '2026-03-01 06:34:31', '2026-03-01 06:34:42', 1, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, 3),
+(13, 6, 2, 'Therian', NULL, 22, NULL, 5, 1, 0, NULL, 'PUTO', '2026-03-02 16:29:45', '2026-03-03 16:54:52', 1, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, 2);
 
 -- --------------------------------------------------------
 
@@ -503,7 +502,8 @@ CREATE TABLE `ive_casos` (
 
 INSERT INTO `ive_casos` (`id`, `persona_id`, `fum`, `eco_semanas`, `obra_social`, `cantidad_hijos`, `interrupcion_previa`, `alta`, `created_at`, `updated_at`, `encargado_id`) VALUES
 (3, 4, '2026-03-05', 2, 0, 1, 0, NULL, '2026-03-01 06:37:27', '2026-03-01 06:37:27', NULL),
-(4, 3, '2026-03-03', 4, 0, 1, 0, NULL, '2026-03-01 06:46:25', '2026-03-01 06:47:47', 4);
+(4, 3, '2026-03-03', 4, 0, 1, 0, NULL, '2026-03-01 06:46:25', '2026-03-01 06:47:47', 4),
+(5, 6, '2009-11-21', 8, 0, 68, 1, NULL, '2026-03-02 16:31:31', '2026-03-02 16:31:31', 4);
 
 -- --------------------------------------------------------
 
@@ -806,6 +806,15 @@ CREATE TABLE `masculinidades_casos` (
   `encargado_id` bigint UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `masculinidades_casos`
+--
+
+INSERT INTO `masculinidades_casos` (`id`, `persona_id`, `victima_id`, `derivacion_id`, `situacion_habitacional_id`, `nivel_estudio_id`, `trabaja`, `red_contencion`, `situacion_sanitaria_id`, `realiza_tratamiento`, `consumo`, `terapia`, `espacio_grupal_id`, `hijos_en_comun`, `relacion_actual`, `descripcion_relacion`, `situacion_judicial`, `desobediencia`, `reincidencia`, `asistencia_dispositivo`, `observaciones`, `created_at`, `updated_at`, `encargado_id`) VALUES
+(1, 1, NULL, 3, 1, NULL, 1, 0, NULL, NULL, 1, 0, NULL, 9, 0, NULL, 'qs', 0, 0, 0, NULL, '2026-03-01 17:15:31', '2026-03-01 18:34:03', 2),
+(2, 7, NULL, 2, NULL, NULL, 0, 0, NULL, NULL, 1, 0, NULL, 68, 0, NULL, 'POBRE', 1, 0, 0, 'UNA LACRA', '2026-03-02 16:32:25', '2026-03-02 16:32:25', 2),
+(3, 16, NULL, 3, 3, NULL, 1, 0, NULL, NULL, 1, 1, NULL, 1, 0, NULL, 's', 1, 0, 0, 'hh', '2026-03-03 16:25:02', '2026-03-03 16:25:02', 2);
+
 -- --------------------------------------------------------
 
 --
@@ -1020,7 +1029,10 @@ INSERT INTO `personas` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `dni`, `
 (2, 'pas', 'ala', '2001-12-04', '555', 'Femenino', NULL, NULL, NULL, 99, NULL, NULL, 0, 'A+', '2026-02-27 16:00:41', '2026-02-27 16:00:41'),
 (3, 'mirta', 'gomez', '1990-02-08', '27272', 'Femenino', 'qr3427223', NULL, NULL, 2, '231341`', NULL, 1, 'AB+', '2026-02-27 17:29:39', '2026-02-27 17:29:39'),
 (4, 'Hernan', 'Vilchez', '2026-02-09', '123|', 'Femenino', '21', NULL, NULL, 98, '23', NULL, 0, 'A-', '2026-02-28 22:44:41', '2026-02-28 22:44:41'),
-(5, 'AA', 'NO SE', '2025-11-30', '4444', 'Femenino', 'Almafuerte 748', NULL, NULL, NULL, '03364870710', NULL, 1, 'A+', '2026-03-01 05:56:24', '2026-03-01 05:56:24');
+(5, 'AA', 'NO SE', '2025-11-30', '4444', 'Femenino', 'Almafuerte 748', NULL, NULL, NULL, '03364870710', NULL, 1, 'A+', '2026-03-01 05:56:24', '2026-03-01 05:56:24'),
+(6, 'Alejo', 'Mosquera', '1990-02-20', '7473737', 'Femenino', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, '2026-03-02 16:26:34', '2026-03-02 16:26:34'),
+(7, 'Bruno', 'MassocooA', '2025-10-28', '6363', 'Masculino', NULL, NULL, NULL, 99, NULL, NULL, 1, 'A+', '2026-03-02 16:27:00', '2026-03-02 16:27:00'),
+(16, 'hh', 'hh', '2023-10-29', '77', 'Masculino', NULL, 1, 36, 99, NULL, 2, 0, 'A+', '2026-03-03 16:18:58', '2026-03-03 16:18:58');
 
 -- --------------------------------------------------------
 
@@ -1200,8 +1212,30 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `password`, `nombre`, `apellido`, `email`, `email_verified_at`, `rol_id`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, 'admin', '$2y$12$SUDkLv7S68NuGcJSFlUTtuUyW8mib4MPSIM3zaXIUHdbFICp8NAEC', 'admin', 'admin', 'admin@gmail.com', NULL, 2, NULL, '2026-02-27 00:25:46', '2026-02-27 00:25:46'),
-(2, 'juan', '$2y$12$i8Ujv7SHD48/16/AjDZjKuyFlZ9JN0tQJe.0xM9xDOA2GNBhnSKaO', 'Juan Segundo', 'Cian', 'juansegundocian@gmail.com', NULL, 1, NULL, '2026-02-27 22:44:02', '2026-02-27 22:44:02'),
-(3, 'DaniAbal', '$2y$12$4TUvEvTJbpj8v1UBgW10SOcsWZlIKwBurbVhkHxnOWwnjKHcTWlSW', 'd', 'a', 'dani@gmail.com', NULL, 3, NULL, '2026-02-28 00:05:57', '2026-02-28 00:05:57');
+(2, 'juan', '$2y$12$i8Ujv7SHD48/16/AjDZjKuyFlZ9JN0tQJe.0xM9xDOA2GNBhnSKaO', 'Juan Segundo', 'Cian', 'juansegundocian@gmail.com', NULL, 1, NULL, '2026-02-27 22:44:02', '2026-03-02 17:41:57'),
+(3, 'DaniAbal', '$2y$12$4TUvEvTJbpj8v1UBgW10SOcsWZlIKwBurbVhkHxnOWwnjKHcTWlSW', 'd', 'a', 'dani@gmail.com', NULL, 1, NULL, '2026-02-28 00:05:57', '2026-03-03 01:32:31');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `vinculos_casos`
+--
+
+CREATE TABLE `vinculos_casos` (
+  `id` bigint UNSIGNED NOT NULL,
+  `genero_caso_id` bigint UNSIGNED NOT NULL COMMENT 'ID del caso en Direccion Genero (Victima)',
+  `masculinidad_caso_id` bigint UNSIGNED NOT NULL COMMENT 'ID del caso en Masculinidades (Agresor)',
+  `tipo_vinculo` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ej: Pareja, Ex-pareja, Conviviente, Progenitor',
+  `observaciones` text COLLATE utf8mb4_unicode_ci,
+  `fecha_vinculacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `vinculos_casos`
+--
+
+INSERT INTO `vinculos_casos` (`id`, `genero_caso_id`, `masculinidad_caso_id`, `tipo_vinculo`, `observaciones`, `fecha_vinculacion`) VALUES
+(1, 13, 1, NULL, NULL, '2026-03-03 13:54:52');
 
 -- --------------------------------------------------------
 
@@ -1543,6 +1577,14 @@ ALTER TABLE `users`
   ADD KEY `users_rol_id_foreign` (`rol_id`);
 
 --
+-- Indexes for table `vinculos_casos`
+--
+ALTER TABLE `vinculos_casos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_vinculo_genero` (`genero_caso_id`),
+  ADD KEY `fk_vinculo_masculinidad` (`masculinidad_caso_id`);
+
+--
 -- Indexes for table `zona_barrio`
 --
 ALTER TABLE `zona_barrio`
@@ -1575,19 +1617,19 @@ ALTER TABLE `areas`
 -- AUTO_INCREMENT for table `area_user`
 --
 ALTER TABLE `area_user`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `barrio`
 --
 ALTER TABLE `barrio`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
 
 --
 -- AUTO_INCREMENT for table `direccion_genero_casos`
 --
 ALTER TABLE `direccion_genero_casos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `direccion_genero_caso_programa`
@@ -1629,19 +1671,19 @@ ALTER TABLE `encargados`
 -- AUTO_INCREMENT for table `encargado_area`
 --
 ALTER TABLE `encargado_area`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `espacios_grupales`
 --
 ALTER TABLE `espacios_grupales`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `estados_civiles`
 --
 ALTER TABLE `estados_civiles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -1653,7 +1695,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `ive_casos`
 --
 ALTER TABLE `ive_casos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `ive_caso_red`
@@ -1677,13 +1719,13 @@ ALTER TABLE `ive_medicaciones`
 -- AUTO_INCREMENT for table `localidad`
 --
 ALTER TABLE `localidad`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=210;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=211;
 
 --
 -- AUTO_INCREMENT for table `masculinidades_casos`
 --
 ALTER TABLE `masculinidades_casos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `masculinidades_caso_medida`
@@ -1719,7 +1761,7 @@ ALTER TABLE `masculinidades_tipos_violencia`
 -- AUTO_INCREMENT for table `medidas_cautelares`
 --
 ALTER TABLE `medidas_cautelares`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -1731,7 +1773,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `niveles_estudio`
 --
 ALTER TABLE `niveles_estudio`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -1743,19 +1785,19 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `personas`
 --
 ALTER TABLE `personas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `programas_asistencia`
 --
 ALTER TABLE `programas_asistencia`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `provincia`
 --
 ALTER TABLE `provincia`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -1767,19 +1809,19 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `situaciones_habitacionales`
 --
 ALTER TABLE `situaciones_habitacionales`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `situaciones_sanitarias`
 --
 ALTER TABLE `situaciones_sanitarias`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `tipos_violencia`
 --
 ALTER TABLE `tipos_violencia`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -1788,10 +1830,16 @@ ALTER TABLE `users`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT for table `vinculos_casos`
+--
+ALTER TABLE `vinculos_casos`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `zona_barrio`
 --
 ALTER TABLE `zona_barrio`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
@@ -1931,6 +1979,13 @@ ALTER TABLE `personas`
 --
 ALTER TABLE `users`
   ADD CONSTRAINT `users_rol_id_foreign` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--
+-- Constraints for table `vinculos_casos`
+--
+ALTER TABLE `vinculos_casos`
+  ADD CONSTRAINT `fk_vinculo_genero` FOREIGN KEY (`genero_caso_id`) REFERENCES `direccion_genero_casos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_vinculo_masculinidad` FOREIGN KEY (`masculinidad_caso_id`) REFERENCES `masculinidades_casos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
