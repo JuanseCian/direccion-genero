@@ -5,6 +5,7 @@ namespace App\Http\Controllers\frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 use App\Models\{Persona, MasculinidadesCaso, Encargado,MasculinidadesDerivacion,SituacionSanitaria,SituacionHabitacional,NivelEstudio,EspacioGrupal,MedidaCautelar,TipoViolencia};
 
 
@@ -138,50 +139,102 @@ class MasculinidadesCasoController extends Controller
         ->with('success', 'Caso registrado correctamente.');
 }
 
-        public function edit($id)
-    {
-        $caso = MasculinidadesCaso::findOrFail($id);
-        
-        $legajo = $caso;
+       public function edit($id)
+{
+    $caso = MasculinidadesCaso::with([
+        'medidas',
+        'tiposViolencia',
+        'grupoFamiliar'
+    ])->findOrFail($id);
 
-        $personas = Persona::where('sexo', 'Masculino')->get();
-        
-        $derivaciones = \DB::table('masculinidades_derivaciones')->get();
-        $situacionesHabitacionales = \DB::table('situaciones_habitacionales')->get();
-        $nivelesEstudio = \DB::table('niveles_estudio')->get();
-        $espaciosGrupales = \DB::table('espacios_grupales')->get();
-        $situacionesSanitarias = \DB::table('situaciones_sanitarias')->get();
+    $agresores = Persona::where('sexo', 'Masculino')->get();
 
-        $encargados = Encargado::whereHas('areas', function($q){
-            $q->where('areas.id', 4); // ID de Masculinidades
-        })->get();
+    $victimas = Persona::all();
 
-        return view('frontend.areas.masculinidades.edit', compact(
-            'caso', 
-            'legajo', 
-            'personas', 
-            'derivaciones', 
-            'situacionesHabitacionales', 
-            'nivelesEstudio', 
-            'espaciosGrupales',
-            'situacionesSanitarias',
-            'encargados'
-        ));
+   
+    $derivaciones = DB::table('masculinidades_derivaciones')->get();
+    $situacionesHabitacionales = DB::table('situaciones_habitacionales')->get();
+    $espaciosGrupales = DB::table('espacios_grupales')->get();
+    $situacionSanitaria = DB::table('situaciones_sanitarias')->get();
+
+   
+    $tipoViolencia = DB::table('tipos_violencia')->get();
+    $medidasCautelares = DB::table('medidas_cautelares')->get();
+
+   
+    $encargados = Encargado::whereHas('areas', function($q){
+        $q->where('areas.id', 4);
+    })->get();
+
+    return view('frontend.areas.masculinidades.edit', compact(
+        'caso',
+        'agresores',
+        'victimas',
+        'derivaciones',
+        'situacionesHabitacionales',
+        'espaciosGrupales',
+        'situacionSanitaria',
+        'tipoViolencia',
+        'medidasCautelares',
+        'encargados'
+    ));
+}
+
+  public function update(Request $request, $id)
+{
+    $caso = MasculinidadesCaso::findOrFail($id);
+
+    $datos = $request->all();
+
+    $camposCheckbox = [
+        'trabaja',
+        'consumo',
+        'desobediencia',
+        'reincidencia',
+        'terapia',
+        'red_contencion',
+        'relacion_actual'
+    ];
+
+    foreach ($camposCheckbox as $campo) {
+        $datos[$campo] = $request->has($campo) ? 1 : 0;
     }
 
-    public function update(Request $request, $id)
-    {
-        $caso = MasculinidadesCaso::findOrFail($id);
-        
-        $datos = $request->all();
-        $camposCheckbox = ['trabaja', 'consumo', 'desobediencia', 'reincidencia', 'terapia', 'red_contencion'];
-        
-        foreach ($camposCheckbox as $campo) {
-            $datos[$campo] = $request->has($campo) ? 1 : 0;
+    if (!$request->has('relacion_actual')) {
+        $datos['descripcion_relacion'] = null;
+    }
+
+    $caso->update($datos);
+
+    if ($request->has('tipos_violencia')) {
+        $caso->tiposViolencia()->sync($request->tipos_violencia);
+    } else {
+        $caso->tiposViolencia()->sync([]);
+    }
+
+    if ($request->has('medidas_cautelares')) {
+        $caso->medidas()->sync($request->medidas_cautelares);
+    } else {
+        $caso->medidas()->sync([]);
+    }
+
+    $caso->grupoFamiliar()->delete();
+
+    if ($request->has('grupo_familiar')) {
+        foreach ($request->grupo_familiar as $familiar) {
+            if (!empty($familiar['nombre'])) {
+                $caso->grupoFamiliar()->create([
+                    'nombre' => $familiar['nombre'],
+                    'apellido' => $familiar['apellido'] ?? null,
+                    'telefono' => $familiar['telefono'] ?? null,
+                    'vinculo' => $familiar['vinculo'] ?? null,
+                ]);
+            }
         }
-
-        $caso->update($datos);
-
-        return redirect()->route('masculinidades.listado')->with('success', 'Legajo actualizado correctamente.');
     }
+
+    return redirect()
+        ->route('masculinidades.listado')
+        ->with('success', 'Caso actualizado correctamente.');
+}
 }
