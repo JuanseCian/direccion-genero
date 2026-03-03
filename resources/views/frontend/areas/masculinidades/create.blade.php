@@ -1,13 +1,13 @@
 @extends('frontend.layouts.front')
 
-@section('title','Nuevo Legajo - Masculinidades')
+@section('title','Nuevo Caso - Masculinidades')
 
 @section('content')
 <div class="card card-soft p-4 shadow-sm border-0">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0" style="color: #5651A0;">
             <i class="bi bi-person-plus-fill"></i>
-            Nuevo Legajo de Masculinidades
+            Nuevo Caso de Masculinidades
         </h2>
         <a href="{{ route('masculinidades.index') }}" class="btn btn-outline-secondary btn-sm">
             <i class="bi bi-arrow-left"></i> Volver
@@ -113,7 +113,7 @@
 
         <div class="text-end mt-4">
             <button type="submit" class="btn text-white px-5 shadow-sm" style="background: #5651A0;">
-                <i class="bi bi-save"></i> Guardar Legajo
+                <i class="bi bi-save"></i> Guardar Caso
             </button>
         </div>
     </form>

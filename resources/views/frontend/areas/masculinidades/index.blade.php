@@ -23,7 +23,7 @@
                 <div class="mb-3">
                     <i class="bi bi-folder2-open" style="font-size: 2.5rem; color: #5651A0;"></i>
                 </div>
-                <h5 class="fw-bold">Legajos Existentes</h5>
+                <h5 class="fw-bold">Casos Existentes</h5>
                 <p class="text-muted small">Seguimiento de casos y participación en programas de masculinidad.</p>
                 <a href="{{ route('masculinidades.listado') }}" class="btn text-white w-100 mt-auto" style="background: #5651A0;">
                     Ver Listado
@@ -51,10 +51,10 @@
                 <div class="mb-3">
                     <i class="bi bi-person-plus-fill" style="font-size: 2.5rem; color: #198754;"></i>
                 </div>
-                <h5 class="fw-bold">Nuevo Legajo</h5>
-                <p class="text-muted small">Inicie la carga de un nuevo legajo para el programa.</p>
+                <h5 class="fw-bold">Nuevo Caso</h5>
+                <p class="text-muted small">Inicie la carga de un nuevo caso para el programa.</p>
                 <a href="{{ route('masculinidades.create') }}" class="btn btn-success w-100 mt-auto shadow-sm">
-                    <i class="bi bi-plus-lg"></i> Crear Legajo
+                    <i class="bi bi-plus-lg"></i> Crear Caso
                 </a>
             </div>
         </div>
