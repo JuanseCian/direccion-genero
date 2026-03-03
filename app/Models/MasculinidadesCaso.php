@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\MedidaCautelar;
 
 class MasculinidadesCaso extends Model
 {
@@ -12,12 +13,27 @@ class MasculinidadesCaso extends Model
     protected $table = 'masculinidades_casos';
     
     protected $fillable = [
-        'persona_id', 'victima_id', 'derivacion_id', 'situacion_habitacional_id',
-        'nivel_estudio_id', 'trabaja', 'red_contencion', 'situacion_sanitaria_id',
-        'realiza_tratamiento', 'consumo', 'terapia', 'espacio_grupal_id',
-        'hijos_en_comun', 'relacion_actual', 'descripcion_relacion',
-        'situacion_judicial', 'desobediencia', 'reincidencia',
-        'asistencia_dispositivo', 'observaciones', 'encargado_id'
+        'persona_id',
+        'victima_id',
+        'derivacion_id',
+        'situacion_habitacional_id',
+        'nivel_estudio_id',
+        'trabaja',
+        'red_contencion',
+        'situacion_sanitaria_id',
+        'realiza_tratamiento',
+        'consumo',
+        'terapia',
+        'espacio_grupal_id',
+        'hijos_en_comun',
+        'relacion_actual',
+        'descripcion_relacion',
+        'situacion_judicial',
+        'desobediencia',
+        'reincidencia',
+        'asistencia_dispositivo',
+        'observaciones',
+        'encargado_id'
     ];
 
     public function persona()
@@ -28,6 +44,29 @@ class MasculinidadesCaso extends Model
     public function encargado()
     {
         return $this->belongsTo(Encargado::class);
+    }
+    public function situacion()
+    {
+        return $this->belongsTo(SituacionSanitaria::class);
+    }
+    public function medidas()
+    {
+        return $this->belongsToMany(
+            MedidaCautelar::class,
+            'masculinidades_caso_medida',
+            'caso_id',
+            'medida_id'
+        );
+    }
+
+    public function tiposViolencia()
+    {
+        return $this->belongsToMany(
+            TipoViolencia::class,
+            'masculinidades_caso_violencia',
+            'caso_id',
+            'tipo_violencia_id'
+        );
     }
 
     

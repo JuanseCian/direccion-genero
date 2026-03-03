@@ -19,12 +19,13 @@
 
         <div class="row g-3">
             {{-- DATOS FILTRADOS POR SEXO MASCULINO --}}
+            <h3>Informacion Agresor</h3>
             <div class="col-md-6">
-                <label class="form-label fw-bold">Persona (Solo Masculinos)</label>
+                <label class="form-label fw-bold">Agresor (Solo Masculinos)</label>
                 <select name="persona_id" class="form-select @error('persona_id') is-invalid @enderror" required>
                     <option value="">Seleccione una persona...</option>
-                    @foreach($personas as $persona)
-                        <option value="{{ $persona->id }}">{{ $persona->apellido }}, {{ $persona->nombre }} ({{ $persona->dni }})</option>
+                    @foreach($agresores as $agresor)
+                        <option value="{{ $agresor->id }}">{{ $agresor->apellido }}, {{ $agresor->nombre }} ({{ $agresor->dni }})</option>
                     @endforeach
                 </select>
                 @error('persona_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -38,11 +39,7 @@
                         <option value="{{ $encargado->id }}">{{ $encargado->nombre }}</option>
                     @endforeach
                 </select>
-            </div>
-
-            <hr class="my-4">
-
-            {{-- CAMPOS ESPECÍFICOS DEL SQL --}}
+            </div>  
             <div class="col-md-4">
                 <label class="form-label fw-bold">Derivación</label>
                 <select name="derivacion_id" class="form-select" required>
@@ -62,17 +59,44 @@
                     @endforeach
                 </select>
             </div>
+            <div class="col-md-12">
+                <label class="form-label fw-bold">Violencia ejercida</label>
 
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Hijos en común</label>
-                <input type="number" name="hijos_en_comun" class="form-control" value="0">
+                <div class="row">
+                    @foreach($tipoViolencia as $tipo)
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input 
+                                    class="form-check-input" 
+                                    type="checkbox" 
+                                    name="tipo_violencia_id[]" 
+                                    value="{{ $tipo->id }}"
+                                    id="violencia{{ $tipo->id }}"
+                                >
+                                <label class="form-check-label" for="violencia{{ $tipo->id }}">
+                                    {{ $tipo->nombre }}
+                                </label>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Reincidencia</label>
+                <input type="number" name="reincidencia" class="form-control" value="0">
+            </div>
+            
+             <div class="col-md-4">
+                <label class="form-label fw-bold">Asistencia al dispositivo</label>
+                <input type="number" name="asistencia_dispositivo" class="form-control" value="0">
+            </div>
+            
 
             <div class="col-md-12">
                 <label class="form-label fw-bold">Situación Judicial</label>
                 <textarea name="situacion_judicial" class="form-control" rows="2" placeholder="Describa el estado de la causa..."></textarea>
             </div>
-
+           
             {{-- CHECKBOXES DE COMPORTAMIENTO --}}
             <div class="col-md-12 mt-3">
                 <div class="card bg-light p-3 border-0">
@@ -104,6 +128,63 @@
                     </div>
                 </div>
             </div>
+
+            <hr class="my-4">
+            <h3>Informacion Victima</h3>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Victima</label>
+                <select name="victima_id" class="form-select @error('victima_id') is-invalid @enderror" required>
+                    <option value="">Seleccione una persona...</option>
+                    @foreach($victimas as $victima)
+                        <option value="{{ $victima->id }}">{{ $victima->apellido }}, {{ $victima->nombre }} ({{ $victima->dni }})</option>
+                    @endforeach
+                </select>
+                @error('persona_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Situación Sanitaria/label>
+                <select name="situacion_sanitaria_id" class="form-select">
+                    <option value="">Seleccione...</option>
+                    @foreach($situacionSanitaria as $situacionSanitaria)
+                        <option value="{{ $situacionSanitaria->id }}">{{ $situacionSanitaria->nombre}}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Hijos en común</label>
+                <input type="number" name="hijos_en_comun" class="form-control" value="0">
+            </div>
+
+             <div class="col-md-12">
+                <label class="form-label fw-bold">Medidas Cautelares</label>
+
+                <div class="row">
+                    @foreach($medidasCautelares as $medida)
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input 
+                                    class="form-check-input" 
+                                    type="checkbox" 
+                                    name="medida_id[]" 
+                                    value="{{ $medida->id }}"
+                                    id="medida{{ $medida->id }}"
+                                >
+                                <label class="form-check-label" for="medida{{ $medida->id }}">
+                                    {{ $medida->nombre }}
+                                </label>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            
+            
+
+            <hr class="my-4">
+            {{-- CAMPOS ESPECÍFICOS DEL SQL --}}
+            
 
             <div class="col-md-12">
                 <label class="form-label fw-bold">Observaciones</label>
