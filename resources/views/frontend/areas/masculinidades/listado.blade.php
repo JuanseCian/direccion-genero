@@ -8,11 +8,11 @@
              style="background:#5651A0; border-radius:8px 8px 0 0;">
             
             <h5 class="mb-0">
-                <i class="bi bi-people-fill me-2"></i> Listado de Legajos: Masculinidades
+                <i class="bi bi-people-fill me-2"></i> Listado de casos: Masculinidades
             </h5>
 
             <a href="{{ route('masculinidades.create') }}" class="btn btn-light btn-sm shadow-sm">
-                <i class="bi bi-plus-lg"></i> Nuevo Legajo
+                <i class="bi bi-plus-lg"></i> Nuevo Caso
             </a>
         </div>
 
@@ -84,7 +84,7 @@
                                     </a>
                                     <form action="#" method="POST" class="d-inline">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Borrar legajo?')">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Borrar Caso?')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -94,7 +94,7 @@
                         @empty
                         <tr>
                             <td colspan="6" class="text-center py-4 text-muted">
-                                <i class="bi bi-info-circle me-1"></i> No hay legajos de masculinidades cargados.
+                                <i class="bi bi-info-circle me-1"></i> No hay Casos de masculinidades cargados.
                             </td>
                         </tr>
                         @endforelse
