@@ -40,12 +40,18 @@
                                 <select name="persona_id" id="persona_id" class="form-select shadow-sm @error('persona_id') is-invalid @enderror" required>
                                     <option value="" selected disabled>Seleccione una persona...</option>
                                     @foreach($personas as $persona)
-                                    <option value="{{ $persona->id }}" 
-                                            data-vinculada="{{ in_array($persona->id, $idsIve) ? 'true' : 'false' }}">
-                                        {{ $persona->apellido }}, {{ $persona->nombre }} (DNI {{ $persona->dni }})
-                                        {{ in_array($persona->id, $idsIve) ? ' ⚠️' : '' }}
-                                    </option>
-                                @endforeach
+<option value="{{ $persona->id }}"
+    data-provincia="{{ $persona->provincia_id }}"
+    data-localidad="{{ $persona->localidad_id }}"
+    data-barrio="{{ $persona->barrio_id }}"
+    data-nivel="{{ $persona->nivel_estudio_id }}"
+    data-trabaja="{{ $persona->trabaja }}"
+    data-vinculada="{{ in_array($persona->id, $idsIve) ? 'true' : 'false' }}">
+    
+    {{ $persona->apellido }}, {{ $persona->nombre }} (DNI {{ $persona->dni }})
+    {{ in_array($persona->id, $idsIve) ? ' ⚠️' : '' }}
+</option>
+@endforeach
                                 </select>
                             </div>
                         <div class="col-md-6">
@@ -190,20 +196,30 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
     const selectPersona = document.getElementById('persona_id');
     const alerta = document.getElementById('alerta-vinculacion');
 
     selectPersona.addEventListener('change', function() {
-        // Obtenemos la opción seleccionada
+
         const selectedOption = this.options[this.selectedIndex];
-        
-        // Verificamos el atributo data que pusimos en el PHP
+
+        // Mostrar alerta IVE
         if (selectedOption.dataset.vinculada === 'true') {
-            alerta.classList.remove('d-none'); // Mostramos la alerta
+            alerta.classList.remove('d-none');
         } else {
-            alerta.classList.add('d-none');    // La ocultamos si no aplica
+            alerta.classList.add('d-none');
         }
+
+        // Autocompletar datos
+        document.getElementById('provincia_id').value = selectedOption.dataset.provincia || '';
+        document.getElementById('localidad_id').value = selectedOption.dataset.localidad || '';
+        document.getElementById('barrio_id').value = selectedOption.dataset.barrio || '';
+        document.getElementById('nivel_estudio_id').value = selectedOption.dataset.nivel || '';
+        document.getElementById('trabaja').value = selectedOption.dataset.trabaja ?? 0;
+
     });
+
 });
 </script>
 @endsection

@@ -35,33 +35,46 @@ class DireccionGeneroController extends Controller
         return view('frontend.areas.genero.listado', compact('legajos'));
     }
 
-    public function create()
-    {
-        $personas = Persona::where('sexo','Femenino')->orderBy('apellido')->get();
-        
-        // CORRECCIÓN: El nombre de la variable debe ser IGUAL al del compact
-        $idsIve = IveCaso::pluck('persona_id')->toArray();
+   public function create()
+{
+    $personas = Persona::select(
+            'id',
+            'apellido',
+            'nombre',
+            'dni',
+            'provincia_id',
+            'localidad_id',
+            'barrio_id',
+            'nivel_estudio_id',
+            'trabaja'
+        )
+        ->where('sexo','Femenino')
+        ->orderBy('apellido')
+        ->get();
 
-        $provincias = Provincia::orderBy('nombre')->get();
-        $localidades = Localidad::orderBy('nombre')->get();
-        $barrios = Barrio::orderBy('nombre')->get();
-        $estados_civiles = EstadoCivil::orderBy('nombre')->get();
-        $niveles_estudio = NivelEstudio::orderBy('nombre')->get();
-        $encargados = Encargado::whereHas('areas', function($q){
-            $q->where('areas.id',1);
-        })->get();
+    $idsIve = IveCaso::pluck('persona_id')->toArray();
 
-        return view('frontend.areas.genero.create', compact(
-            'personas',
-            'provincias',
-            'localidades',
-            'barrios',
-            'estados_civiles',
-            'niveles_estudio',
-            'idsIve',
-            'encargados'
-        ));
-    }
+    $provincias = Provincia::orderBy('nombre')->get();
+    $localidades = Localidad::orderBy('nombre')->get();
+    $barrios = Barrio::orderBy('nombre')->get();
+    $estados_civiles = EstadoCivil::orderBy('nombre')->get();
+    $niveles_estudio = NivelEstudio::orderBy('nombre')->get();
+
+    $encargados = Encargado::whereHas('areas', function($q){
+        $q->where('areas.id',1);
+    })->get();
+
+    return view('frontend.areas.genero.create', compact(
+        'personas',
+        'provincias',
+        'localidades',
+        'barrios',
+        'estados_civiles',
+        'niveles_estudio',
+        'idsIve',
+        'encargados'
+    ));
+}
 
     public function store(Request $request)
     {
