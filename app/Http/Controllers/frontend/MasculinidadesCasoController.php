@@ -42,6 +42,7 @@ class MasculinidadesCasoController extends Controller
     $medidasCautelares = MedidaCautelar::orderBy('nombre')->get();
     $tipoViolencia=TipoViolencia::orderBy('nombre')->get() ;
     $situacionSanitaria=SituacionSanitaria::orderBy('nombre')->get();
+    $espacioGrupal=EspacioGrupal::orderBy('nombre')->get();
 
     $encargados = Encargado::whereHas('areas', function($q){
         $q->where('areas.id', 4);
@@ -57,11 +58,12 @@ class MasculinidadesCasoController extends Controller
         'espaciosGrupales',
         'encargados', 
         'medidasCautelares',
-        'tipoViolencia'
+        'tipoViolencia',
+        'espacioGrupal'
     ));
 }
 
-   public function store(Request $request)
+  public function store(Request $request)
 {
     $validated = $request->validate([
         'persona_id' => 'required|exists:personas,id',
@@ -74,16 +76,23 @@ class MasculinidadesCasoController extends Controller
 
         'reincidencia' => 'nullable|integer|min:0',
         'asistencia_dispositivo' => 'nullable|integer|min:0',
+
+        'espacio_grupal_id'=> 'nullable|exists:espacios_grupales,id',
+
         'hijos_en_comun' => 'nullable|integer|min:0',
 
         'situacion_judicial' => 'nullable|string',
         'observaciones' => 'nullable|string',
 
+        
+        'descripcion_relacion' => 'nullable|string|max:255',
+
         'trabaja' => 'nullable|boolean',
         'consumo' => 'nullable|boolean',
         'desobediencia' => 'nullable|boolean',
         'terapia' => 'nullable|boolean',
-
+        'relacion_actual' => 'nullable|boolean',
+        
         'medida_id' => 'required|array',
         'medida_id.*' => 'exists:medidas_cautelares,id',
 
@@ -91,18 +100,38 @@ class MasculinidadesCasoController extends Controller
         'tipo_violencia_id.*' => 'exists:tipos_violencia,id',
     ]);
 
-    // Manejo de checkboxes
+   
     $validated['trabaja'] = $request->has('trabaja');
     $validated['consumo'] = $request->has('consumo');
     $validated['desobediencia'] = $request->has('desobediencia');
     $validated['terapia'] = $request->has('terapia');
+    $validated['relacion_actual'] = $request->has('relacion_actual');
 
-    // 1️⃣ Crear caso
+    
+    if (!$validated['relacion_actual']) {
+        $validated['descripcion_relacion'] = null;
+    }
+
+   
     $caso = MasculinidadesCaso::create($validated);
 
-    // 2️⃣ Guardar relaciones many-to-many
+  
     $caso->medidas()->attach($request->medida_id);
     $caso->tiposViolencia()->attach($request->tipo_violencia_id);
+
+   
+    if ($request->has('grupo')) {
+        foreach ($request->grupo as $familiar) {
+            if (!empty($familiar['nombre'])) {
+                $caso->grupoFamiliar()->create([
+                    'nombre' => $familiar['nombre'],
+                    'apellido' => $familiar['apellido'] ?? null,
+                    'telefono' => $familiar['telefono'] ?? null,
+                    'vinculo' => $familiar['vinculo'] ?? null,
+                ]);
+            }
+        }
+    }
 
     return redirect()
         ->route('masculinidades.index')

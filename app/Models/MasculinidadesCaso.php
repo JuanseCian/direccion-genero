@@ -27,6 +27,7 @@ class MasculinidadesCaso extends Model
         'espacio_grupal_id',
         'hijos_en_comun',
         'relacion_actual',
+        'tipo_relacion',
         'descripcion_relacion',
         'situacion_judicial',
         'desobediencia',
@@ -58,7 +59,14 @@ class MasculinidadesCaso extends Model
             'medida_id'
         );
     }
-
+    public function grupoFamiliar()
+    {
+        return $this->hasMany(MasculinidadesGrupoFamiliar::class, 'caso_id');
+    }
+    public function espacioGrupal()
+{
+    return $this->belongsTo(EspacioGrupal::class, 'espacio_grupal_id');
+}
     public function tiposViolencia()
     {
         return $this->belongsToMany(

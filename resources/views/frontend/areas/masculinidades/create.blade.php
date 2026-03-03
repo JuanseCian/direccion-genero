@@ -59,6 +59,15 @@
                     @endforeach
                 </select>
             </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Espacio Grupal</label>
+                <select name="espacio_grupal_id" class="form-select">
+                    <option value="">Seleccione...</option>
+                    @foreach($espacioGrupal as $espacioGrupal)
+                        <option value="{{ $espacioGrupal->id }}">{{ $espacioGrupal->nombre}}</option>
+                    @endforeach
+                </select>
+            </div>
             <div class="col-md-12">
                 <label class="form-label fw-bold">Violencia ejercida</label>
 
@@ -96,7 +105,14 @@
                 <label class="form-label fw-bold">Situación Judicial</label>
                 <textarea name="situacion_judicial" class="form-control" rows="2" placeholder="Describa el estado de la causa..."></textarea>
             </div>
-           
+           <hr class="my-4">
+            <h3>Grupo Conviviente</h3>
+
+            <div id="grupoFamiliarContainer"></div>
+
+            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="agregarFamiliar()">
+                + Agregar Integrante
+            </button>
             {{-- CHECKBOXES DE COMPORTAMIENTO --}}
             <div class="col-md-12 mt-3">
                 <div class="card bg-light p-3 border-0">
@@ -109,8 +125,14 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="consumo" value="1">
+                                <input class="form-check-input" type="checkbox" name="consumo" value="1" id="consumoSwitch">
                                 <label class="form-check-label">¿Consumo?</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3" id="terapiaContainer" style="display: none;">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="terapia" value="1" id="terapiaSwitch">
+                                <label class="form-check-label">¿Terapia?</label>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -119,12 +141,7 @@
                                 <label class="form-check-label">¿Desobediencia?</label>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="terapia" value="1">
-                                <label class="form-check-label">¿Terapia?</label>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -142,7 +159,7 @@
                 @error('persona_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
             <div class="col-md-4">
-                <label class="form-label fw-bold">Situación Sanitaria/label>
+                <label class="form-label fw-bold">Situación Sanitaria</label>
                 <select name="situacion_sanitaria_id" class="form-select">
                     <option value="">Seleccione...</option>
                     @foreach($situacionSanitaria as $situacionSanitaria)
@@ -156,7 +173,32 @@
                 <label class="form-label fw-bold">Hijos en común</label>
                 <input type="number" name="hijos_en_comun" class="form-control" value="0">
             </div>
+            <hr class="my-4">
 
+                <div class="row align-items-end">
+
+                    <div class="col-md-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" 
+                                type="checkbox" 
+                                name="relacion_actual" 
+                                value="1" 
+                                id="relacionActualSwitch">
+                            <label class="form-check-label">
+                                ¿Tienen relación actualmente?
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4" id="tipoRelacionContainer" style="display:none;">
+                        <label class="form-label">Descripción de la relación</label>
+                        <input type="text" 
+                            name="descripcion_relacion" 
+                            class="form-control"
+                            placeholder="Ej: pareja, contacto esporádico, convivencia...">
+                    </div>
+
+                </div>
              <div class="col-md-12">
                 <label class="form-label fw-bold">Medidas Cautelares</label>
 
@@ -199,4 +241,98 @@
         </div>
     </form>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const consumo = document.getElementById('consumoSwitch');
+    const terapiaContainer = document.getElementById('terapiaContainer');
+
+    function toggleTerapia() {
+        if (consumo.checked) {
+            terapiaContainer.style.display = 'block';
+        } else {
+            terapiaContainer.style.display = 'none';
+            document.getElementById('terapiaSwitch').checked = false;
+        }
+    }
+
+    // Ejecutar al cargar
+    toggleTerapia();
+
+    // Ejecutar al cambiar
+    consumo.addEventListener('change', toggleTerapia);
+});
+</script>
+<script>
+let index = 0;
+
+function agregarFamiliar() {
+
+    const container = document.getElementById('grupoFamiliarContainer');
+
+    const html = `
+        <div class="card p-3 mt-3 border">
+            <div class="row g-2">
+
+                <div class="col-md-3">
+                    <input type="text" name="grupo[${index}][nombre]" 
+                           class="form-control" placeholder="Nombre">
+                </div>
+
+                <div class="col-md-3">
+                    <input type="text" name="grupo[${index}][apellido]" 
+                           class="form-control" placeholder="Apellido">
+                </div>
+
+                <div class="col-md-3">
+                    <input type="text" name="grupo[${index}][telefono]" 
+                           class="form-control" placeholder="Teléfono">
+                </div>
+
+                <div class="col-md-2">
+                    <select name="grupo[${index}][vinculo]" class="form-select">
+                        <option value="">Vínculo</option>
+                        <option value="padre">Padre</option>
+                        <option value="madre">Madre</option>
+                        <option value="hermano">Hermano</option>
+                        <option value="hijo">Hijo</option>
+                        <option value="hija">Hija</option>
+                    </select>
+                </div>
+
+                <div class="col-md-1 text-end">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.card').remove()">
+                        X
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', html);
+
+    index++;
+}
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const switchRelacion = document.getElementById('relacionActualSwitch');
+    const tipoContainer = document.getElementById('tipoRelacionContainer');
+    const tipoInput = document.querySelector('input[name="descripcion_relacion"]');
+
+    function toggleRelacion() {
+        if (switchRelacion.checked) {
+            tipoContainer.style.display = 'block';
+        } else {
+            tipoContainer.style.display = 'none';
+            tipoInput.value = '';
+        }
+    }
+
+    toggleRelacion();
+    switchRelacion.addEventListener('change', toggleRelacion);
+
+});
+</script>
 @endsection
