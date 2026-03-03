@@ -3,15 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\DireccionGeneroCaso;
-use App\Models\Persona;
-use App\Models\Provincia;
-use App\Models\Localidad;
-use App\Models\Barrio;
-use App\Models\EstadoCivil;
-use App\Models\NivelEstudio;
-use App\Models\IveCaso;
-use App\Models\Encargado;
+use App\Models\{DireccionGeneroCaso, Persona, Provincia, Localidad, Barrio, EstadoCivil, NivelEstudio, IveCaso, MasculinidadesCaso, Encargado};
 use Illuminate\Http\Request;
 
 class DireccionGeneroController extends Controller
@@ -95,7 +87,8 @@ class DireccionGeneroController extends Controller
         $legajo = DireccionGeneroCaso::findOrFail($id);
         $personas = Persona::where('sexo', 'Femenino')->orderBy('apellido')->get();
 
-        // Verificamos si existe en IVE
+        $casosMasculinidades = MasculinidadesCaso::with('persona')->get();
+
         $existeEnIve = IveCaso::where('persona_id', $legajo->persona_id)->exists();
 
         $provincias = Provincia::orderBy('nombre')->get();
@@ -115,6 +108,7 @@ class DireccionGeneroController extends Controller
             'barrios',
             'estados_civiles',
             'niveles_estudio',
+            'casosMasculinidades',
             'existeEnIve',
             'encargados'
         ));
@@ -145,6 +139,12 @@ class DireccionGeneroController extends Controller
             'observaciones' => $request->observaciones,
             'encargado_id' => $request->encargado_id
         ]);
+
+        if ($request->has('agresores')) {
+            $legajo->agresores()->sync($request->agresores);
+        } else {
+            $legajo->agresores()->detach(); // Si se desmarcan todos
+        }
 
         return redirect()->route('genero.listado')->with('success', 'Legajo actualizado correctamente');
     }

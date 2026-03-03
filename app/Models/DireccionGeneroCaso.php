@@ -36,42 +36,36 @@ class DireccionGeneroCaso extends Model
         'observaciones'
     ];
 
-    // PERSONA
     public function persona()
     {
         return $this->belongsTo(Persona::class);
     }
 
 
-    // ESTADO CIVIL
     public function estadoCivil()
     {
         return $this->belongsTo(EstadoCivil::class,'estado_civil_id');
     }
 
 
-    // NIVEL ESTUDIO
     public function nivelEstudio()
     {
         return $this->belongsTo(NivelEstudio::class,'nivel_estudio_id');
     }
 
 
-    // PROVINCIA
     public function provincia()
     {
         return $this->belongsTo(Provincia::class);
     }
 
 
-    // LOCALIDAD
     public function localidad()
     {
         return $this->belongsTo(Localidad::class);
     }
 
 
-    // BARRIO
     public function barrio()
     {
         return $this->belongsTo(Barrio::class);
@@ -81,5 +75,15 @@ class DireccionGeneroCaso extends Model
     {
         return $this->belongsTo(Encargado::class,'encargado_id');
     }
+
+    public function agresores()
+    {
+        return $this->belongsToMany(
+            \App\Models\MasculinidadesCaso::class, 
+            'vinculos_casos',                  
+            'genero_caso_id',                   
+            'masculinidad_caso_id'               
+        )->withPivot('tipo_vinculo');            
+}
 
 }

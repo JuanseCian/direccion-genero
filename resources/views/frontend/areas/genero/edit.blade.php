@@ -79,6 +79,25 @@
                 <input type="text" name="barrio" class="form-control border-0 shadow-sm" value="{{ $legajo->barrio->nombre ?? '' }}">
             </div>
 
+            <div class="col-md-12 mt-4">
+                <div class="p-3 rounded mb-2" style="background: #fff0f0; color: #a05151;">
+                    <h6 class="fw-bold mb-0"><i class="bi bi-person-exclamation me-2"></i> Vinculación con Agresores (Masculinidades)</h6>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <label class="form-label fw-bold">Seleccionar Casos de Masculinidades Vinculados</label>
+                <select name="agresores[]" class="form-select border-0 shadow-sm select2" multiple>
+                    @foreach($casosMasculinidades as $casoM)
+                        <option value="{{ $casoM->id }}" 
+                            {{ $legajo->agresores->contains($casoM->id) ? 'selected' : '' }}>
+                            Caso #{{ $casoM->id }} - {{ $casoM->persona->apellido }}, {{ $casoM->persona->nombre }} (DNI: {{ $casoM->persona->dni }})
+                        </option>
+                    @endforeach
+                </select>
+                <small class="text-muted">Puedes seleccionar uno o varios legajos del área de masculinidades.</small>
+            </div>
+
             <div class="col-md-4">
                 <label class="form-label fw-bold">Estado Civil</label>
                 <select name="estado_civil_id" class="form-select border-0 shadow-sm">
