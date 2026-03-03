@@ -19,6 +19,9 @@ class Persona extends Model
     'fecha_nacimiento',
     'barrio_id',
     'trabaja',
+    'nivel_estudio_id',
+    'localidad_id',
+    'provincia_id',
     'grupo_sanguineo'
     ];
 

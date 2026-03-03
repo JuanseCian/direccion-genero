@@ -89,7 +89,7 @@
     </div>
     
 </div>
-<a href="{{ route('frontend.areas.ive.index') }}" class="btn btn-light btn-sm shadow-sm">
+<a href="{{ route('genero.index') }}" class="btn btn-light btn-sm shadow-sm">
     <i class="bi bi-arrow-left"></i> Volver al Panel
 </a>
 

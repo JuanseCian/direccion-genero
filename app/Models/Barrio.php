@@ -21,7 +21,7 @@ class Barrio extends Model
     {
         return $this->belongsTo(Localidad::class, 'localidad_id');
     }
-
+    
     public function zona()
     {
         return $this->belongsTo(ZonaBarrio::class,'zona_barrio_id');

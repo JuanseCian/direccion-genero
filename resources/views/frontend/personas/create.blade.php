@@ -79,7 +79,30 @@
 
             </div>
 
+            <div class="col-md-4">
+                <label class="form-label">Provincia</label>
+                <select name="provincia_id" class="form-control">
 
+                    <option value="">Seleccione Provincia</option>
+
+                    @foreach($provincia as $provincia)
+                    <option value="{{ $provincia->id }}"> {{ $provincia->nombre }} </option>
+                    @endforeach
+                    
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Localidad</label>
+                <select name="localidad_id" class="form-control">
+
+                    <option value="">Seleccione barrio</option>
+
+                    @foreach($localidad as $localidad)
+                    <option value="{{ $localidad->id }}"> {{ $localidad->nombre }} </option>
+                    @endforeach
+                    
+                </select>
+            </div>
             <div class="col-md-4">
                 <label class="form-label">Barrio</label>
                 <select name="barrio_id" class="form-control">
@@ -111,7 +134,16 @@
 
             </div>
 
+            <div class="col-md-6">
 
+                <label class="form-label">Nivel Estudio</label>
+                <select name="nivel_estudio_id" class="form-control" required>
+                    @foreach($nivelEstudio as $nivel)
+                        <option value="{{ $nivel->id }}">{{ $nivel->nombre }}</option>
+                    @endforeach
+                </select>
+
+            </div>
 
             <div class="col-md-6">
 

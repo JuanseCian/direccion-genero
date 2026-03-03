@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Persona;
 use App\Models\Barrio;
-
+use App\Models\NivelEstudio;
+use App\Models\Provincia;
+use App\Models\Localidad;
 class PersonaController extends Controller
 {
 
@@ -15,7 +17,7 @@ class PersonaController extends Controller
 
         $buscar = $request->buscar;
 
-        $personas = \App\Models\Persona::query()
+        $personas = Persona::query()
             ->when($buscar, function ($query, $buscar) {
                 $query->where('dni', 'like', "%$buscar%")
                     ->orWhere('nombre', 'like', "%$buscar%")
@@ -36,8 +38,10 @@ class PersonaController extends Controller
     public function create()
     {
         $barrios = Barrio::orderBy('nombre')->get();
-
-        return view('frontend.personas.create', compact('barrios'));
+        $nivelEstudio = NivelEstudio::orderBy('nombre')->get();
+        $provincia = Provincia::orderBy('nombre')->get();
+        $localidad = Localidad::orderBy('nombre')->get();
+        return view('frontend.personas.create', compact('barrios','nivelEstudio','provincia','localidad'));
     }
 
 
@@ -51,6 +55,9 @@ class PersonaController extends Controller
             'fecha_nacimiento'=>'nullable|date',
             'barrio_id'=>'nullable',
             'trabaja'=>'nullable',
+            'nivel_estudio_id' => 'nullable|exists:niveles_estudio,id',
+            'provincia_id' => 'nullable|exists:provincia,id',
+            'localidad_id' => 'nullable|exists:localidad,id',
             'grupo_sanguineo'=>'nullable'
         ]);
 
