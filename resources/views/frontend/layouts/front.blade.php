@@ -229,7 +229,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link nav-destacado" href="#">
+                    <a class="nav-link nav-destacado" href="{{ route('frontend.stats.index') }}">
                         <i class="bi bi-bar-chart"></i> Estadísticas
                     </a>
                 </li>
