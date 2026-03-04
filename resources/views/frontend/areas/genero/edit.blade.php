@@ -186,9 +186,9 @@
 
             <div class="col-md-6">
                 <div class="form-check form-switch p-3 bg-white rounded shadow-sm border">
-                    <input class="form-check-input" type="checkbox" name="trabaja" value="1" id="trabaja" 
+                    <input class="form-check-input mx-1" type="checkbox" name="trabaja" value="1" id="trabaja" 
                            {{ $legajo->trabaja ? 'checked' : '' }}>
-                    <label class="form-check-label fw-bold" for="trabaja">¿Posee empleo actualmente?</label>
+                    <label class="form-check-label fw-bold ms-1" for="trabaja">¿Posee empleo actualmente?</label>
                 </div>
             </div>
             <div class="mb-3">
