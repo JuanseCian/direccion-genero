@@ -104,10 +104,10 @@
 
         <div class="submenu" id="submenuUbicaciones">
 
-            <a href="{{ route('provincias.index') }}">Provincias</a>
-            <a href="{{ route('localidades.index') }}">Localidades</a>
-            <a href="{{ route('barrios.index') }}">Barrios</a>
-            <a href="{{ route('zonas.index') }}">Zonas</a>
+            
+            <a  href="{{ route('localidades.index') }}" class="fw-bold">Localidades</a>
+            <a href="{{ route('barrios.index') }}" class="fw-bold">Barrios</a>
+            <a href="{{ route('zonas.index') }}" class="fw-bold">Zonas</a>
 
         </div>
 
@@ -138,12 +138,12 @@
 
         <div class="submenu" id="submenuContencion">
 
-            <a href="{{ route('medidas-cautelares.index') }}">Medidas Cautelares</a>
-            <a href="{{ route('espacios-grupales.index') }}">Espacios Grupales</a>
-            <a href="{{ route('backend.situaciones-habitacionales.index') }}">Situaciones Habitacionales</a>
-            <a href="{{ route('backend.programas-asistencia.index') }}">Programas de Asistencia</a>
-            <a href="{{ route('backend.situaciones-sanitarias.index') }}">Situaciones Sanitarias</a>
-            <a href="{{ route('backend.tipo-violencia.index') }}">Tipos de Violencia</a>
+            <a href="{{ route('medidas-cautelares.index') }}" class="fw-bold">Medidas Cautelares</a>
+            <a href="{{ route('espacios-grupales.index') }}" class="fw-bold">Espacios Grupales</a>
+            <a href="{{ route('backend.situaciones-habitacionales.index') }}" class="fw-bold">Situaciones Habitacionales</a>
+            <a href="{{ route('backend.programas-asistencia.index') }}" class="fw-bold">Programas de Asistencia</a>
+            <a href="{{ route('backend.situaciones-sanitarias.index') }}" class="fw-bold">Situaciones Sanitarias</a>
+            <a href="{{ route('backend.tipo-violencia.index') }}" class="fw-bold">Tipos de Violencia</a>
 
         </div>
 
