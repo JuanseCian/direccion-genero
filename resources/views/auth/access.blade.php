@@ -20,13 +20,14 @@
                 display: flex;
                 flex-direction: column;
                 min-height: 100vh;
+                margin: 0;
             }
 
             .flip-card-container { 
                 perspective: 1000px; 
                 width: 100%; 
                 max-width: 1000px; 
-                margin: 20px auto; 
+                margin: 5   0px auto; 
                 min-height: 550px; 
             }
 
@@ -69,8 +70,12 @@
             }
 
             section {
-                flex: 1 auto; 
-                padding-bottom: 0 !important; 
+                flex: 1; 
+                display: flex;
+                align-items: center;    
+                justify-content: center;
+                padding-top: 10vh;       /* Esto lo bajará un 10% de la altura de la pantalla */
+    padding-bottom: 20px;        
             }
 
             footer {
@@ -90,7 +95,7 @@
 
 
 
-    <section class="pt-4 px-3 px-md-5">
+    <section class=" px-3 px-md-5">
         <div class="container flip-card-container">
             <div class="flip-card-inner {{ $flip ? 'is-flipped' : '' }}" id="cardInner">
                 
