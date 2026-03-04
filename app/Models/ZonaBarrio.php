@@ -12,4 +12,9 @@ class ZonaBarrio extends Model
     protected $fillable = [
         'nombre'
     ];
+
+    public function barrios()
+    {
+        return $this->hasMany(Barrio::class, 'zona_barrio_id');
+    }
 }

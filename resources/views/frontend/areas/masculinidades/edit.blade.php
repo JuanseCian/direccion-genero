@@ -126,7 +126,85 @@
                           class="form-control"
                           rows="2">{{ $caso->situacion_judicial }}</textarea>
             </div>
+            {{-- SECCIÓN: Víctimas Vinculadas --}}
+            <div class="col-md-12 mt-4">
+                <div class="p-3 rounded mb-2" style="background: #f8f9fa;">
+                    <h6 class="fw-bold mb-0 text-muted"><i class="bi bi-people me-2"></i> Personas en Situación de Violencia (Víctimas)</h6>
+                </div>
+            </div>
+            <div class="col-md-12 mt-2">
+                <div class="p-3 rounded mb-3" style="background: #e6f2ff; color: #004085; display: flex; justify-content: space-between; align-items: center;">
+                    <h6 class="fw-bold mb-0"><i class="bi bi-person-heart me-2"></i> Víctimas Vinculadas (Área de Género)</h6>
+                    <button type="button" class="btn btn-sm btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalVictimas">
+                        <i class="bi bi-plus-circle me-1"></i> Vincular Víctima
+                    </button>
+                </div>
+             
+                <div id="lista-victimas" class="row g-3">
+                    @foreach($caso->victimas as $victima)
+                        <div class="col-md-4" id="victima-item-{{ $victima->id }}">
+                            <div class="card border-0 shadow-sm p-2 d-flex flex-row align-items-center justify-content-between" style="background: #f0f8ff;">
+                                <div class="small">
+                                    <a href="{{ route('genero.edit', $victima->id) }}" class="text-decoration-none" target="_blank">
+                                        <span class="fw-bold text-primary">#{{ $victima->id }}</span> - {{ $victima->persona->apellido }}, {{ $victima->persona->nombre }}
+                                        <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.8rem;"></i>
+                                    </a>
+                                    <input type="hidden" name="victimas[]" value="{{ $victima->id }}">
+                                </div>
+                                <button type="button" class="btn btn-link text-danger p-0" onclick="quitarVictima({{ $victima->id }})">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
 
+            {{-- Modal de Víctimas --}}
+            <div class="modal fade" id="modalVictimas" tabindex="-1" aria-labelledby="modalVictimasLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="modalVictimasLabel">Buscar Legajo en Dirección de Género</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
+                                <input type="text" id="busquedaVictima" class="form-control border-0 bg-light" placeholder="Buscar por Nombre, Apellido o DNI...">
+                            </div>
+                            
+                            <div style="max-height: 400px; overflow-y: auto;">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Legajo Género</th>
+                                            <th>Nombre Completo</th>
+                                            <th>DNI</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaResultadosVictimas">
+                                        @foreach($casosGenero as $casoG)
+                                        <tr class="fila-victima">
+                                            <td><strong>#{{ $casoG->id }}</strong></td>
+                                            <td>{{ $casoG->persona->apellido }}, {{ $casoG->persona->nombre }}</td>
+                                            <td>{{ $casoG->persona->dni }}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                        onclick="agregarVictima({{ $casoG->id }}, '{{ $casoG->persona->apellido }} {{ $casoG->persona->nombre }}')">
+                                                    Seleccionar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {{-- CHECKS --}}
             <div class="col-md-12 mt-3">
                 <div class="card bg-light p-3 border-0">
@@ -216,4 +294,56 @@
         </div>
     </form>
 </div>
+
+<script>
+// Buscador en tiempo real dentro del modal de víctimas
+document.getElementById('busquedaVictima').addEventListener('keyup', function() {
+    let filtro = this.value.toLowerCase();
+    let filas = document.querySelectorAll('#tablaResultadosVictimas .fila-victima');
+    
+    filas.forEach(fila => {
+        let texto = fila.innerText.toLowerCase();
+        fila.style.display = texto.includes(filtro) ? '' : 'none';
+    });
+});
+
+const urlBaseGenero = "{{ route('genero.edit', ':id') }}";
+
+// Función para agregar la víctima a la lista visual
+function agregarVictima(id, nombre) {
+    if (document.getElementById('victima-item-' + id)) {
+        alert('Esta víctima ya ha sido seleccionada.');
+        return;
+    }
+    
+    const urlLegajo = urlBaseGenero.replace(':id', id);
+
+    const lista = document.getElementById('lista-victimas');
+    const html = `
+        <div class="col-md-4" id="victima-item-${id}">
+            <div class="card border-0 shadow-sm p-2 d-flex flex-row align-items-center justify-content-between" style="background: #f0f8ff;">
+                <div class="small">
+                    <a href="${urlLegajo}" class="text-decoration-none" target="_blank">
+                        <span class="fw-bold text-primary">#${id}</span> - ${nombre}
+                        <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <input type="hidden" name="victimas[]" value="${id}">
+                </div>
+                <button type="button" class="btn btn-link text-danger p-0" onclick="quitarVictima(${id})">
+                    <i class="bi bi-x-circle-fill"></i>
+                </button>
+            </div>
+        </div>
+    `;
+    lista.insertAdjacentHTML('beforeend', html);
+}
+
+// Función para quitar de la lista
+function quitarVictima(id) {
+    const elemento = document.getElementById('victima-item-' + id);
+    if (elemento) {
+        elemento.remove();
+    }
+}
+</script>
 @endsection

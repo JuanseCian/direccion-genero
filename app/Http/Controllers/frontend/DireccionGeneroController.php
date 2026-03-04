@@ -99,7 +99,7 @@ class DireccionGeneroController extends Controller
     {
         $legajo = DireccionGeneroCaso::findOrFail($id);
         $personas = Persona::where('sexo', 'Femenino')->orderBy('apellido')->get();
-
+        $barrios = Barrio::orderBy('nombre', 'asc')->get();
         $casosMasculinidades = MasculinidadesCaso::with('persona')->get();
 
         $existeEnIve = IveCaso::where('persona_id', $legajo->persona_id)->exists();

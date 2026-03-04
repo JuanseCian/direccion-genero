@@ -39,7 +39,7 @@
                 </div>
                 <h5 class="fw-bold">Estadísticas</h5>
                 <p class="text-muted small">Reportes de impacto y evolución del área de masculinidades.</p>
-                <a href="{{ route('masculinidades.listado') }}" class="btn btn-outline-secondary w-100 mt-auto">
+                <a href="{{ route('stats.masculinidades') }}" class="btn btn-outline-secondary w-100 mt-auto">
                     Ver Reportes
                 </a>
             </div>

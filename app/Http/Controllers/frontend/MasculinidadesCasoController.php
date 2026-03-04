@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
-use App\Models\{Persona, MasculinidadesCaso, Encargado,MasculinidadesDerivacion,SituacionSanitaria,SituacionHabitacional,NivelEstudio,EspacioGrupal,MedidaCautelar,TipoViolencia};
+use App\Models\{Persona, MasculinidadesCaso, Encargado,MasculinidadesDerivacion,SituacionSanitaria,SituacionHabitacional,NivelEstudio,EspacioGrupal,MedidaCautelar,TipoViolencia,DireccionGeneroCaso};
 
 
 class MasculinidadesCasoController extends Controller
@@ -148,6 +148,7 @@ class MasculinidadesCasoController extends Controller
     ])->findOrFail($id);
 
     $agresores = Persona::where('sexo', 'Masculino')->get();
+    $casosGenero = DireccionGeneroCaso::with('persona')->get();
 
     $victimas = Persona::all();
 
@@ -169,6 +170,7 @@ class MasculinidadesCasoController extends Controller
     return view('frontend.areas.masculinidades.edit', compact(
         'caso',
         'agresores',
+        'casosGenero',
         'victimas',
         'derivaciones',
         'situacionesHabitacionales',
@@ -199,6 +201,12 @@ class MasculinidadesCasoController extends Controller
     foreach ($camposCheckbox as $campo) {
         $datos[$campo] = $request->has($campo) ? 1 : 0;
     }
+
+    if ($request->has('victimas')) {
+            $caso->victimas()->sync($request->victimas);
+        } else {
+            $caso->victimas()->detach(); // Si se eliminan todas en la vista
+        }   
 
     if (!$request->has('relacion_actual')) {
         $datos['descripcion_relacion'] = null;

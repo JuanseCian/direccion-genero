@@ -27,4 +27,13 @@ class Barrio extends Model
         return $this->belongsTo(ZonaBarrio::class,'zona_barrio_id');
     }
 
+    public function direccionGeneroCasos()
+    {
+        return $this->hasMany(DireccionGeneroCaso::class);
+    }
+
+    public function personas()
+    {
+        return $this->hasMany(\App\Models\Persona::class);
+    }
 }

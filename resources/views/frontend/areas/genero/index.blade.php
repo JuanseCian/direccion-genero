@@ -40,7 +40,7 @@
                 </div>
                 <h5 class="fw-bold">Estadísticas</h5>
                 <p class="text-muted small">Visualice reportes técnicos y métricas del área de género.</p>
-                <a href="#" class="btn btn-outline-secondary w-100 mt-auto">
+                <a href="{{ route('stats.genero') }}" class="btn btn-outline-secondary w-100 mt-auto">
                     Ver Reportes
                 </a>
             </div>

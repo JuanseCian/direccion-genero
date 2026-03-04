@@ -86,4 +86,6 @@ class DireccionGeneroCaso extends Model
         )->withPivot('tipo_vinculo');            
 }
 
+
+
 }

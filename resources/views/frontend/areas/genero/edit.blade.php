@@ -76,7 +76,14 @@
 
             <div class="col-md-4">
                 <label class="form-label fw-bold">Barrio</label>
-                <input type="text" name="barrio" class="form-control border-0 shadow-sm" value="{{ $legajo->barrio->nombre ?? '' }}">
+                <select name="barrio_id" class="form-select border-0 shadow-sm">
+                    <option value="">Seleccionar Barrio</option>
+                    @foreach($barrios as $barrio)
+                        <option value="{{ $barrio->id }}" {{ $legajo->barrio_id == $barrio->id ? 'selected' : '' }}>
+                            {{ $barrio->nombre }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
             

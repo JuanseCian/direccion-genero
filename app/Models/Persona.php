@@ -37,4 +37,15 @@ class Persona extends Model
     public function casosGenero() {
         return $this->hasMany(DireccionGeneroCaso::class, 'persona_id');
     }
+    
+    public function masculinidadesCasos()
+    {
+        return $this->hasMany(\App\Models\MasculinidadesCaso::class);
+    }
+
+    public function barrios()
+    {
+        return $this->belongsTo(\App\Models\Barrio::class);
+    }
+
 }

@@ -64,9 +64,9 @@ class MasculinidadesCaso extends Model
         return $this->hasMany(MasculinidadesGrupoFamiliar::class, 'caso_id');
     }
     public function espacioGrupal()
-{
-    return $this->belongsTo(EspacioGrupal::class, 'espacio_grupal_id');
-}
+    {
+        return $this->belongsTo(EspacioGrupal::class, 'espacio_grupal_id');
+    }
     public function tiposViolencia()
     {
         return $this->belongsToMany(
@@ -77,5 +77,8 @@ class MasculinidadesCaso extends Model
         );
     }
 
-    
+    public function victimas()
+    {
+        return $this->belongsToMany(DireccionGeneroCaso::class, 'vinculos_casos', 'masculinidad_caso_id', 'genero_caso_id');
+    }
 }

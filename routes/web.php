@@ -68,6 +68,8 @@ Route::middleware(['auth','activo','area:ive'])->group(function () {
 });
 //rutas personas
 require __DIR__.'/personas.php';
+//rutas stats
+require __DIR__.'/stats.php';
 
 
 
