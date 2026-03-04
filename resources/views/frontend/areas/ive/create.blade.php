@@ -3,6 +3,8 @@
 @section('title','Registrar Atención IVE')
 
 @section('content')
+
+
 <div class="card card-soft p-4 shadow-sm border-0">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0" style="color: #5651A0;">
@@ -53,7 +55,33 @@
                 <label class="form-label fw-bold">Semanas (ECO)</label>
                 <input type="number" name="eco_semanas" class="form-control border-0 shadow-sm" placeholder="Semanas por ecografía"> {{-- --}}
             </div>
+            <div class="col-md-12 mt-4">
+                <label class="form-label fw-bold">Medicación administrada</label>
 
+                <div id="medicaciones-container">
+                    <div class="row g-2 mb-2 medicacion-item">
+                        <div class="col-md-6">
+                            <input type="text"
+                                name="medicaciones[0][nombre]"
+                                class="form-control"
+                                placeholder="Nombre de la medicación">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text"
+                                name="medicaciones[0][numero_lote]"
+                                class="form-control"
+                                placeholder="Número de lote">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger w-100 remove-medicacion">X</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-medicacion">
+                    + Agregar medicación
+                </button>
+            </div>
             {{-- SECCIÓN: Antecedentes y Social --}}
             <div class="col-md-4">
                 <label class="form-label fw-bold">Cantidad de Hijos</label>
@@ -71,7 +99,63 @@
                     <label class="form-check-label fw-bold" for="ip">Interrupción Previa</label>
                 </div>
             </div>
-            <div class="mb-3">
+
+            <div class="col-md-4 mt-2">
+            <div class="form-check form-switch p-3 bg-light rounded shadow-sm">
+                    <input class="form-check-input mx-1" 
+                        type="checkbox" 
+                        name="violencia_previa" 
+                        value="1" 
+                        id="violencia_previa">
+                    <label class="form-check-label fw-bold" for="violencia_previa">
+                        ¿Vivió violencia previa?
+                    </label>
+                </div>
+            </div>
+
+           <div class="col-md-12 mt-3" id="violencia-container" style="display: none;">
+                <label class="form-label fw-bold mb-2 text-danger">
+                    Tipos de violencia
+                </label>
+
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach($tiposViolencia as $tipo)
+                        <input type="checkbox"
+                            class="btn-check"
+                            name="tipos_violencia[]"
+                            value="{{ $tipo->id }}"
+                            id="violencia_{{ $tipo->id }}"
+                            autocomplete="off"
+                            @if(isset($caso) && $caso->tiposViolencia->contains($tipo->id)) checked @endif>
+
+                        <label class="violencia-chip"
+                            for="violencia_{{ $tipo->id }}">
+                            {{ $tipo->nombre }}
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+            
+         <div class="col-md-12 mt-3">
+            <label class="form-label fw-bold mb-2">Red de contención</label>
+
+            <div class="d-flex flex-wrap gap-2">
+                @foreach($redes as $red)
+                    <input type="checkbox"
+                        class="btn-check"
+                        name="redes_contencion[]"
+                        value="{{ $red->id }}"
+                        id="red_{{ $red->id }}"
+                        autocomplete="off"
+                        @if(isset($caso) && $caso->redesContencion->contains($red->id)) checked @endif>
+
+                    <label class="red-chip"
+                        for="red_{{ $red->id }}">
+                        {{ $red->nombre }}
+                    </label>
+                @endforeach
+            </div>
+        </div>
                 <label>Encargado</label>
                 <select name="encargado_id" class="form-control">
                     <option value="">Seleccionar Encargado</option>
@@ -107,6 +191,63 @@ document.addEventListener('DOMContentLoaded', function() {
                 alertaGenero.classList.add('d-none');
             }
         });
+    }
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const checkbox = document.querySelector('input[name="violencia_previa"]');
+    const container = document.getElementById('violencia-container');
+
+    function toggleViolencia() {
+        if (checkbox.checked) {
+            container.style.display = 'block';
+            container.style.opacity = 0;
+            container.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => container.style.opacity = 1, 10);
+        } else {
+            container.style.opacity = 0;
+            setTimeout(() => container.style.display = 'none', 300);
+        }
+    }
+
+    toggleViolencia();
+    checkbox.addEventListener('change', toggleViolencia);
+});
+</script>
+<script>
+let index = 1;
+
+document.getElementById('add-medicacion').addEventListener('click', function () {
+    const container = document.getElementById('medicaciones-container');
+
+    const html = `
+        <div class="row g-2 mb-2 medicacion-item">
+            <div class="col-md-6">
+                <input type="text"
+                       name="medicaciones[${index}][nombre]"
+                       class="form-control"
+                       placeholder="Nombre de la medicación">
+            </div>
+            <div class="col-md-4">
+                <input type="text"
+                       name="medicaciones[${index}][numero_lote]"
+                       class="form-control"
+                       placeholder="Número de lote">
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-danger w-100 remove-medicacion">X</button>
+            </div>
+        </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', html);
+    index++;
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-medicacion')) {
+        e.target.closest('.medicacion-item').remove();
     }
 });
 </script>
