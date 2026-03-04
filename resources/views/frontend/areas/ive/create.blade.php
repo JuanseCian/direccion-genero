@@ -22,7 +22,7 @@
                     <div class="d-flex align-items-center">
                         <i class="bi bi-person-exclamation me-3 fs-3"></i>
                         <div>
-                            <strong>Atención: Legajo en Género Detectado</strong><br>
+                            <strong>Atención: Caso en Género Detectado</strong><br>
                             Esta persona ya posee un registro activo en la <strong>Dirección de Género</strong>. 
                             Se recomienda realizar un abordaje integral entre ambas áreas.
                         </div>
@@ -61,13 +61,13 @@
             </div>
             <div class="col-md-4 mt-auto">
                 <div class="form-check form-switch p-3 bg-light rounded shadow-sm">
-                    <input class="form-check-input" type="checkbox" name="obra_social" value="1" id="os"> {{-- --}}
+                    <input class="form-check-input mx-1" type="checkbox" name="obra_social" value="1" id="os"> {{-- --}}
                     <label class="form-check-label fw-bold" for="os">¿Posee Obra Social?</label>
                 </div>
             </div>
             <div class="col-md-4 mt-auto">
                 <div class="form-check form-switch p-3 bg-light rounded shadow-sm">
-                    <input class="form-check-input" type="checkbox" name="interrupcion_previa" value="1" id="ip"> {{-- --}}
+                    <input class="form-check-input mx-1" type="checkbox" name="interrupcion_previa" value="1" id="ip"> {{-- --}}
                     <label class="form-check-label fw-bold" for="ip">Interrupción Previa</label>
                 </div>
             </div>

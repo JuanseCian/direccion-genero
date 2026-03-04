@@ -25,7 +25,7 @@
                 <div class="mb-3">
                     <i class="bi bi-folder2-open" style="font-size: 2.5rem; color: #5651A0;"></i>
                 </div>
-                <h5 class="fw-bold">Legajos Existentes</h5>
+                <h5 class="fw-bold">Casos Existentes</h5>
                 <p class="text-muted small">Consulte, edite o realice el seguimiento de los casos actuales.</p>
                 <a href="{{ route('genero.listado') }}" class="btn text-white w-100 mt-auto" style="background: #5651A0;">
                     Ver Listado
@@ -51,10 +51,10 @@
                 <div class="mb-3">
                     <i class="bi bi-person-plus-fill" style="font-size: 2.5rem; color: #198754;"></i>
                 </div>
-                <h5 class="fw-bold">Nuevo Legajo</h5>
+                <h5 class="fw-bold">Nuevo Caso</h5>
                 <p class="text-muted small">Inicie la carga de un nuevo caso de violencia de género.</p>
                 <a href="{{ route('genero.create') }}" class="btn btn-success w-100 mt-auto shadow-sm">
-                    <i class="bi bi-plus-lg"></i> Crear Legajo
+                    <i class="bi bi-plus-lg"></i> Crear Caso
                 </a>
             </div>
         </div>
