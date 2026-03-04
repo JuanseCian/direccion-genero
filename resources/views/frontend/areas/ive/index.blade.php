@@ -39,7 +39,7 @@
                 </div>
                 <h5 class="fw-bold">Estadísticas IVE</h5>
                 <p class="text-muted small">Análisis de solicitudes, edades y zonas de residencia.</p>
-                <a href="#" class="btn btn-outline-secondary w-100 mt-auto">
+                <a href="{{ route('stats.ive') }}" class="btn btn-outline-secondary w-100 mt-auto">
                     Ver Reportes
                 </a>
             </div>

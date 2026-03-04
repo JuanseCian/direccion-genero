@@ -124,4 +124,66 @@ class StatsController extends Controller
             'hasta'
         ));
     }
+
+    public function ive(Request $request)
+    {
+        $desde = $request->desde;
+        $hasta = $request->hasta;
+
+        $query = \App\Models\IveCaso::with('persona.barrio.zona');
+
+        if ($desde && $hasta) {
+            $query->whereBetween('created_at', [$desde, $hasta]);
+        }
+
+        $totalCasos = (clone $query)->count();
+
+        $conObraSocial = (clone $query)->where('obra_social', 1)->count();
+        $sinObraSocial = (clone $query)->where('obra_social', 0)->count();
+
+        $conInterrupcionPrevia = (clone $query)->where('interrupcion_previa', 1)->count();
+
+        $promedioSemanas = round((clone $query)->avg('eco_semanas'),1);
+
+    
+
+        $zonas = \App\Models\ZonaBarrio::with(['barrios' => function($q) use ($desde,$hasta){
+
+            $q->whereHas('personas.casosIve', function($sub) use ($desde,$hasta){
+                if($desde && $hasta){
+                    $sub->whereBetween('created_at', [$desde,$hasta]);
+                }
+            })
+            ->withCount(['personas as total_casos' => function($sub) use ($desde,$hasta){
+                $sub->whereHas('casosIve', function($s) use ($desde,$hasta){
+                    if($desde && $hasta){
+                        $s->whereBetween('created_at', [$desde,$hasta]);
+                    }
+                });
+            }]);
+
+        }])->get()->map(function($zona){
+            $zona->total = $zona->barrios->sum('total_casos');
+            return $zona;
+        });
+
+        $casosPorZona = $zonas->map(function($z){
+            return [
+                'nombre' => $z->nombre,
+                'total' => $z->total
+            ];
+        });
+
+        return view('frontend.stats.ive', compact(
+            'totalCasos',
+            'conObraSocial',
+            'sinObraSocial',
+            'conInterrupcionPrevia',
+            'promedioSemanas',
+            'zonas',
+            'casosPorZona',
+            'desde',
+            'hasta'
+        ));
+    }
 }
