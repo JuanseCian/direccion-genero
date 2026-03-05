@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 05, 2026 at 03:18 PM
+-- Generation Time: Mar 05, 2026 at 03:42 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -1149,7 +1149,8 @@ INSERT INTO `personas` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `dni`, `
 (5, 'AA', 'NO SE', '2025-11-30', '4444', 'Femenino', 'Almafuerte 748', NULL, NULL, NULL, '03364870710', NULL, 1, 'A+', '2026-03-01 05:56:24', '2026-03-01 05:56:24'),
 (6, 'Alejo', 'Mosquera', '1990-02-20', '7473737', 'Femenino', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, '2026-03-02 16:26:34', '2026-03-02 16:26:34'),
 (7, 'Bruno', 'MassocooA', '2025-10-28', '6363', 'Masculino', NULL, NULL, NULL, 99, NULL, NULL, 1, 'A+', '2026-03-02 16:27:00', '2026-03-02 16:27:00'),
-(16, 'hh', 'hh', '2023-10-29', '77', 'Masculino', NULL, 1, 36, 99, NULL, 2, 0, 'A+', '2026-03-03 16:18:58', '2026-03-03 16:18:58');
+(16, 'hh', 'hh', '2023-10-29', '77', 'Masculino', NULL, 1, 36, 99, NULL, 2, 0, 'A+', '2026-03-03 16:18:58', '2026-03-03 16:18:58'),
+(17, 'Bruno', 'Massocco', '2022-09-29', '43056618', 'Masculino', NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, '2026-03-05 18:40:44', '2026-03-05 18:40:44');
 
 -- --------------------------------------------------------
 
@@ -1718,6 +1719,7 @@ ALTER TABLE `personal_access_tokens`
 ALTER TABLE `personas`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_personas_dni` (`dni`),
+  ADD UNIQUE KEY `unique_dni` (`dni`),
   ADD KEY `nivel_estudio_id` (`nivel_estudio_id`),
   ADD KEY `fk_personas_provincia` (`provincia_id`),
   ADD KEY `fk_personas_localidad` (`localidad_id`),
@@ -2013,7 +2015,7 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `personas`
 --
 ALTER TABLE `personas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `programas_asistencia`
