@@ -9,9 +9,14 @@
             <i class="bi bi-pencil-square"></i>
             Editar Caso #{{ $caso->id }}
         </h2>
-        <a href="{{ route('masculinidades.index') }}" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-arrow-left"></i> Volver
-        </a>
+        <div>
+            <button type="button" class="btn btn-info btn-sm text-white shadow-sm" data-bs-toggle="modal" data-bs-target="#modalIntervenciones">
+                <i class="bi bi-chat-right-text me-1"></i> Intervenciones
+            </button>
+            <a href="{{ route('masculinidades.index') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Volver al listado
+            </a>
+        </div>
     </div>
 
     <form action="{{ route('masculinidades.update', $caso->id) }}" method="POST">
@@ -293,6 +298,104 @@
             </button>
         </div>
     </form>
+</div>
+
+{{-- MODAL INTERVENCIONES MASCULINIDADES --}}
+<div class="modal fade" id="modalIntervenciones" tabindex="-1" aria-labelledby="modalIntervencionesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white" style="background: #5651A0;">
+                <h5 class="modal-title" id="modalIntervencionesLabel">
+                    <i class="bi bi-journal-text"></i> Intervenciones: {{ $caso->persona->apellido }}, {{ $caso->persona->nombre }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body p-4">
+                {{-- 1. FORMULARIO NUEVA INTERVENCIÓN --}}
+                <h6 class="fw-bold mb-3 text-success"><i class="bi bi-plus-circle"></i> Cargar Nueva Intervención</h6>
+                
+                <form action="{{ route('masculinidades.intervenciones.store', $caso->id) }}" method="POST" class="mb-5">
+                    @csrf
+                    <div class="row g-3 bg-light p-3 rounded shadow-sm border">
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold small">Fecha</label>
+                            <input type="date" name="fecha_intervencion" class="form-control border-0 shadow-sm" required value="{{ date('Y-m-d') }}">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold small">Tipo de Intervención</label>
+                            <select name="tipo_intervencion_id" class="form-select border-0 shadow-sm" required>
+                                <option value="">Seleccione...</option>
+                                @foreach($tiposIntervencion as $tipo)
+                                    <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-5">
+                            <label class="form-label fw-bold small">Profesional a cargo</label>
+                            <select name="encargado_id" class="form-select border-0 shadow-sm" required>
+                                <option value="">Seleccione...</option>
+                                @foreach($encargados as $e)
+                                    <option value="{{ $e->id }}">
+                                        {{ $e->apellido }}, {{ $e->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label fw-bold small">Detalle / Evolución</label>
+                            <textarea name="detalle" class="form-control border-0 shadow-sm" rows="3" required placeholder="Escriba el detalle de la intervención aquí..."></textarea>
+                        </div>
+                        
+                        <div class="col-12 text-end mt-3">
+                            <button type="button" class="btn btn-secondary btn-sm me-2" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success btn-sm shadow-sm px-4">
+                                <i class="bi bi-save"></i> Guardar Intervención
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <hr class="my-4" style="opacity: 0.1;">
+
+                {{-- 2. HISTORIAL --}}
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0 text-muted"><i class="bi bi-clock-history"></i> Historial de Intervenciones</h6>
+                    <span class="badge rounded-pill bg-primary px-3">{{ $caso->intervenciones->count() }} Registros</span>
+                </div>
+
+                <div class="table-responsive shadow-sm rounded">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr class="small text-uppercase">
+                                <th style="width: 15%;">Fecha</th>
+                                <th style="width: 20%;">Tipo</th>
+                                <th style="width: 20%;">Profesional</th>
+                                <th style="width: 45%;">Detalle</th>
+                            </tr>
+                        </thead>
+                        <tbody class="small">
+                            @forelse($caso->intervenciones as $intervencion)
+                                <tr>
+                                    <td class="text-nowrap fw-bold">{{ \Carbon\Carbon::parse($intervencion->fecha_intervencion)->format('d/m/Y') }}</td>
+                                    <td><span class="badge bg-soft-secondary text-dark border w-100" style="background-color: #f0f0f0;">{{ $intervencion->tipo->nombre ?? 'S/D' }}</span></td>
+                                    <td>{{ $intervencion->encargado->apellido }}, {{ $intervencion->encargado->nombre }}</td>
+                                    <td class="text-wrap">{{ $intervencion->detalle }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">No hay intervenciones registradas.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>

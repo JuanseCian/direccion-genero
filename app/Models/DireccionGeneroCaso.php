@@ -84,8 +84,12 @@ class DireccionGeneroCaso extends Model
             'genero_caso_id',                   
             'masculinidad_caso_id'               
         )->withPivot('tipo_vinculo');            
-}
+    }
 
+    public function intervenciones()
+    {
+        return $this->hasMany(DireccionGeneroIntervencion::class, 'caso_id')->orderBy('fecha_intervencion', 'desc');
+    }
 
 
 }

@@ -10,6 +10,7 @@ use App\Models\IveCaso;
 use App\Models\Encargado;
 use App\Models\DireccionGeneroCaso;
 use App\Models\TipoViolencia;
+use App\Models\TipoIntervencion;
 use App\Models\RedContencion;
 
 class IveCasoController extends Controller
@@ -75,12 +76,10 @@ class IveCasoController extends Controller
 
             $caso = IveCaso::create($data);
 
-            // Tipos de violencia
             if ($request->has('tipos_violencia')) {
                 $caso->tiposViolencia()->sync($request->tipos_violencia);
             }
 
-            // Redes de contención
             if ($request->has('redes_contencion')) {
                 $caso->redesContencion()->sync($request->redes_contencion);
             }
@@ -116,6 +115,8 @@ class IveCasoController extends Controller
     {
         $caso = IveCaso::with([
             'tiposViolencia',
+            'intervenciones.tipo', 
+            'intervenciones.encargado',
             'redesContencion',
             'medicaciones'
         ])->findOrFail($id);
@@ -125,6 +126,7 @@ class IveCasoController extends Controller
         $personas = Persona::where('sexo', 'Femenino')->get();
         $tiposViolencia = TipoViolencia::orderBy('nombre')->get();
         $redes = RedContencion::orderBy('nombre')->get();
+        $tiposIntervencion = TipoIntervencion::all();
 
         $encargados = Encargado::whereHas('areas', function($q){
             $q->where('areas.id', 3);
@@ -139,7 +141,8 @@ class IveCasoController extends Controller
             'existeEnGenero', 
             'encargados',
             'tiposViolencia',
-            'redes'
+            'redes',
+            'tiposIntervencion'
         ));
     }
 

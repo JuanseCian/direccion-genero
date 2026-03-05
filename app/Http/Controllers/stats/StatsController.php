@@ -10,6 +10,8 @@ use App\Models\Persona;
 use Illuminate\Http\Request;
 use App\Models\MasculinidadesCaso;
 use App\Models\IveCaso;
+use Illuminate\Support\Facades\DB;
+
 
 class StatsController extends Controller
 {
@@ -182,6 +184,40 @@ class StatsController extends Controller
             'promedioSemanas',
             'zonas',
             'casosPorZona',
+            'desde',
+            'hasta'
+        ));
+    }
+
+    public function intervenciones(Request $request)
+    {
+        $desde = $request->desde;
+        $hasta = $request->hasta;
+
+        $query = DB::table('intervenciones_totales');
+
+        if ($desde && $hasta) {
+            $query->whereBetween('fecha_intervencion', [$desde, $hasta]);
+        }
+
+        $totalIntervenciones = (clone $query)->count();
+
+        $porArea = (clone $query)
+            ->select('area', DB::raw('count(*) as total'))
+            ->groupBy('area')
+            ->get();
+
+        $porTipo = (clone $query)
+            ->join('tipos_intervencion','tipos_intervencion.id','=','intervenciones_totales.tipo_intervencion_id')
+            ->select('tipos_intervencion.nombre', DB::raw('count(*) as total'))
+            ->groupBy('tipos_intervencion.nombre')
+            ->orderBy('total','desc')
+            ->get();
+
+        return view('frontend.stats.intervenciones', compact(
+            'totalIntervenciones',
+            'porArea',
+            'porTipo',
             'desde',
             'hasta'
         ));

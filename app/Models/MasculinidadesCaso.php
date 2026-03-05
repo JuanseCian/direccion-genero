@@ -81,4 +81,9 @@ class MasculinidadesCaso extends Model
     {
         return $this->belongsToMany(DireccionGeneroCaso::class, 'vinculos_casos', 'masculinidad_caso_id', 'genero_caso_id');
     }
+
+    public function intervenciones() {
+        return $this->hasMany(MasculinidadesIntervencion::class, 'caso_id')
+                    ->orderBy('fecha_intervencion', 'desc');
+    }
 }

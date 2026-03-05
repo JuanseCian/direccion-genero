@@ -149,6 +149,10 @@
 
     </div>
     
+    <a href="{{ route('backend.tipo-intervencion.index') }}">
+        <i class="bi bi-person-gear"></i>
+        <span class="menu-text">Tipos de Intervención</span>
+    </a>
 
 
     <a href="{{ route('home') }}">

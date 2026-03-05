@@ -15,3 +15,7 @@ Route::prefix('estadisticas')->name('stats.')->group(function () {
     Route::get('/estadisticas', function () {
         return view('frontend.stats.index');
     })->name('frontend.stats.index');
+
+    Route::get('/estadisticas/intervenciones',
+    [StatsController::class,'intervenciones'])
+    ->name('frontend.stats.intervenciones');

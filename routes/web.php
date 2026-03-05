@@ -70,6 +70,8 @@ Route::middleware(['auth','activo','area:ive'])->group(function () {
 require __DIR__.'/personas.php';
 //rutas stats
 require __DIR__.'/stats.php';
+//rutas intervenciones
+require __DIR__.'/intervenciones.php';
 
 
 
@@ -100,3 +102,5 @@ require __DIR__.'/situacion-habitacional.php';
 require __DIR__.'/situacion-sanitaria.php';
 //rutas tipo de violencia
 require __DIR__.'/tipo-violencia.php';
+//rutas tipo de intervencion
+require __DIR__.'/tipointervencion.php';

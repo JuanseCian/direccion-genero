@@ -8,17 +8,24 @@
         <h2 class="mb-0" style="color: #5651A0;">
             <i class="bi bi-pencil-square"></i> Editar Legajo IVE: {{ $caso->persona->apellido }}, {{ $caso->persona->nombre }}
         </h2>
-        <a href="{{ route('frontend.areas.ive.listado') }}" class="btn btn-light border-0">
-            <i class="bi bi-arrow-left"></i> Volver al Listado
-        </a>
+        <div>
+            {{-- Botón para abrir el Modal de Intervenciones --}}
+            <button type="button" class="btn btn-info text-white border-0 me-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalIntervenciones">
+                <i class="bi bi-journal-text"></i> Intervenciones
+            </button>
+
+            <a href="{{ route('frontend.areas.ive.listado') }}" class="btn btn-light border-0 shadow-sm">
+                <i class="bi bi-arrow-left"></i> Volver al Listado
+            </a>
+        </div>
     </div>
 
+    {{-- FORMULARIO PRINCIPAL DEL CASO --}}
     <form action="{{ route('frontend.areas.ive.update', $caso->id) }}" method="POST">
         @csrf
         @method('PUT')
         
         <div class="row g-3">
-
             {{-- PERSONA --}}
             <div class="col-12">
                 <div class="p-3 rounded" style="background: #ecebfa; color: #5651A0;">
@@ -91,7 +98,7 @@
                                autocomplete="off"
                                {{ $caso->tiposViolencia->contains($tipo->id) ? 'checked' : '' }}>
 
-                        <label class="violencia-chip" for="violencia_{{ $tipo->id }}">
+                        <label class="violencia-chip btn btn-outline-danger btn-sm" for="violencia_{{ $tipo->id }}">
                             {{ $tipo->nombre }}
                         </label>
                     @endforeach
@@ -112,7 +119,7 @@
                                autocomplete="off"
                                {{ $caso->redesContencion->contains($red->id) ? 'checked' : '' }}>
 
-                        <label class="red-chip" for="red_{{ $red->id }}">
+                        <label class="red-chip btn btn-outline-secondary btn-sm" for="red_{{ $red->id }}">
                             {{ $red->nombre }}
                         </label>
                     @endforeach
@@ -152,11 +159,11 @@
 
             {{-- ENCARGADO --}}
             <div class="col-12 mt-3">
-                <label>Encargado</label>
-                <select name="encargado_id" class="form-control">
+                <label class="fw-bold">Encargado del Caso</label>
+                <select name="encargado_id" class="form-select border-0 shadow-sm">
                     @foreach($encargados as $encargado)
                         <option value="{{ $encargado->id }}"
-                            {{ $legajo->encargado_id == $encargado->id ? 'selected' : '' }}>
+                            {{ $caso->encargado_id == $encargado->id ? 'selected' : '' }}>
                             {{ $encargado->apellido }} {{ $encargado->nombre }}
                         </option>
                     @endforeach
@@ -167,12 +174,119 @@
             <div class="col-12 mt-4 text-end">
                 <hr style="opacity: 0.1;">
                 <button type="submit" class="btn text-white px-5 py-2 shadow-sm" style="background: #5651A0;">
-                    <i class="bi bi-check-circle"></i> Actualizar Cambios
+                    <i class="bi bi-check-circle"></i> Actualizar Caso
                 </button>
             </div>
 
         </div>
     </form>
+</div>
+
+{{-- MODAL INTERVENCIONES }}
+<div class="modal fade" id="modalIntervenciones" tabindex="-1" aria-labelledby="modalIntervencionesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white" style="background: #5651A0;">
+                <h5 class="modal-title" id="modalIntervencionesLabel">
+                    <i class="bi bi-journal-text"></i> Intervenciones: {{ $caso->persona->apellido }}, {{ $caso->persona->nombre }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body p-4">
+                
+                {{-- 1. FORMULARIO NUEVA INTERVENCIÓN (ARRIBA) --}}
+                <h6 class="fw-bold mb-3 text-success"><i class="bi bi-plus-circle"></i> Cargar Nueva Intervención</h6>
+                
+                <form action="{{ route('frontend.areas.ive.intervenciones.store', $caso->id) }}" method="POST" class="mb-5">
+                    @csrf
+                    <div class="row g-3 bg-light p-3 rounded shadow-sm border">
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold small">Fecha</label>
+                            <input type="date" name="fecha_intervencion" class="form-control border-0 shadow-sm" required value="{{ date('Y-m-d') }}">
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold small">Tipo de Intervención</label>
+                            <select name="tipo_intervencion_id" class="form-select border-0 shadow-sm" required>
+                                <option value="">Seleccione...</option>
+                                @foreach($tiposIntervencion as $tipo)
+                                    <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-5">
+                            <label class="form-label fw-bold small">Profesional a cargo</label>
+                            <select name="encargado_id" class="form-select border-0 shadow-sm" required>
+                                <option value="">Seleccione...</option>
+                                @foreach($encargados as $encargado)
+                                    <option value="{{ $encargado->id }}">
+                                        {{ $encargado->apellido }}, {{ $encargado->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label fw-bold small">Detalle / Evolución</label>
+                            <textarea name="detalle" class="form-control border-0 shadow-sm" rows="3" required placeholder="Escriba el detalle de la intervención aquí..."></textarea>
+                        </div>
+                        
+                        <div class="col-12 text-end mt-3">
+                            <button type="button" class="btn btn-secondary btn-sm me-2" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success btn-sm shadow-sm px-4">
+                                <i class="bi bi-save"></i> Guardar Intervención
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <hr class="my-4" style="opacity: 0.1;">
+
+                {{-- 2. HISTORIAL DE INTERVENCIONES (DEBAJO) --}}
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0 text-muted"><i class="bi bi-clock-history"></i> Historial de Intervenciones</h6>
+                    <span class="badge rounded-pill bg-primary px-3">{{ $caso->intervenciones->count() }} Registros</span>
+                </div>
+
+                <div class="table-responsive shadow-sm rounded">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr class="small text-uppercase">
+                                <th style="width: 15%;">Fecha</th>
+                                <th style="width: 20%;">Tipo</th>
+                                <th style="width: 20%;">Profesional</th>
+                                <th style="width: 45%;">Detalle</th>
+                            </tr>
+                        </thead>
+                        <tbody class="small">
+                            @forelse($caso->intervenciones as $intervencion)
+                                <tr>
+                                    <td class="text-nowrap fw-bold">{{ \Carbon\Carbon::parse($intervencion->fecha_intervencion)->format('d/m/Y') }}</td>
+                                    <td>
+                                        <span class="badge bg-soft-secondary text-dark border w-100" style="background-color: #f0f0f0;">
+                                            {{ $intervencion->tipo->nombre ?? 'S/D' }}
+                                        </span>
+                                    </td>
+                                    <td>{{ $intervencion->encargado->apellido }}, {{ $intervencion->encargado->nombre }}</td>
+                                    <td class="text-wrap">{{ $intervencion->detalle }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <i class="bi bi-info-circle d-block fs-4 mb-2"></i>
+                                        No hay intervenciones registradas para este caso.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+            </div> 
+        </div>
+    </div>
 </div>
 
 {{-- JS --}}
@@ -221,6 +335,12 @@ document.addEventListener('DOMContentLoaded', function () {
             e.target.closest('.medicacion-item').remove();
         }
     });
+
+    // Abrir modal automáticamente si hay errores en la carga de intervención
+    @if($errors->has('detalle') || $errors->has('fecha_intervencion'))
+        var myModal = new bootstrap.Modal(document.getElementById('modalIntervenciones'));
+        myModal.show();
+    @endif
 
 });
 </script>

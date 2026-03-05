@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\{DireccionGeneroCaso, Persona, Provincia, Localidad, Barrio, EstadoCivil, NivelEstudio, IveCaso, MasculinidadesCaso, Encargado};
+use App\Models\{DireccionGeneroCaso, Persona, Provincia, Localidad, Barrio, EstadoCivil, NivelEstudio, IveCaso, MasculinidadesCaso, Encargado, TipoViolencia, RedContencion, TipoIntervencion};
 use Illuminate\Http\Request;
 
 class DireccionGeneroController extends Controller
@@ -27,46 +27,46 @@ class DireccionGeneroController extends Controller
         return view('frontend.areas.genero.listado', compact('legajos'));
     }
 
-   public function create()
-{
-    $personas = Persona::select(
-            'id',
-            'apellido',
-            'nombre',
-            'dni',
-            'provincia_id',
-            'localidad_id',
-            'barrio_id',
-            'nivel_estudio_id',
-            'trabaja'
-        )
-        ->where('sexo','Femenino')
-        ->orderBy('apellido')
-        ->get();
+    public function create()
+    {
+        $personas = Persona::select(
+                'id',
+                'apellido',
+                'nombre',
+                'dni',
+                'provincia_id',
+                'localidad_id',
+                'barrio_id',
+                'nivel_estudio_id',
+                'trabaja'
+            )
+            ->where('sexo','Femenino')
+            ->orderBy('apellido')
+            ->get();
 
-    $idsIve = IveCaso::pluck('persona_id')->toArray();
+        $idsIve = IveCaso::pluck('persona_id')->toArray();
 
-    $provincias = Provincia::orderBy('nombre')->get();
-    $localidades = Localidad::orderBy('nombre')->get();
-    $barrios = Barrio::orderBy('nombre')->get();
-    $estados_civiles = EstadoCivil::orderBy('nombre')->get();
-    $niveles_estudio = NivelEstudio::orderBy('nombre')->get();
+        $provincias = Provincia::orderBy('nombre')->get();
+        $localidades = Localidad::orderBy('nombre')->get();
+        $barrios = Barrio::orderBy('nombre')->get();
+        $estados_civiles = EstadoCivil::orderBy('nombre')->get();
+        $niveles_estudio = NivelEstudio::orderBy('nombre')->get();
 
-    $encargados = Encargado::whereHas('areas', function($q){
-        $q->where('areas.id',1);
-    })->get();
+        $encargados = Encargado::whereHas('areas', function($q){
+            $q->where('areas.id',1);
+        })->get();
 
-    return view('frontend.areas.genero.create', compact(
-        'personas',
-        'provincias',
-        'localidades',
-        'barrios',
-        'estados_civiles',
-        'niveles_estudio',
-        'idsIve',
-        'encargados'
-    ));
-}
+        return view('frontend.areas.genero.create', compact(
+            'personas',
+            'provincias',
+            'localidades',
+            'barrios',
+            'estados_civiles',
+            'niveles_estudio',
+            'idsIve',
+            'encargados'
+        ));
+    }
 
     public function store(Request $request)
     {
@@ -97,7 +97,8 @@ class DireccionGeneroController extends Controller
 
     public function edit($id)
     {
-        $legajo = DireccionGeneroCaso::findOrFail($id);
+        $legajo = DireccionGeneroCaso::with(['persona', 'intervenciones.tipo', 'intervenciones.encargado'])
+                                ->findOrFail($id);
         $personas = Persona::where('sexo', 'Femenino')->orderBy('apellido')->get();
         $barrios = Barrio::orderBy('nombre', 'asc')->get();
         $casosMasculinidades = MasculinidadesCaso::with('persona')->get();
@@ -109,6 +110,7 @@ class DireccionGeneroController extends Controller
         $barrios = Barrio::orderBy('nombre')->get();
         $estados_civiles = EstadoCivil::orderBy('nombre')->get();
         $niveles_estudio = NivelEstudio::orderBy('nombre')->get();
+        $tiposIntervencion = TipoIntervencion::orderBy('nombre')->get();
         $encargados = Encargado::whereHas('areas', function($q){
             $q->where('areas.id',1);
         })->get();
@@ -123,7 +125,8 @@ class DireccionGeneroController extends Controller
             'niveles_estudio',
             'casosMasculinidades',
             'existeEnIve',
-            'encargados'
+            'encargados',
+            'tiposIntervencion'
         ));
     }
 

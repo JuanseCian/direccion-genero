@@ -144,6 +144,37 @@ $tieneIVE = $esAdmin || $user->areas->contains('nombre','ive');
 
     </div>
 
+    <div class="col-lg-4 col-md-6 mb-4">
+
+        @if($tieneGenero)
+        <a href="{{ route('frontend.stats.intervenciones') }}" class="text-decoration-none">
+        @endif
+
+        <div class="card card-soft p-4 h-100 area-card area-intervenciones
+        {{ !$tieneGenero ? 'bloqueado' : '' }}">
+
+            <div class="liston">
+                Solo personal autorizado
+            </div>
+
+            <i class="bi bi-person-lines-fill area-icon"></i>
+
+            <h4 class="mt-3">
+                Estadísticas de Intervenciones
+            </h4>
+
+            <p class="text-muted">
+                Indicadores de las intervenciones realizadas
+            </p>
+
+        </div>
+
+        @if($tieneGenero)
+        </a>
+        @endif
+
+    </div>
+
 </div>
 
 
@@ -224,6 +255,13 @@ $tieneIVE = $esAdmin || $user->areas->contains('nombre','ive');
 
 .bloqueado:hover .liston{
     opacity:1;
+}
+
+.area-intervenciones:hover{
+    transform:translateY(-6px);
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+    background:#f6e58d; /* amarillo pastel */
+    color:white;
 }
 
 </style>
