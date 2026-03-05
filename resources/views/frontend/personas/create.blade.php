@@ -10,6 +10,15 @@
         Nueva Persona
     </h3>
 
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
 
     <form method="POST" action="{{ route('personas.store') }}">
     @csrf
@@ -20,7 +29,12 @@
             <div class="col-md-3">
 
                 <label class="form-label">DNI</label>
-                <input type="text" name="dni" class="form-control" required>
+                <input type="text" name="dni" class="form-control @error('dni') is-invalid @enderror" required>
+                @error('dni')
+                <div class="invalid-feedback">
+                    {{ $message }}
+                </div>
+                @enderror
 
             </div>
 
