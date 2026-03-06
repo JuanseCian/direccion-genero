@@ -6,480 +6,505 @@
 
 <div class="container-fluid py-4">
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="fw-bold mb-0" style="color:#5651A0;">
-            <i class="bi bi-pencil-square"></i> Editar Caso
-        </h2>
-        <p class="text-muted">
-            {{ $caso->persona->apellido }}, {{ $caso->persona->nombre }}
-        </p>
+    {{-- CABECERA --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0" style="color:#5651A0;">
+                <i class="bi bi-pencil-square"></i> Editar Caso
+            </h2>
+            <p class="text-muted">
+                {{ $caso->persona->apellido }}, {{ $caso->persona->nombre }}
+            </p>
+        </div>
+
+        <div>
+            <button type="button" class="btn btn-info btn-sm text-white shadow-sm" data-bs-toggle="modal" data-bs-target="#modalIntervenciones">
+                <i class="bi bi-chat-right-text"></i> Intervenciones
+            </button>
+
+            <a href="{{ route('masculinidades.index') }}" class="btn btn-outline-secondary shadow-sm">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
     </div>
 
-    <div>
-        <button type="button"
-                class="btn btn-info btn-sm text-white shadow-sm"
-                data-bs-toggle="modal"
-                data-bs-target="#modalIntervenciones">
+    <form action="{{ route('masculinidades.update', $caso->id) }}" method="POST">
+        @csrf
+        @method('PUT')
 
-            <i class="bi bi-chat-right-text"></i> Intervenciones
-        </button>
+        {{-- 1. IDENTIFICACIÓN --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary">
+                    <i class="bi bi-person-badge me-2"></i>1. Identificación del Agresor y Responsables
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary">Agresor</label>
+                        <select name="persona_id" class="form-select" disabled>
+                            @foreach($agresores as $agresor)
+                                <option value="{{ $agresor->id }}" {{ $caso->persona_id == $agresor->id ? 'selected' : '' }}>
+                                    {{ $agresor->apellido }}, {{ $agresor->nombre }} ({{ $agresor->dni }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary">Encargado/a</label>
+                        <select name="encargado_id" class="form-select border-primary-subtle">
+                            <option value="">Seleccione...</option>
+                            @foreach($encargados as $encargado)
+                                <option value="{{ $encargado->id }}" {{ $caso->encargado_id == $encargado->id ? 'selected' : '' }}>
+                                    {{ $encargado->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <a href="{{ route('masculinidades.index') }}"
-           class="btn btn-outline-secondary shadow-sm">
+        {{-- 2. CONTEXTO --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary">
+                    <i class="bi bi-journal-text me-2"></i>2. Contexto del Caso
+                </h5>
+            </div>
+            <div class="card-body bg-light-subtle">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Derivación</label>
+                        <select name="derivacion_id" class="form-select">
+                            @foreach($derivaciones as $d)
+                                <option value="{{ $d->id }}" {{ $caso->derivacion_id == $d->id ? 'selected' : '' }}>
+                                    {{ $d->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-           <i class="bi bi-arrow-left"></i> Volver
-        </a>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Situación Habitacional</label>
+                        <select name="situacion_habitacional_id" class="form-select">
+                            <option value="">Seleccione...</option>
+                            @foreach($situacionesHabitacionales as $sh)
+                                <option value="{{ $sh->id }}" {{ $caso->situacion_habitacional_id == $sh->id ? 'selected' : '' }}>
+                                    {{ $sh->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Espacio Grupal</label>
+                        <select name="espacio_grupal_id" class="form-select">
+                            <option value="">Seleccione...</option>
+                            @foreach($espaciosGrupales as $espacio)
+                                <option value="{{ $espacio->id }}" {{ $caso->espacio_grupal_id == $espacio->id ? 'selected' : '' }}>
+                                    {{ $espacio->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- VIOLENCIA --}}
+                    <div class="col-md-12 my-3">
+                        <div class="p-3 border rounded bg-white shadow-sm">
+                            <label class="form-label fw-bold text-danger">
+                                <i class="bi bi-exclamation-triangle"></i> Tipos de Violencia Ejercida
+                            </label>
+                            <div class="row">
+                                @foreach($tipoViolencia as $tipo)
+                                    <div class="col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="tipo_violencia_id[]" value="{{ $tipo->id }}" {{ $caso->tiposViolencia->contains($tipo->id) ? 'checked' : '' }}>
+                                            <label class="form-check-label">{{ $tipo->nombre }}</label>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Reincidencia</label>
+                        <input type="number" name="reincidencia" class="form-control" value="{{ $caso->reincidencia }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">¿Debe realizar el dispositivo?</label>
+                        <select name="debe_dispositivo" id="debeDispositivo" class="form-select">
+                            <option value="">Seleccione...</option>
+                            <option value="1" {{ $caso->debe_dispositivo == 1 ? 'selected' : '' }}>Sí</option>
+                            <option value="0" {{ $caso->debe_dispositivo == 0 ? 'selected' : '' }}>No</option>
+                        </select>
+                    </div>
+
+                    <div id="camposDispositivo" class="row col-md-12">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Asistencia al dispositivo</label>
+                            <select name="asistencia_dispositivo" class="form-select">
+                                <option value="">Seleccione...</option>
+                                <option value="1" {{ $caso->asistencia_dispositivo == 1 ? 'selected' : '' }}>Asistencia regular</option>
+                                <option value="2" {{ $caso->asistencia_dispositivo == 2 ? 'selected' : '' }}>Asistencia irregular</option>
+                                <option value="3" {{ $caso->asistencia_dispositivo == 3 ? 'selected' : '' }}>Abandonó</option>
+                                <option value="4" {{ $caso->asistencia_dispositivo == 4 ? 'selected' : '' }}>Finalizado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Fecha de Finalización</label>
+                            <input type="date" name="fecha_finalizacion" class="form-control" value="{{ $caso->fecha_finalizacion }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- 3. GRUPO CONVIVIENTE (DISEÑO DE CARDS) --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-people me-2"></i>3. Grupo Conviviente</h5>
+                <button type="button" class="btn btn-sm btn-primary" onclick="agregarFamiliar()">
+                    <i class="bi bi-plus-circle"></i> Añadir Integrante
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="grupoFamiliarContainer">
+                    @php 
+                        $convivientes = json_decode($caso->grupo_conviviente, true) ?? []; 
+                    @endphp
+
+                    @if(count($convivientes) == 0)
+                        <p class="text-muted small text-center italic py-2">No hay integrantes registrados en este formulario.</p>
+                    @endif
+
+                    @foreach($convivientes as $idx => $f)
+                        <div class="card p-3 mt-3 border shadow-sm">
+                            <div class="row g-2">
+                                <div class="col-md-3">
+                                    <input type="text" name="grupo[{{$idx}}][nombre]" class="form-control" placeholder="Nombre" value="{{ $f['nombre'] ?? '' }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" name="grupo[{{$idx}}][apellido]" class="form-control" placeholder="Apellido" value="{{ $f['apellido'] ?? '' }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" name="grupo[{{$idx}}][telefono]" class="form-control" placeholder="Teléfono" value="{{ $f['telefono'] ?? '' }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <select name="grupo[{{$idx}}][vinculo]" class="form-select">
+                                        <option value="">Vínculo</option>
+                                        <option value="padre" {{ ($f['vinculo'] ?? '') == 'padre' ? 'selected' : '' }}>Padre</option>
+                                        <option value="madre" {{ ($f['vinculo'] ?? '') == 'madre' ? 'selected' : '' }}>Madre</option>
+                                        <option value="hijo/a" {{ ($f['vinculo'] ?? '') == 'hijo/a' ? 'selected' : '' }}>Hijo/a</option>
+                                        <option value="hermano/a" {{ ($f['vinculo'] ?? '') == 'hermano/a' ? 'selected' : '' }}>Hermano/a</option>
+                                        <option value="otro" {{ ($f['vinculo'] ?? '') == 'otro' ? 'selected' : '' }}>Otro</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1 text-end">
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.closest('.card').remove()">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
+        {{-- 4. VÍCTIMAS VINCULADAS --}}
+        <div class="card shadow-sm border-0 mb-4 border-start border-4" style="border-color: #e83e8c !important;">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0" style="color: #e83e8c;">
+                    <i class="bi bi-person-heart me-2"></i>4. Víctimas Vinculadas
+                </h5>
+                <button type="button" class="btn btn-sm btn-outline-danger shadow-sm" data-bs-toggle="modal" data-bs-target="#modalVictimas">
+                    <i class="bi bi-plus-circle me-1"></i> Vincular Víctima
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="lista-victimas" class="row g-3">
+                    @foreach($caso->victimas as $victima)
+                        <div class="col-md-6" id="victima-item-{{ $victima->id }}">
+                            <div class="card border-danger border-opacity-25 shadow-sm p-2 d-flex flex-row align-items-center justify-content-between bg-light">
+                                <div class="small d-flex align-items-center">
+                                    <a href="{{ route('genero.edit', $victima->id) }}" class="text-decoration-none fw-bold text-danger me-2" target="_blank">
+                                        <span>#{{ $victima->id }}</span> - {{ $victima->persona->apellido }}, {{ $victima->persona->nombre }}
+                                        <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.75rem;"></i>
+                                    </a>
+                                    
+                                    <button type="button" class="btn btn-sm btn-light border p-1 text-info shadow-sm" onclick="abrirInfoVinculo({{ $victima->id }}, '{{ $victima->persona->apellido }}, {{ $victima->persona->nombre }}')" title="Detalles del vínculo">
+                                        <i class="bi bi-info-circle-fill"></i>
+                                    </button>
+
+                                    <input type="hidden" name="victimas[{{ $victima->id }}][hijos_en_comun]" id="hijos_{{ $victima->id }}" value="{{ $victima->pivot->hijos_en_comun ?? 0 }}">
+                                    <input type="hidden" name="victimas[{{ $victima->id }}][relacion_actual]" id="relacion_{{ $victima->id }}" value="{{ $victima->pivot->relacion_actual ?? 0 }}">
+                                    <input type="hidden" name="victimas[{{ $victima->id }}][descripcion_relacion]" id="desc_{{ $victima->id }}" value="{{ $victima->pivot->descripcion_relacion ?? '' }}">
+                                </div>
+                                <button type="button" class="btn btn-link text-secondary p-0 ms-2" onclick="quitarVictima({{ $victima->id }})">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
+        {{-- FINAL: JUDICIAL Y OBSERVACIONES --}}
+        <div class="card shadow-sm border-0 mb-5">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary">Situación Judicial</label>
+                        <textarea name="situacion_judicial" class="form-control" rows="3">{{ $caso->situacion_judicial }}</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary">Observaciones</label>
+                        <textarea name="observaciones" class="form-control" rows="3">{{ $caso->observaciones }}</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-light text-end py-3">
+                <button type="submit" class="btn btn-lg text-white px-5 shadow-sm" style="background:#5651A0">
+                    <i class="bi bi-save-fill me-2"></i> ACTUALIZAR CASO
+                </button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+{{-- --- MODALES --- --}}
+
+{{-- MODAL 1: BUSCAR VÍCTIMA --}}
+<div class="modal fade" id="modalVictimas" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white" style="background-color: #e83e8c;">
+                <h5 class="modal-title"><i class="bi bi-search me-2"></i>Vincular Legajo de Género</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body bg-light">
+                <div class="input-group mb-3 shadow-sm">
+                    <span class="input-group-text bg-white border-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" id="busquedaVictima" class="form-control border-0" placeholder="Buscar por nombre, apellido o DNI...">
+                </div>
+                <div class="table-responsive bg-white rounded shadow-sm border" style="max-height: 400px;">
+                    <table class="table table-hover mb-0 text-sm">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th>Legajo</th>
+                                <th>Nombre Completo</th>
+                                <th>DNI</th>
+                                <th class="text-end">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaResultadosVictimas">
+                            @foreach($casosGenero as $casoG)
+                            <tr class="fila-victima">
+                                <td class="fw-bold text-danger">#{{ $casoG->id }}</td>
+                                <td>{{ $casoG->persona->apellido }}, {{ $casoG->persona->nombre }}</td>
+                                <td>{{ $casoG->persona->dni }}</td>
+                                <td class="text-end">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="agregarVictima({{ $casoG->id }}, '{{ $casoG->persona->apellido }}, {{ $casoG->persona->nombre }}')">
+                                        <i class="bi bi-link-45deg"></i> Vincular
+                                    </button>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<form action="{{ route('masculinidades.update', $caso->id) }}" method="POST">
-@csrf
-@method('PUT')
-
-
-{{-- IDENTIFICACIÓN --}}
-<div class="card shadow-sm border-0 mb-4">
-
-<div class="card-header bg-white py-3">
-<h5 class="mb-0 text-primary">
-<i class="bi bi-person-badge me-2"></i>
-1. Identificación del Agresor y Responsables
-</h5>
+{{-- MODAL 2: DETALLES DEL VÍNCULO --}}
+<div class="modal fade" id="modalInfoVinculo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white" style="background-color: #17a2b8;">
+                <h5 class="modal-title"><i class="bi bi-diagram-3 me-2"></i>Detalles del Vínculo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="fw-bold mb-3 text-secondary" id="infoVinculoNombre"></p>
+                <input type="hidden" id="infoVinculoId">
+                <div class="mb-3">
+                    <label class="form-label fw-bold small">Hijos en común</label>
+                    <input type="number" id="infoHijos" class="form-control" value="0" min="0">
+                </div>
+                <div class="mb-3 form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="infoRelacion">
+                    <label class="form-check-label fw-bold small">¿Tienen relación actualmente?</label>
+                </div>
+                <div class="mb-3" id="infoDescContainer" style="display: none;">
+                    <label class="form-label fw-bold small">Descripción de la relación</label>
+                    <input type="text" id="infoDesc" class="form-control" placeholder="Ej: Convivientes, Pareja...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-info text-white btn-sm px-4" onclick="guardarInfoVinculo()">Guardar Datos</button>
+            </div>
+        </div>
+    </div>
 </div>
-
-<div class="card-body">
-
-<div class="row g-3">
-
-<div class="col-md-6">
-<label class="form-label fw-bold text-secondary">Agresor</label>
-
-<select name="persona_id" class="form-select" disabled>
-@foreach($agresores as $agresor)
-<option value="{{ $agresor->id }}"
-{{ $caso->persona_id == $agresor->id ? 'selected' : '' }}>
-{{ $agresor->apellido }}, {{ $agresor->nombre }} ({{ $agresor->dni }})
-</option>
-@endforeach
-</select>
-</div>
-
-<div class="col-md-6">
-<label class="form-label fw-bold text-secondary">Encargado/a</label>
-
-<select name="encargado_id" class="form-select border-primary-subtle">
-<option value="">Seleccione...</option>
-
-@foreach($encargados as $encargado)
-<option value="{{ $encargado->id }}"
-{{ $caso->encargado_id == $encargado->id ? 'selected' : '' }}>
-{{ $encargado->nombre }}
-</option>
-@endforeach
-
-</select>
-</div>
-
-</div>
-</div>
-</div>
-
-
-
-{{-- CONTEXTO --}}
-<div class="card shadow-sm border-0 mb-4">
-
-<div class="card-header bg-white py-3">
-<h5 class="mb-0 text-primary">
-<i class="bi bi-journal-text me-2"></i>
-2. Contexto del Caso
-</h5>
-</div>
-
-<div class="card-body bg-light-subtle">
-
-<div class="row g-3">
-
-<div class="col-md-4">
-<label class="form-label fw-bold">Derivación</label>
-
-<select name="derivacion_id" class="form-select">
-@foreach($derivaciones as $d)
-<option value="{{ $d->id }}"
-{{ $caso->derivacion_id == $d->id ? 'selected' : '' }}>
-{{ $d->nombre }}
-</option>
-@endforeach
-</select>
-</div>
-
-
-<div class="col-md-4">
-<label class="form-label fw-bold">Situación Habitacional</label>
-
-<select name="situacion_habitacional_id" class="form-select">
-
-<option value="">Seleccione...</option>
-
-@foreach($situacionesHabitacionales as $sh)
-<option value="{{ $sh->id }}"
-{{ $caso->situacion_habitacional_id == $sh->id ? 'selected' : '' }}>
-{{ $sh->nombre }}
-</option>
-@endforeach
-
-</select>
-</div>
-
-
-<div class="col-md-4">
-<label class="form-label fw-bold">Espacio Grupal</label>
-
-<select name="espacio_grupal_id" class="form-select">
-
-<option value="">Seleccione...</option>
-
-@foreach($espaciosGrupales as $espacio)
-<option value="{{ $espacio->id }}"
-{{ $caso->espacio_grupal_id == $espacio->id ? 'selected' : '' }}>
-{{ $espacio->nombre }}
-</option>
-@endforeach
-
-</select>
-</div>
-
-
-
-{{-- VIOLENCIA --}}
-<div class="col-md-12 my-3">
-
-<div class="p-3 border rounded bg-white">
-
-<label class="form-label fw-bold text-danger">
-<i class="bi bi-exclamation-triangle"></i>
-Tipos de Violencia Ejercida
-</label>
-
-<div class="row">
-
-@foreach($tipoViolencia as $tipo)
-
-<div class="col-md-3">
-
-<div class="form-check">
-
-<input class="form-check-input"
-type="checkbox"
-name="tipo_violencia_id[]"
-value="{{ $tipo->id }}"
-{{ $caso->tiposViolencia->contains($tipo->id) ? 'checked' : '' }}>
-
-<label class="form-check-label">
-{{ $tipo->nombre }}
-</label>
-
-</div>
-</div>
-
-@endforeach
-
-</div>
-</div>
-</div>
-
-
-<div class="col-md-4">
-<label class="form-label fw-bold">Reincidencia</label>
-
-<input type="number"
-name="reincidencia"
-class="form-control"
-value="{{ $caso->reincidencia }}">
-</div>
-
-
-
-<div class="col-md-4">
-
-<label class="form-label fw-bold">¿Debe realizar el dispositivo?</label>
-
-<select name="debe_dispositivo"
-id="debeDispositivo"
-class="form-select">
-
-<option value="">Seleccione...</option>
-
-<option value="1"
-{{ $caso->debe_dispositivo == 1 ? 'selected' : '' }}>
-Sí
-</option>
-
-<option value="0"
-{{ $caso->debe_dispositivo == 0 ? 'selected' : '' }}>
-No
-</option>
-
-</select>
-
-</div>
-
-
-<div id="camposDispositivo" class="row">
-
-<div class="col-md-4">
-
-<label class="form-label fw-bold">
-Asistencia al dispositivo
-</label>
-
-<select name="asistencia_dispositivo" class="form-select">
-
-<option value="">Seleccione...</option>
-
-<option value="1"
-{{ $caso->asistencia_dispositivo == 1 ? 'selected' : '' }}>
-Asistencia regular
-</option>
-
-<option value="2"
-{{ $caso->asistencia_dispositivo == 2 ? 'selected' : '' }}>
-Asistencia irregular
-</option>
-
-<option value="3"
-{{ $caso->asistencia_dispositivo == 3 ? 'selected' : '' }}>
-Abandonó
-</option>
-
-<option value="4"
-{{ $caso->asistencia_dispositivo == 4 ? 'selected' : '' }}>
-Finalizado
-</option>
-
-</select>
-
-</div>
-
-
-<div class="col-md-4">
-
-<label class="form-label fw-bold">
-Fecha de Finalización
-</label>
-
-<input type="date"
-name="fecha_finalizacion"
-class="form-control"
-value="{{ $caso->fecha_finalizacion ?? '' }}">
-
-</div>
-
-</div>
-
-</div>
-</div>
-</div>
-
-
-
-{{-- VICTIMAS --}}
-<div class="card shadow-sm border-0 mb-4 border-start border-4 border-danger">
-
-<div class="card-header bg-white py-3">
-
-<h5 class="mb-0 text-danger">
-<i class="bi bi-shield-exclamation me-2"></i>
-3. Información de la Víctima
-</h5>
-
-</div>
-
-<div class="card-body">
-
-<div class="row g-3">
-
-<div class="col-md-12 mt-2">
-
-<div class="p-3 rounded mb-3"
-style="background:#e6f2ff;color:#004085;display:flex;justify-content:space-between;align-items:center;">
-
-<h6 class="fw-bold mb-0">
-<i class="bi bi-person-heart me-2"></i>
-Víctimas Vinculadas
-</h6>
-
-<button type="button"
-class="btn btn-sm btn-primary shadow-sm"
-data-bs-toggle="modal"
-data-bs-target="#modalVictimas">
-
-<i class="bi bi-plus-circle me-1"></i>
-Vincular Víctima
-
-</button>
-
-</div>
-
-
-<div id="lista-victimas" class="row g-3">
-
-@foreach($caso->victimas as $victima)
-
-<div class="col-md-4"
-id="victima-item-{{ $victima->id }}">
-
-<div class="card border-0 shadow-sm p-2 d-flex flex-row align-items-center justify-content-between"
-style="background:#f0f8ff;">
-
-<div class="small">
-
-<a href="{{ route('genero.edit',$victima->id) }}"
-class="text-decoration-none"
-target="_blank">
-
-<span class="fw-bold text-primary">
-#{{ $victima->id }}
-</span>
-
-{{ $victima->persona->apellido }},
-{{ $victima->persona->nombre }}
-
-<i class="bi bi-box-arrow-up-right ms-1"></i>
-
-</a>
-
-<input type="hidden"
-name="victimas[]"
-value="{{ $victima->id }}">
-
-</div>
-
-<button type="button"
-class="btn btn-link text-danger p-0"
-onclick="quitarVictima({{ $victima->id }})">
-
-<i class="bi bi-x-circle-fill"></i>
-
-</button>
-
-</div>
-</div>
-
-@endforeach
-
-</div>
-
-</div>
-</div>
-</div>
-</div>
-
-
-
-{{-- FINAL --}}
-<div class="card shadow-sm border-0 mb-5">
-
-<div class="card-body">
-
-<div class="row g-3">
-
-<div class="col-md-6">
-
-<label class="form-label fw-bold text-secondary">
-Situación Judicial
-</label>
-
-<textarea name="situacion_judicial"
-class="form-control"
-rows="3">{{ $caso->situacion_judicial }}</textarea>
-
-</div>
-
-
-<div class="col-md-6">
-
-<label class="form-label fw-bold text-secondary">
-Observaciones
-</label>
-
-<textarea name="observaciones"
-class="form-control"
-rows="3">{{ $caso->observaciones }}</textarea>
-
-</div>
-
-</div>
-</div>
-
-
-<div class="card-footer bg-light text-end py-3">
-
-<button type="submit"
-class="btn btn-lg text-white px-5 shadow-sm"
-style="background:#5651A0">
-
-<i class="bi bi-save-fill me-2"></i>
-ACTUALIZAR CASO
-
-</button>
-
-</div>
-</div>
-
-</form>
-</div>
-
-
 
 <style>
-
-.card{
-border-radius:12px;
-transition:0.3s;
-}
-
-.form-label{
-font-size:0.9rem;
-}
-
-.form-control:focus,
-.form-select:focus{
-border-color:#5651A0;
-box-shadow:0 0 0 0.2rem rgba(86,81,160,0.25);
-}
-
-.bg-light-subtle{
-background:#f8f9fa;
-}
-
-.border-primary-subtle{
-border-color:#5651a055 !important;
-}
-
+    .card { border-radius:12px; transition:0.3s; }
+    .form-label { font-size:0.9rem; }
+    .form-control:focus, .form-select:focus {
+        border-color:#5651A0;
+        box-shadow:0 0 0 0.2rem rgba(86,81,160,0.25);
+    }
+    .bg-light-subtle { background:#f8f9fa; }
+    .border-primary-subtle { border-color:#5651a055 !important; }
 </style>
 
-
+{{-- --- SCRIPTS --- --}}
 <script>
-
+// 1. Lógica General (Dispositivo)
 function toggleDispositivo(){
+    let valor = document.getElementById('debeDispositivo').value;
+    let bloque = document.getElementById('camposDispositivo');
+    bloque.style.display = (valor == 1) ? 'flex' : 'none';
+}
+document.getElementById('debeDispositivo').addEventListener('change', toggleDispositivo);
+window.addEventListener('load', toggleDispositivo);
 
-let valor=document.getElementById('debeDispositivo').value
-let bloque=document.getElementById('camposDispositivo')
-
-if(valor==1){
-bloque.style.display='flex'
-}else{
-bloque.style.display='none'
+// 2. Lógica Grupo Conviviente
+let integranteIdx = {{ count($convivientes) }};
+function agregarIntegrante() {
+    const html = `
+        <tr>
+            <td><input type="text" name="grupo_conviviente[${integranteIdx}][nombre]" class="form-control form-control-sm"></td>
+            <td><input type="number" name="grupo_conviviente[${integranteIdx}][edad]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="grupo_conviviente[${integranteIdx}][vinculo]" class="form-control form-control-sm"></td>
+            <td class="text-center"><button type="button" class="btn btn-link text-danger p-0" onclick="eliminarFila(this)"><i class="bi bi-trash-fill"></i></button></td>
+        </tr>`;
+    document.getElementById('tabla-convivientes').insertAdjacentHTML('beforeend', html);
+    integranteIdx++;
+}
+function eliminarFila(btn) {
+    btn.closest('tr').remove();
 }
 
+// 3. Lógica Víctimas Vinculadas
+const urlBaseGenero = "{{ route('genero.edit', ':id') }}";
+
+function agregarVictima(id, nombre) {
+    if (document.getElementById('victima-item-' + id)) {
+        alert('Esta víctima ya está vinculada.');
+        return;
+    }
+    
+    const urlLegajo = urlBaseGenero.replace(':id', id);
+    const lista = document.getElementById('lista-victimas');
+    const html = `
+        <div class="col-md-6" id="victima-item-${id}">
+            <div class="card border-danger border-opacity-25 shadow-sm p-2 d-flex flex-row align-items-center justify-content-between bg-light">
+                <div class="small d-flex align-items-center">
+                    <a href="${urlLegajo}" class="text-decoration-none fw-bold text-danger me-2" target="_blank">
+                        <span>#${id}</span> - ${nombre} <i class="bi bi-box-arrow-up-right ms-1"></i>
+                    </a>
+                    <button type="button" class="btn btn-sm btn-light border p-1 text-info" onclick="abrirInfoVinculo(${id}, '${nombre}')">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </button>
+                    <input type="hidden" name="victimas[${id}][hijos_en_comun]" id="hijos_${id}" value="0">
+                    <input type="hidden" name="victimas[${id}][relacion_actual]" id="relacion_${id}" value="0">
+                    <input type="hidden" name="victimas[${id}][descripcion_relacion]" id="desc_${id}" value="">
+                </div>
+                <button type="button" class="btn btn-link text-secondary p-0 ms-2" onclick="quitarVictima(${id})">
+                    <i class="bi bi-x-circle-fill"></i>
+                </button>
+            </div>
+        </div>`;
+    
+    lista.insertAdjacentHTML('beforeend', html);
+    bootstrap.Modal.getInstance(document.getElementById('modalVictimas')).hide();
+    setTimeout(() => abrirInfoVinculo(id, nombre), 400); 
 }
 
-document.getElementById('debeDispositivo').addEventListener('change',toggleDispositivo)
+function quitarVictima(id) {
+    document.getElementById('victima-item-' + id)?.remove();
+}
 
-window.addEventListener('load',toggleDispositivo)
+// 4. Lógica Modal Info Vínculo
+document.getElementById('infoRelacion').addEventListener('change', function() {
+    document.getElementById('infoDescContainer').style.display = this.checked ? 'block' : 'none';
+});
 
+function abrirInfoVinculo(id, nombre) {
+    document.getElementById('infoVinculoId').value = id;
+    document.getElementById('infoVinculoNombre').innerText = "Expediente Género: " + nombre;
+    document.getElementById('infoHijos').value = document.getElementById('hijos_' + id).value || 0;
+    
+    let tieneRelacion = document.getElementById('relacion_' + id).value === "1";
+    document.getElementById('infoRelacion').checked = tieneRelacion;
+    document.getElementById('infoDesc').value = document.getElementById('desc_' + id).value || '';
+    document.getElementById('infoDescContainer').style.display = tieneRelacion ? 'block' : 'none';
+    
+    new bootstrap.Modal(document.getElementById('modalInfoVinculo')).show();
+}
+
+function guardarInfoVinculo() {
+    let id = document.getElementById('infoVinculoId').value;
+    document.getElementById('hijos_' + id).value = document.getElementById('infoHijos').value;
+    document.getElementById('relacion_' + id).value = document.getElementById('infoRelacion').checked ? "1" : "0";
+    document.getElementById('desc_' + id).value = document.getElementById('infoDesc').value;
+    bootstrap.Modal.getInstance(document.getElementById('modalInfoVinculo')).hide();
+}
+
+// 5. Buscador Modal
+document.getElementById('busquedaVictima')?.addEventListener('keyup', function() {
+    let filtro = this.value.toLowerCase();
+    document.querySelectorAll('#tablaResultadosVictimas .fila-victima').forEach(fila => {
+        fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' : 'none';
+    });
+});
+
+let index = {{ count($convivientes) }}; 
+
+function agregarFamiliar() {
+    const container = document.getElementById('grupoFamiliarContainer');
+    
+    // Si es el primer integrante que agregamos manualmente y no había nada antes, limpiamos el mensaje
+    if(index === 0) container.innerHTML = ''; 
+
+    const html = `
+        <div class="card p-3 mt-3 border shadow-sm">
+            <div class="row g-2">
+                <div class="col-md-3"><input type="text" name="grupo[${index}][nombre]" class="form-control" placeholder="Nombre"></div>
+                <div class="col-md-3"><input type="text" name="grupo[${index}][apellido]" class="form-control" placeholder="Apellido"></div>
+                <div class="col-md-3"><input type="text" name="grupo[${index}][telefono]" class="form-control" placeholder="Teléfono"></div>
+                <div class="col-md-2">
+                    <select name="grupo[${index}][vinculo]" class="form-select">
+                        <option value="">Vínculo</option>
+                        <option value="padre">Padre</option>
+                        <option value="madre">Madre</option>
+                        <option value="hijo/a">Hijo/a</option>
+                        <option value="hermano/a">Hermano/a</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                <div class="col-md-1 text-end">
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.closest('.card').remove()">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    container.insertAdjacentHTML('beforeend', html);
+    index++;
+}
 </script>
+
+
 
 @endsection

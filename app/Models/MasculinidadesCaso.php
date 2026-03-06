@@ -82,7 +82,12 @@ class MasculinidadesCaso extends Model
 
     public function victimas()
     {
-        return $this->belongsToMany(DireccionGeneroCaso::class, 'vinculos_casos', 'masculinidad_caso_id', 'genero_caso_id');
+        return $this->belongsToMany(
+            DireccionGeneroCaso::class, 
+            'vinculos_casos', 
+            'masculinidad_caso_id', 
+            'genero_caso_id'
+        )->withPivot('hijos_en_comun', 'relacion_actual', 'descripcion_relacion', 'tipo_vinculo', 'observaciones');
     }
 
     public function intervenciones() {
