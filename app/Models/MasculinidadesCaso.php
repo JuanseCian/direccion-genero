@@ -86,4 +86,9 @@ class MasculinidadesCaso extends Model
         return $this->hasMany(MasculinidadesIntervencion::class, 'caso_id')
                     ->orderBy('fecha_intervencion', 'desc');
     }
+    public function adjuntos()
+{
+    return $this->hasMany(Adjunto::class, 'entidad_id')
+        ->where('entidad_tipo', 'masculinidades');
+}
 }

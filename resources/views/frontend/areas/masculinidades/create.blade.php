@@ -14,7 +14,7 @@
         </a>
     </div>
 
-    <form action="{{ route('masculinidades.store') }}" method="POST">
+    <form action="{{ route('masculinidades.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="row g-3">
@@ -233,6 +233,18 @@
                 <textarea name="observaciones" class="form-control" rows="3"></textarea>
             </div>
         </div>
+            <div class="col-12">
+                <label class="form-label fw-bold">Adjuntar Archivos</label>
+
+                <div class="mb-3">
+                <label class="form-label">Certificado</label>
+                <input type="file" name="certificado" class="form-control" accept=".pdf,.jpg,.jpeg,.png">
+                </div>
+
+                <small class="text-muted">
+                    Puede subir archivos PDF o imágenes. Se permiten múltiples archivos.
+                </small>
+            </div>
 
         <div class="text-end mt-4">
             <button type="submit" class="btn text-white px-5 shadow-sm" style="background: #5651A0;">
