@@ -6,12 +6,11 @@
 <div class="card card-soft p-4 shadow-sm border-0">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0" style="color: #5651A0;">
-            <i class="bi bi-pencil-square"></i> Editar Legajo IVE: {{ $caso->persona->apellido }}, {{ $caso->persona->nombre }}
+            <i class="bi bi-pencil-square"></i> Editar Legajo IVE: {{ $caso->persona->apellido }}, {{ $caso->persona->nombre }} <br><small>{{$caso->persona->dni}}</small>
         </h2>
         <div>
-            {{-- Botón para abrir el Modal de Intervenciones --}}
-            <button type="button" class="btn btn-info text-white border-0 me-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#modalIntervenciones">
-                <i class="bi bi-journal-text"></i> Intervenciones
+            <button type="button" class="btn text-white shadow-sm me-2" style="background: #17a2b8;" data-bs-toggle="modal" data-bs-target="#modalIntervenciones">
+                <i class="bi bi-chat-left-text-fill me-1"></i> Intervenciones
             </button>
 
             <a href="{{ route('frontend.areas.ive.listado') }}" class="btn btn-light border-0 shadow-sm">
@@ -20,7 +19,6 @@
         </div>
     </div>
 
-    {{-- FORMULARIO PRINCIPAL DEL CASO --}}
     <form action="{{ route('frontend.areas.ive.update', $caso->id) }}" method="POST">
         @csrf
         @method('PUT')
@@ -29,14 +27,7 @@
             {{-- PERSONA --}}
             <div class="col-12">
                 <div class="p-3 rounded" style="background: #ecebfa; color: #5651A0;">
-                    <label class="fw-bold mb-2">Persona Vinculada</label>
-                    <select name="persona_id" class="form-select border-0 shadow-sm" required>
-                        @foreach($personas as $persona)
-                            <option value="{{ $persona->id }}" {{ $caso->persona_id == $persona->id ? 'selected' : '' }}>
-                                {{ $persona->nombre }} {{ $persona->apellido }} (DNI: {{ $persona->dni }})
-                            </option>
-                        @endforeach
-                    </select>
+                    <h6 class="fw-bold mb-0"><i class="bi bi-person-badge me-2"></i> Persona Vinculada</h6>
                 </div>
             </div>
 
@@ -63,14 +54,14 @@
             </div>
 
             <div class="col-md-4 mt-auto">
-                <div class="form-check form-switch p-3 bg-light rounded shadow-sm">
+                <div class="form-check form-switch p-3 bg-white rounded shadow-sm border">
                     <input class="form-check-input mx-1" type="checkbox" name="obra_social" value="1" {{ $caso->obra_social ? 'checked' : '' }}>
                     <label class="form-check-label fw-bold">¿Posee Obra Social?</label>
                 </div>
             </div>
 
             <div class="col-md-4 mt-auto">
-                <div class="form-check form-switch p-3 bg-light rounded shadow-sm">
+                <div class="form-check form-switch p-3 bg-white rounded shadow-sm border">
                     <input class="form-check-input mx-1"  type="checkbox" name="interrupcion_previa" value="1" {{ $caso->interrupcion_previa ? 'checked' : '' }}>
                     <label class="form-check-label fw-bold">Interrupción Previa</label>
                 </div>
@@ -78,29 +69,19 @@
 
             {{-- VIOLENCIA PREVIA --}}
             <div class="col-md-4 mt-2">
-                <div class="form-check form-switch p-3 bg-light rounded shadow-sm">
+                <div class="form-check form-switch p-3 bg-white rounded shadow-sm border">
                     <input class="form-check-input mx-1" type="checkbox" id="violencia_previa" name="violencia_previa" value="1" {{ $caso->violencia_previa ? 'checked' : '' }}>
                     <label class="form-check-label fw-bold text-danger">Violencia Previa</label>
                 </div>
             </div>
 
             {{-- TIPOS DE VIOLENCIA --}}
-            <div class="col-12 mt-3" id="violencia-container" style="display:none;">
+            <div class="col-12 mt-3" id="violencia-container" style="{{ $caso->violencia_previa ? '' : 'display:none;' }}">
                 <label class="form-label fw-bold text-danger mb-2">Tipos de Violencia</label>
-
                 <div class="d-flex flex-wrap gap-2">
                     @foreach($tiposViolencia as $tipo)
-                        <input type="checkbox"
-                               class="btn-check"
-                               name="tipos_violencia[]"
-                               value="{{ $tipo->id }}"
-                               id="violencia_{{ $tipo->id }}"
-                               autocomplete="off"
-                               {{ $caso->tiposViolencia->contains($tipo->id) ? 'checked' : '' }}>
-
-                        <label class="violencia-chip btn btn-outline-danger btn-sm" for="violencia_{{ $tipo->id }}">
-                            {{ $tipo->nombre }}
-                        </label>
+                        <input type="checkbox" class="btn-check" name="tipos_violencia[]" value="{{ $tipo->id }}" id="violencia_{{ $tipo->id }}" autocomplete="off" {{ $caso->tiposViolencia->contains($tipo->id) ? 'checked' : '' }}>
+                        <label class="violencia-chip btn btn-outline-danger btn-sm" for="violencia_{{ $tipo->id }}">{{ $tipo->nombre }}</label>
                     @endforeach
                 </div>
             </div>
@@ -108,52 +89,36 @@
             {{-- RED DE CONTENCIÓN --}}
             <div class="col-12 mt-4">
                 <label class="form-label fw-bold mb-2">Red de Contención</label>
-
                 <div class="d-flex flex-wrap gap-2">
                     @foreach($redes as $red)
-                        <input type="checkbox"
-                               class="btn-check"
-                               name="redes_contencion[]"
-                               value="{{ $red->id }}"
-                               id="red_{{ $red->id }}"
-                               autocomplete="off"
-                               {{ $caso->redesContencion->contains($red->id) ? 'checked' : '' }}>
-
-                        <label class="red-chip btn btn-outline-secondary btn-sm" for="red_{{ $red->id }}">
-                            {{ $red->nombre }}
-                        </label>
+                        <input type="checkbox" class="btn-check" name="redes_contencion[]" value="{{ $red->id }}" id="red_{{ $red->id }}" autocomplete="off" {{ $caso->redesContencion->contains($red->id) ? 'checked' : '' }}>
+                        <label class="red-chip btn btn-outline-secondary btn-sm" for="red_{{ $red->id }}">{{ $red->nombre }}</label>
                     @endforeach
                 </div>
             </div>
 
             {{-- MEDICACIONES --}}
             <div class="col-12 mt-4">
-                <label class="form-label fw-bold">Medicaciones</label>
-
+                <div class="p-3 rounded mb-2" style="background: #f8f9fa;">
+                    <h6 class="fw-bold mb-0 text-muted"><i class="bi bi-capsule me-2"></i> Medicaciones</h6>
+                </div>
                 <div id="medicaciones-container">
                     @foreach($caso->medicaciones as $index => $med)
                         <div class="row g-2 mb-2 medicacion-item">
                             <div class="col-md-6">
-                                <input type="text" name="medicaciones[{{ $index }}][nombre]"
-                                       class="form-control"
-                                       value="{{ $med->nombre }}"
-                                       placeholder="Nombre medicación">
+                                <input type="text" name="medicaciones[{{ $index }}][nombre]" class="form-control border-0 shadow-sm" value="{{ $med->nombre }}" placeholder="Nombre medicación">
                             </div>
                             <div class="col-md-4">
-                                <input type="text" name="medicaciones[{{ $index }}][numero_lote]"
-                                       class="form-control"
-                                       value="{{ $med->numero_lote }}"
-                                       placeholder="Número lote">
+                                <input type="text" name="medicaciones[{{ $index }}][numero_lote]" class="form-control border-0 shadow-sm" value="{{ $med->numero_lote }}" placeholder="Número lote">
                             </div>
                             <div class="col-md-2">
-                                <button type="button" class="btn btn-danger w-100 remove-medicacion">X</button>
+                                <button type="button" class="btn btn-danger w-100 remove-medicacion"><i class="bi bi-trash"></i></button>
                             </div>
                         </div>
                     @endforeach
                 </div>
-
                 <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-medicacion">
-                    + Agregar medicación
+                    <i class="bi bi-plus-lg"></i> Agregar medicación
                 </button>
             </div>
 
@@ -162,27 +127,24 @@
                 <label class="fw-bold">Encargado del Caso</label>
                 <select name="encargado_id" class="form-select border-0 shadow-sm">
                     @foreach($encargados as $encargado)
-                        <option value="{{ $encargado->id }}"
-                            {{ $caso->encargado_id == $encargado->id ? 'selected' : '' }}>
+                        <option value="{{ $encargado->id }}" {{ $caso->encargado_id == $encargado->id ? 'selected' : '' }}>
                             {{ $encargado->apellido }} {{ $encargado->nombre }}
                         </option>
                     @endforeach
                 </select>
             </div>
 
-            {{-- BOTÓN --}}
             <div class="col-12 mt-4 text-end">
                 <hr style="opacity: 0.1;">
                 <button type="submit" class="btn text-white px-5 py-2 shadow-sm" style="background: #5651A0;">
-                    <i class="bi bi-check-circle"></i> Actualizar Caso
+                    <i class="bi bi-save me-2"></i> Actualizar Caso
                 </button>
             </div>
-
         </div>
     </form>
 </div>
 
-{{-- MODAL INTERVENCIONES }}
+{{-- MODAL INTERVENCIONES --}}
 <div class="modal fade" id="modalIntervenciones" tabindex="-1" aria-labelledby="modalIntervencionesLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content border-0 shadow">
@@ -194,8 +156,7 @@
             </div>
             
             <div class="modal-body p-4">
-                
-                {{-- 1. FORMULARIO NUEVA INTERVENCIÓN (ARRIBA) --}}
+                {{-- FORMULARIO NUEVA INTERVENCIÓN --}}
                 <h6 class="fw-bold mb-3 text-success"><i class="bi bi-plus-circle"></i> Cargar Nueva Intervención</h6>
                 
                 <form action="{{ route('frontend.areas.ive.intervenciones.store', $caso->id) }}" method="POST" class="mb-5">
@@ -244,7 +205,7 @@
 
                 <hr class="my-4" style="opacity: 0.1;">
 
-                {{-- 2. HISTORIAL DE INTERVENCIONES (DEBAJO) --}}
+                {{-- HISTORIAL --}}
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="fw-bold mb-0 text-muted"><i class="bi bi-clock-history"></i> Historial de Intervenciones</h6>
                     <span class="badge rounded-pill bg-primary px-3">{{ $caso->intervenciones->count() }} Registros</span>
@@ -264,11 +225,7 @@
                             @forelse($caso->intervenciones as $intervencion)
                                 <tr>
                                     <td class="text-nowrap fw-bold">{{ \Carbon\Carbon::parse($intervencion->fecha_intervencion)->format('d/m/Y') }}</td>
-                                    <td>
-                                        <span class="badge bg-soft-secondary text-dark border w-100" style="background-color: #f0f0f0;">
-                                            {{ $intervencion->tipo->nombre ?? 'S/D' }}
-                                        </span>
-                                    </td>
+                                    <td><span class="badge bg-soft-secondary text-dark border w-100" style="background-color: #f0f0f0;">{{ $intervencion->tipo->nombre ?? 'S/D' }}</span></td>
                                     <td>{{ $intervencion->encargado->apellido }}, {{ $intervencion->encargado->nombre }}</td>
                                     <td class="text-wrap">{{ $intervencion->detalle }}</td>
                                 </tr>
@@ -283,66 +240,52 @@
                         </tbody>
                     </table>
                 </div>
-
             </div> 
         </div>
     </div>
 </div>
 
-{{-- JS --}}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
+    // Lógica para mostrar/ocultar tipos de violencia
+    const checkViolencia = document.getElementById('violencia_previa');
+    const containerViolencia = document.getElementById('violencia-container');
 
-    const violenciaCheckbox = document.getElementById('violencia_previa');
-    const violenciaContainer = document.getElementById('violencia-container');
-
-    function toggleViolencia() {
-        if (violenciaCheckbox.checked) {
-            violenciaContainer.style.display = 'block';
-        } else {
-            violenciaContainer.style.display = 'none';
-        }
+    if(checkViolencia) {
+        checkViolencia.addEventListener('change', function() {
+            containerViolencia.style.display = this.checked ? 'block' : 'none';
+        });
     }
 
-    toggleViolencia();
-    violenciaCheckbox.addEventListener('change', toggleViolencia);
+    // Lógica para agregar/quitar medicaciones
+    let medIndex = {{ $caso->medicaciones->count() }};
+    const addBtn = document.getElementById('add-medicacion');
+    const containerMed = document.getElementById('medicaciones-container');
 
-    let index = {{ $caso->medicaciones->count() }};
+    if(addBtn) {
+        addBtn.addEventListener('click', function() {
+            const html = `
+                <div class="row g-2 mb-2 medicacion-item">
+                    <div class="col-md-6">
+                        <input type="text" name="medicaciones[${medIndex}][nombre]" class="form-control border-0 shadow-sm" placeholder="Nombre medicación">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" name="medicaciones[${medIndex}][numero_lote]" class="form-control border-0 shadow-sm" placeholder="Número lote">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-danger w-100 remove-medicacion"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>`;
+            containerMed.insertAdjacentHTML('beforeend', html);
+            medIndex++;
+        });
+    }
 
-    document.getElementById('add-medicacion').addEventListener('click', function () {
-        const container = document.getElementById('medicaciones-container');
-
-        const html = `
-            <div class="row g-2 mb-2 medicacion-item">
-                <div class="col-md-6">
-                    <input type="text" name="medicaciones[${index}][nombre]" class="form-control" placeholder="Nombre medicación">
-                </div>
-                <div class="col-md-4">
-                    <input type="text" name="medicaciones[${index}][numero_lote]" class="form-control" placeholder="Número lote">
-                </div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-danger w-100 remove-medicacion">X</button>
-                </div>
-            </div>
-        `;
-
-        container.insertAdjacentHTML('beforeend', html);
-        index++;
-    });
-
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-medicacion')) {
+    containerMed.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-medicacion')) {
             e.target.closest('.medicacion-item').remove();
         }
     });
-
-    // Abrir modal automáticamente si hay errores en la carga de intervención
-    @if($errors->has('detalle') || $errors->has('fecha_intervencion'))
-        var myModal = new bootstrap.Modal(document.getElementById('modalIntervenciones'));
-        myModal.show();
-    @endif
-
 });
 </script>
-
 @endsection
