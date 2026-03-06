@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 05, 2026 at 03:42 PM
+-- Generation Time: Mar 06, 2026 at 05:33 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -43,6 +43,14 @@ CREATE TABLE `adjuntos` (
   `fecha_eliminacion` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `adjuntos`
+--
+
+INSERT INTO `adjuntos` (`id`, `entidad_tipo`, `entidad_id`, `nombre_original`, `nombre_guardado`, `ruta`, `tipo_mime`, `tamaño`, `confidencial`, `hash_sha256`, `subido_por`, `eliminado_logico`, `fecha_eliminacion`, `created_at`) VALUES
+(1, 'masculinidades', 15, 'caso_000015_444_2026-03-06.docx', 'caso_000015_444_2026-03-06.docx', 'masculinidades_certificados/caso_000015_444_2026-03-06.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 8257, 0, 'c80989b74c5279488810ce0f94d96afd338b04aec8d0f720a6bdc07691c30292', 1, 0, NULL, '2026-03-06 02:21:23'),
+(2, 'masculinidades', 15, 'samurai.png', 'certificado_000015_444.png', 'masculinidades_certificados/certificado_000015_444.png', 'image/png', 1924682, 0, '082eef8bdf099f55081c4db9c6060622a0e4f0a38261047b3537efbbf2c1562d', 1, 0, NULL, '2026-03-06 02:21:23');
 
 -- --------------------------------------------------------
 
@@ -103,7 +111,9 @@ INSERT INTO `area_user` (`id`, `user_id`, `area_id`) VALUES
 (9, 1, 4),
 (10, 1, 3),
 (15, 3, 1),
-(17, 3, 3);
+(17, 3, 3),
+(18, 2, 1),
+(19, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -271,7 +281,6 @@ CREATE TABLE `direccion_genero_casos` (
 --
 
 INSERT INTO `direccion_genero_casos` (`id`, `persona_id`, `estado_civil_id`, `genero`, `provincia_id`, `localidad_id`, `barrio_id`, `nivel_estudio_id`, `trabaja`, `organizacion_social`, `organizacion_social_detalle`, `observaciones`, `created_at`, `updated_at`, `estado_id`, `nivel_riesgo_id`, `situacion_sanitaria`, `situacion_habitacional`, `servicios_luz`, `servicios_cable`, `servicios_gas_natural`, `servicios_agua_potable`, `servicios_internet`, `tipo_violencia`, `denuncio_antes`, `denuncio_antes_detalle`, `amenaza_con_arma`, `amenaza_tipo_arma`, `fecha_ultima_denuncia`, `medida_proteccion`, `boton_panico_numero`, `encargado_id`) VALUES
-(11, 2, 4, 'MUJER', NULL, 185, 33, 1, 1, 0, NULL, 'a', '2026-03-01 06:16:04', '2026-03-04 23:09:51', 1, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, 3),
 (12, 5, 2, 'Therian', NULL, 36, NULL, 1, 1, 0, NULL, 'skkjk', '2026-03-01 06:34:31', '2026-03-05 16:44:59', 1, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, 3),
 (13, 6, 2, 'Therian', NULL, 22, 14, 5, 1, 0, NULL, 'PUTO', '2026-03-02 16:29:45', '2026-03-04 23:10:08', 1, NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, NULL, 2);
 
@@ -348,8 +357,6 @@ CREATE TABLE `direccion_genero_intervenciones` (
 --
 
 INSERT INTO `direccion_genero_intervenciones` (`id`, `caso_id`, `tipo_intervencion_id`, `fecha_intervencion`, `detalle`, `encargado_id`, `created_at`, `updated_at`) VALUES
-(1, 11, 4, '2026-03-05', 'h', 1, '2026-03-05 16:36:37', '2026-03-05 16:36:37'),
-(4, 11, 5, '2026-03-05', 'a', 3, '2026-03-05 16:38:38', '2026-03-05 16:38:38'),
 (6, 12, 2, '2026-03-05', 'jj', 2, '2026-03-05 16:42:52', '2026-03-05 16:42:52'),
 (7, 12, 5, '2026-03-05', 'jj', 2, '2026-03-05 16:44:24', '2026-03-05 16:44:24');
 
@@ -542,11 +549,10 @@ CREATE TABLE `ive_casos` (
 --
 
 INSERT INTO `ive_casos` (`id`, `persona_id`, `fum`, `eco_semanas`, `obra_social`, `cantidad_hijos`, `interrupcion_previa`, `violencia_previa`, `alta`, `created_at`, `updated_at`, `encargado_id`) VALUES
-(3, 4, '2026-03-05', 2, 0, 1, 0, 0, NULL, '2026-03-01 06:37:27', '2026-03-01 06:37:27', NULL),
-(4, 3, '2026-03-03', 4, 0, 1, 0, 0, NULL, '2026-03-01 06:46:25', '2026-03-01 06:47:47', 4),
 (5, 6, '2009-11-21', 8, 0, 68, 1, 0, NULL, '2026-03-02 16:31:31', '2026-03-02 16:31:31', 4),
 (7, 4, '2026-03-04', 2, 1, 2, 0, 0, NULL, '2026-03-04 19:00:21', '2026-03-04 19:00:21', 2),
-(10, 4, '2026-03-02', 3, 1, 2, 1, 0, NULL, '2026-03-04 20:36:43', '2026-03-04 20:36:43', 2);
+(10, 4, '2026-03-02', 3, 1, 2, 1, 0, NULL, '2026-03-04 20:36:43', '2026-03-04 20:36:43', 2),
+(11, 18, NULL, NULL, 1, 0, 1, 0, NULL, '2026-03-06 16:33:08', '2026-03-06 16:33:08', 4);
 
 -- --------------------------------------------------------
 
@@ -565,7 +571,10 @@ CREATE TABLE `ive_caso_red` (
 --
 
 INSERT INTO `ive_caso_red` (`id`, `ive_caso_id`, `red_id`) VALUES
-(3, 10, 3);
+(3, 10, 3),
+(4, 11, 3),
+(5, 11, 2),
+(6, 11, 4);
 
 -- --------------------------------------------------------
 
@@ -895,17 +904,20 @@ CREATE TABLE `masculinidades_casos` (
   `observaciones` text,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `encargado_id` bigint UNSIGNED DEFAULT NULL
+  `encargado_id` bigint UNSIGNED DEFAULT NULL,
+  `fecha_finalizacion` date DEFAULT NULL,
+  `debe_dispositivo` tinyint(1) DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `masculinidades_casos`
 --
 
-INSERT INTO `masculinidades_casos` (`id`, `persona_id`, `victima_id`, `derivacion_id`, `situacion_habitacional_id`, `trabaja`, `red_contencion`, `situacion_sanitaria_id`, `consumo`, `terapia`, `espacio_grupal_id`, `hijos_en_comun`, `relacion_actual`, `descripcion_relacion`, `situacion_judicial`, `desobediencia`, `reincidencia`, `asistencia_dispositivo`, `observaciones`, `created_at`, `updated_at`, `encargado_id`) VALUES
-(1, 1, NULL, 3, 1, 1, 0, NULL, 1, 0, NULL, 9, 0, NULL, 'qs', 0, 0, 0, NULL, '2026-03-01 17:15:31', '2026-03-01 18:34:03', 2),
-(2, 7, NULL, 2, NULL, 0, 0, NULL, 1, 0, NULL, 68, 0, NULL, NULL, 1, 1, 0, 'UNA LACRA', '2026-03-02 16:32:25', '2026-03-05 16:45:32', 2),
-(3, 16, NULL, 3, 3, 1, 0, NULL, 1, 1, NULL, 1, 0, NULL, 's', 1, 0, 0, 'hh', '2026-03-03 16:25:02', '2026-03-03 16:25:02', 2);
+INSERT INTO `masculinidades_casos` (`id`, `persona_id`, `victima_id`, `derivacion_id`, `situacion_habitacional_id`, `trabaja`, `red_contencion`, `situacion_sanitaria_id`, `consumo`, `terapia`, `espacio_grupal_id`, `hijos_en_comun`, `relacion_actual`, `descripcion_relacion`, `situacion_judicial`, `desobediencia`, `reincidencia`, `asistencia_dispositivo`, `observaciones`, `created_at`, `updated_at`, `encargado_id`, `fecha_finalizacion`, `debe_dispositivo`) VALUES
+(1, 1, NULL, 3, 1, 0, 0, NULL, 0, 0, 2, 9, 0, NULL, 'qs', 0, 1, 3, NULL, '2026-03-01 17:15:31', '2026-03-06 20:30:35', 2, NULL, 1),
+(2, 7, NULL, 2, NULL, 0, 0, NULL, 1, 0, NULL, 68, 0, NULL, NULL, 1, 1, 1, 'UNA LACRA', '2026-03-02 16:32:25', '2026-03-06 19:58:54', 2, NULL, 0),
+(3, 16, NULL, 3, 3, 1, 0, NULL, 1, 1, NULL, 1, 0, NULL, 's', 1, 0, 0, 'hh', '2026-03-03 16:25:02', '2026-03-03 16:25:02', 2, NULL, 0),
+(14, 19, 6, 3, NULL, 1, 0, 2, 0, 0, NULL, 0, 0, NULL, NULL, 0, 1, 2, 'x', '2026-03-06 05:17:49', '2026-03-06 20:07:18', 2, '2026-01-29', 0);
 
 -- --------------------------------------------------------
 
@@ -992,7 +1004,8 @@ CREATE TABLE `masculinidades_intervenciones` (
 
 INSERT INTO `masculinidades_intervenciones` (`id`, `caso_id`, `tipo_intervencion_id`, `fecha_intervencion`, `detalle`, `encargado_id`, `created_at`, `updated_at`) VALUES
 (1, 1, 4, '2026-03-05', 'sasa', 2, '2026-03-05 17:25:00', '2026-03-05 17:25:00'),
-(2, 1, 1, '2026-03-03', 'n', 2, '2026-03-05 17:27:29', '2026-03-05 17:27:29');
+(2, 1, 1, '2026-03-03', 'n', 2, '2026-03-05 17:27:29', '2026-03-05 17:27:29'),
+(3, 1, 5, '2026-03-06', 'nnn', 2, '2026-03-06 16:09:01', '2026-03-06 16:09:01');
 
 -- --------------------------------------------------------
 
@@ -1150,7 +1163,10 @@ INSERT INTO `personas` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `dni`, `
 (6, 'Alejo', 'Mosquera', '1990-02-20', '7473737', 'Femenino', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, '2026-03-02 16:26:34', '2026-03-02 16:26:34'),
 (7, 'Bruno', 'MassocooA', '2025-10-28', '6363', 'Masculino', NULL, NULL, NULL, 99, NULL, NULL, 1, 'A+', '2026-03-02 16:27:00', '2026-03-02 16:27:00'),
 (16, 'hh', 'hh', '2023-10-29', '77', 'Masculino', NULL, 1, 36, 99, NULL, 2, 0, 'A+', '2026-03-03 16:18:58', '2026-03-03 16:18:58'),
-(17, 'Bruno', 'Massocco', '2022-09-29', '43056618', 'Masculino', NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, '2026-03-05 18:40:44', '2026-03-05 18:40:44');
+(17, 'Bruno', 'Massocco', '2022-09-29', '43056618', 'Masculino', NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, '2026-03-05 18:40:44', '2026-03-05 18:40:44'),
+(18, 'Mario', 'Castaneda', '2021-10-30', '123449', 'Femenino', NULL, NULL, NULL, NULL, '222', 1, 1, NULL, '2026-03-06 05:14:50', '2026-03-06 05:14:50'),
+(19, 'lala', 'lolo', '2024-10-30', '444', 'Masculino', NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, '2026-03-06 05:16:42', '2026-03-06 05:16:42'),
+(20, 'juan', 'cian', '2020-09-30', '777', 'Masculino', 'aaaa 123', 1, 5, 71, '666666', 5, 1, 'O-', '2026-03-06 15:46:57', '2026-03-06 15:46:57');
 
 -- --------------------------------------------------------
 
@@ -1811,7 +1827,7 @@ ALTER TABLE `zona_barrio`
 -- AUTO_INCREMENT for table `adjuntos`
 --
 ALTER TABLE `adjuntos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `adjuntos_descargas`
@@ -1829,7 +1845,7 @@ ALTER TABLE `areas`
 -- AUTO_INCREMENT for table `area_user`
 --
 ALTER TABLE `area_user`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `barrio`
@@ -1913,13 +1929,13 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `ive_casos`
 --
 ALTER TABLE `ive_casos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `ive_caso_red`
 --
 ALTER TABLE `ive_caso_red`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `ive_caso_violencia`
@@ -1949,19 +1965,19 @@ ALTER TABLE `localidad`
 -- AUTO_INCREMENT for table `masculinidades_casos`
 --
 ALTER TABLE `masculinidades_casos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `masculinidades_caso_medida`
 --
 ALTER TABLE `masculinidades_caso_medida`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `masculinidades_caso_violencia`
 --
 ALTER TABLE `masculinidades_caso_violencia`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `masculinidades_derivaciones`
@@ -1979,7 +1995,7 @@ ALTER TABLE `masculinidades_grupo_familiar`
 -- AUTO_INCREMENT for table `masculinidades_intervenciones`
 --
 ALTER TABLE `masculinidades_intervenciones`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `masculinidades_tipos_violencia`
@@ -2003,7 +2019,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `niveles_estudio`
 --
 ALTER TABLE `niveles_estudio`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -2015,7 +2031,7 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `personas`
 --
 ALTER TABLE `personas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `programas_asistencia`
