@@ -355,6 +355,7 @@ public function store(Request $request)
     public function update(Request $request, $id)
     {
         $caso = MasculinidadesCaso::findOrFail($id);
+        $caso->fecha_finalizacion = $request->fecha_finalizacion;
 
         $datos = $request->all();
 
@@ -414,5 +415,15 @@ public function store(Request $request)
         return redirect()
             ->route('masculinidades.listado')
             ->with('success', 'Caso actualizado correctamente.');
+    }
+
+    public function destroy(string $id)
+    {
+        $caso = MasculinidadesCaso::findOrFail($id);
+        $caso->delete();
+
+        return redirect()
+            ->route('masculinidades.listado')
+            ->with('success', 'Caso eliminado correctamente');
     }
 }

@@ -214,6 +214,11 @@ class IveCasoController extends Controller
 
     public function destroy(string $id)
     {
-        //
+        $caso = IveCaso::findOrFail($id);
+        $caso->delete();
+
+        return redirect()
+            ->route('frontend.areas.ive.listado')
+            ->with('success', 'Caso eliminado correctamente');
     }
 }

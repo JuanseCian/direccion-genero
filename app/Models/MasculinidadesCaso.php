@@ -34,7 +34,10 @@ class MasculinidadesCaso extends Model
         'reincidencia',
         'asistencia_dispositivo',
         'observaciones',
-        'encargado_id'
+        'encargado_id',
+        'debe_dispositivo',
+        'asistencia_dispositivo',
+        'fecha_fin_dispositivo'
     ];
 
     public function persona()

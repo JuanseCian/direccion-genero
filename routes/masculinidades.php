@@ -13,4 +13,6 @@ Route::prefix('masculinidades')->group(function () {
     Route::get('/edit/{id}', [MasculinidadesCasoController::class, 'edit'])->name('masculinidades.edit');
     Route::put('/update/{id}', [MasculinidadesCasoController::class, 'update'])->name('masculinidades.update');
 
+    route::delete('/destroy/{id}', [MasculinidadesCasoController::class, 'destroy'])->name('masculinidades.destroy');
+
 });

@@ -69,9 +69,40 @@
                                 </div>
                             </td>
                             <td>
-                                <div class="small text-truncate" style="max-width: 200px;" title="{{ $caso->situacion_judicial }}">
-                                    <strong>Judicial:</strong> {{ Str::limit($caso->situacion_judicial, 30) ?? 'Sin datos' }}
-                                </div>
+                                @switch($caso->asistencia_dispositivo)
+
+                                    @case(1)
+                                        <span class="badge bg-success px-3 py-2">
+                                            Regular
+                                        </span>
+                                    @break
+
+                                    @case(2)
+                                        <span class="badge bg-warning text-dark px-3 py-2">
+                                            Irregular
+                                        </span>
+                                    @break
+
+                                    @case(3)
+                                        <span class="badge bg-danger px-3 py-2">
+                                            Abandonó
+                                        </span>
+                                    @break
+
+                                    @case(4)
+                                        <span class="badge bg-primary px-3 py-2">
+                                            Finalizado
+                                        </span>
+                                    @break
+
+                                    @default
+                                        <span class="badge bg-secondary px-3 py-2">
+                                            Sin datos
+                                        </span>
+
+                                @endswitch
+                           
+
                                 <div class="small text-muted">
                                     <strong>Encargado:</strong> {{ $caso->encargado->nombre ?? 'No asignado' }}
                                 </div>
@@ -82,8 +113,9 @@
                                     <a href="{{ route('masculinidades.edit', $caso->id) }}" class="btn btn-sm btn-outline-primary" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form action="#" method="POST" class="d-inline">
-                                        @csrf @method('DELETE')
+                                    <form action="{{ route('masculinidades.destroy', $caso->id) }}" method="POST" class="d-inline">
+                                        @csrf 
+                                        @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Borrar Caso?')">
                                             <i class="bi bi-trash"></i>
                                         </button>

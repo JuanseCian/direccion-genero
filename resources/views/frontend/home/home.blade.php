@@ -108,7 +108,7 @@ $tieneIVE = $esAdmin || $user->areas->contains('nombre','ive');
             <i class="bi bi-people area-icon"></i>
 
             <h4 class="mt-3">
-                Masculinidades
+                Agresores/Masculinidades
             </h4>
 
             <p class="text-muted">

@@ -3,450 +3,483 @@
 @section('title','Editar Caso - Masculinidades')
 
 @section('content')
-<div class="card card-soft p-4 shadow-sm border-0">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0" style="color: #5651A0;">
-            <i class="bi bi-pencil-square"></i>
-            Editar Caso #{{ $caso->id }}
+
+<div class="container-fluid py-4">
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0" style="color:#5651A0;">
+            <i class="bi bi-pencil-square"></i> Editar Caso
         </h2>
-        <div>
-            <button type="button" class="btn btn-info btn-sm text-white shadow-sm" data-bs-toggle="modal" data-bs-target="#modalIntervenciones">
-                <i class="bi bi-chat-right-text me-1"></i> Intervenciones
-            </button>
-            <a href="{{ route('masculinidades.index') }}" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-arrow-left"></i> Volver al listado
-            </a>
-        </div>
+        <p class="text-muted">
+            {{ $caso->persona->apellido }}, {{ $caso->persona->nombre }}
+        </p>
     </div>
 
-    <form action="{{ route('masculinidades.update', $caso->id) }}" method="POST">
-        @csrf
-        @method('PUT')
+    <div>
+        <button type="button"
+                class="btn btn-info btn-sm text-white shadow-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#modalIntervenciones">
 
-        <div class="row g-3">
+            <i class="bi bi-chat-right-text"></i> Intervenciones
+        </button>
 
-            {{-- AGRESOR --}}
-            <h3>Información Agresor</h3>
+        <a href="{{ route('masculinidades.index') }}"
+           class="btn btn-outline-secondary shadow-sm">
 
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Agresor</label>
-                <select name="persona_id" class="form-select" required>
-                    @foreach($agresores as $agresor)
-                        <option value="{{ $agresor->id }}"
-                            {{ $caso->persona_id == $agresor->id ? 'selected' : '' }}>
-                            {{ $agresor->apellido }}, {{ $agresor->nombre }} ({{ $agresor->dni }})
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Encargado/a</label>
-                <select name="encargado_id" class="form-select">
-                    <option value="">Seleccione...</option>
-                    @foreach($encargados as $encargado)
-                        <option value="{{ $encargado->id }}"
-                            {{ $caso->encargado_id == $encargado->id ? 'selected' : '' }}>
-                            {{ $encargado->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Derivación</label>
-                <select name="derivacion_id" class="form-select">
-                    @foreach($derivaciones as $d)
-                        <option value="{{ $d->id }}"
-                            {{ $caso->derivacion_id == $d->id ? 'selected' : '' }}>
-                            {{ $d->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Situación Habitacional</label>
-                <select name="situacion_habitacional_id" class="form-select">
-                    <option value="">Seleccione...</option>
-                    @foreach($situacionesHabitacionales as $sh)
-                        <option value="{{ $sh->id }}"
-                            {{ $caso->situacion_habitacional_id == $sh->id ? 'selected' : '' }}>
-                            {{ $sh->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Espacio Grupal</label>
-                <select name="espacio_grupal_id" class="form-select">
-                    <option value="">Seleccione...</option>
-                    @foreach($espaciosGrupales as $espacio)
-                        <option value="{{ $espacio->id }}"
-                            {{ $caso->espacio_grupal_id == $espacio->id ? 'selected' : '' }}>
-                            {{ $espacio->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            {{-- VIOLENCIA --}}
-            <div class="col-md-12">
-                <label class="form-label fw-bold">Violencia ejercida</label>
-                <div class="row">
-                    @foreach($tipoViolencia as $tipo)
-                        <div class="col-md-4">
-                            <div class="form-check">
-                                <input class="form-check-input"
-                                       type="checkbox"
-                                       name="tipo_violencia_id[]"
-                                       value="{{ $tipo->id }}"
-                                       {{ $caso->tiposViolencia->contains($tipo->id) ? 'checked' : '' }}>
-                                <label class="form-check-label">
-                                    {{ $tipo->nombre }}
-                                </label>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Reincidencia</label>
-                <input type="number" name="reincidencia" class="form-control"
-                       value="{{ $caso->reincidencia }}">
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Asistencia al dispositivo</label>
-                <input type="number" name="asistencia_dispositivo"
-                       class="form-control"
-                       value="{{ $caso->asistencia_dispositivo }}">
-            </div>
-
-            <div class="col-md-12">
-                <label class="form-label fw-bold">Situación Judicial</label>
-                <textarea name="situacion_judicial"
-                          class="form-control"
-                          rows="2">{{ $caso->situacion_judicial }}</textarea>
-            </div>
-            {{-- SECCIÓN: Víctimas Vinculadas --}}
-            <div class="col-md-12 mt-4">
-                <div class="p-3 rounded mb-2" style="background: #f8f9fa;">
-                    <h6 class="fw-bold mb-0 text-muted"><i class="bi bi-people me-2"></i> Personas en Situación de Violencia (Víctimas)</h6>
-                </div>
-            </div>
-            <div class="col-md-12 mt-2">
-                <div class="p-3 rounded mb-3" style="background: #e6f2ff; color: #004085; display: flex; justify-content: space-between; align-items: center;">
-                    <h6 class="fw-bold mb-0"><i class="bi bi-person-heart me-2"></i> Víctimas Vinculadas (Área de Género)</h6>
-                    <button type="button" class="btn btn-sm btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalVictimas">
-                        <i class="bi bi-plus-circle me-1"></i> Vincular Víctima
-                    </button>
-                </div>
-             
-                <div id="lista-victimas" class="row g-3">
-                    @foreach($caso->victimas as $victima)
-                        <div class="col-md-4" id="victima-item-{{ $victima->id }}">
-                            <div class="card border-0 shadow-sm p-2 d-flex flex-row align-items-center justify-content-between" style="background: #f0f8ff;">
-                                <div class="small">
-                                    <a href="{{ route('genero.edit', $victima->id) }}" class="text-decoration-none" target="_blank">
-                                        <span class="fw-bold text-primary">#{{ $victima->id }}</span> - {{ $victima->persona->apellido }}, {{ $victima->persona->nombre }}
-                                        <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.8rem;"></i>
-                                    </a>
-                                    <input type="hidden" name="victimas[]" value="{{ $victima->id }}">
-                                </div>
-                                <button type="button" class="btn btn-link text-danger p-0" onclick="quitarVictima({{ $victima->id }})">
-                                    <i class="bi bi-x-circle-fill"></i>
-                                </button>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- Modal de Víctimas --}}
-            <div class="modal fade" id="modalVictimas" tabindex="-1" aria-labelledby="modalVictimasLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content border-0 shadow">
-                        <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title" id="modalVictimasLabel">Buscar Legajo en Dirección de Género</h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="input-group mb-3">
-                                <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
-                                <input type="text" id="busquedaVictima" class="form-control border-0 bg-light" placeholder="Buscar por Nombre, Apellido o DNI...">
-                            </div>
-                            
-                            <div style="max-height: 400px; overflow-y: auto;">
-                                <table class="table table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Legajo Género</th>
-                                            <th>Nombre Completo</th>
-                                            <th>DNI</th>
-                                            <th>Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tablaResultadosVictimas">
-                                        @foreach($casosGenero as $casoG)
-                                        <tr class="fila-victima">
-                                            <td><strong>#{{ $casoG->id }}</strong></td>
-                                            <td>{{ $casoG->persona->apellido }}, {{ $casoG->persona->nombre }}</td>
-                                            <td>{{ $casoG->persona->dni }}</td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-outline-primary" 
-                                                        onclick="agregarVictima({{ $casoG->id }}, '{{ $casoG->persona->apellido }} {{ $casoG->persona->nombre }}')">
-                                                    Seleccionar
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {{-- CHECKS --}}
-            <div class="col-md-12 mt-3">
-                <div class="card bg-light p-3 border-0">
-                    <div class="row">
-                        @foreach(['trabaja','consumo','desobediencia','terapia'] as $campo)
-                        <div class="col-md-3">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input"
-                                       type="checkbox"
-                                       name="{{ $campo }}"
-                                       value="1"
-                                       {{ $caso->$campo ? 'checked' : '' }}>
-                                <label class="form-check-label text-capitalize">
-                                    {{ $campo }}
-                                </label>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-
-            {{-- RELACIÓN ACTUAL --}}
-            <hr class="my-4">
-
-            <div class="col-md-4">
-                <div class="form-check form-switch">
-                    <input class="form-check-input"
-                           type="checkbox"
-                           name="relacion_actual"
-                           value="1"
-                           id="relacionActualSwitch"
-                           {{ $caso->relacion_actual ? 'checked' : '' }}>
-                    <label class="form-check-label">
-                        ¿Tienen relación actualmente?
-                    </label>
-                </div>
-            </div>
-
-            <div class="col-md-4"
-                 id="tipoRelacionContainer"
-                 style="{{ $caso->relacion_actual ? '' : 'display:none;' }}">
-                <label class="form-label">Descripción de la relación</label>
-                <input type="text"
-                       name="descripcion_relacion"
-                       class="form-control"
-                       value="{{ $caso->descripcion_relacion }}">
-            </div>
-
-            {{-- MEDIDAS --}}
-            <div class="col-md-12">
-                <label class="form-label fw-bold">Medidas Cautelares</label>
-                <div class="row">
-                    @foreach($medidasCautelares as $medida)
-                        <div class="col-md-4">
-                            <div class="form-check">
-                                <input class="form-check-input"
-                                       type="checkbox"
-                                       name="medida_id[]"
-                                       value="{{ $medida->id }}"
-                                       {{ $caso->medidas->contains($medida->id) ? 'checked' : '' }}>
-                                <label class="form-check-label">
-                                    {{ $medida->nombre }}
-                                </label>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- OBSERVACIONES --}}
-            <div class="col-md-12">
-                <label class="form-label fw-bold">Observaciones</label>
-                <textarea name="observaciones"
-                          class="form-control"
-                          rows="3">{{ $caso->observaciones }}</textarea>
-            </div>
-
-        </div>
-
-        <div class="text-end mt-4">
-            <button type="submit"
-                    class="btn text-white px-5 shadow-sm"
-                    style="background: #5651A0;">
-                Actualizar Caso
-            </button>
-        </div>
-    </form>
-</div>
-
-{{-- MODAL INTERVENCIONES MASCULINIDADES --}}
-<div class="modal fade" id="modalIntervenciones" tabindex="-1" aria-labelledby="modalIntervencionesLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header text-white" style="background: #5651A0;">
-                <h5 class="modal-title" id="modalIntervencionesLabel">
-                    <i class="bi bi-journal-text"></i> Intervenciones: {{ $caso->persona->apellido }}, {{ $caso->persona->nombre }}
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            
-            <div class="modal-body p-4">
-                {{-- 1. FORMULARIO NUEVA INTERVENCIÓN --}}
-                <h6 class="fw-bold mb-3 text-success"><i class="bi bi-plus-circle"></i> Cargar Nueva Intervención</h6>
-                
-                <form action="{{ route('masculinidades.intervenciones.store', $caso->id) }}" method="POST" class="mb-5">
-                    @csrf
-                    <div class="row g-3 bg-light p-3 rounded shadow-sm border">
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small">Fecha</label>
-                            <input type="date" name="fecha_intervencion" class="form-control border-0 shadow-sm" required value="{{ date('Y-m-d') }}">
-                        </div>
-                        
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold small">Tipo de Intervención</label>
-                            <select name="tipo_intervencion_id" class="form-select border-0 shadow-sm" required>
-                                <option value="">Seleccione...</option>
-                                @foreach($tiposIntervencion as $tipo)
-                                    <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        
-                        <div class="col-md-5">
-                            <label class="form-label fw-bold small">Profesional a cargo</label>
-                            <select name="encargado_id" class="form-select border-0 shadow-sm" required>
-                                <option value="">Seleccione...</option>
-                                @foreach($encargados as $e)
-                                    <option value="{{ $e->id }}">
-                                        {{ $e->apellido }}, {{ $e->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        
-                        <div class="col-12">
-                            <label class="form-label fw-bold small">Detalle / Evolución</label>
-                            <textarea name="detalle" class="form-control border-0 shadow-sm" rows="3" required placeholder="Escriba el detalle de la intervención aquí..."></textarea>
-                        </div>
-                        
-                        <div class="col-12 text-end mt-3">
-                            <button type="button" class="btn btn-secondary btn-sm me-2" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-success btn-sm shadow-sm px-4">
-                                <i class="bi bi-save"></i> Guardar Intervención
-                            </button>
-                        </div>
-                    </div>
-                </form>
-
-                <hr class="my-4" style="opacity: 0.1;">
-
-                {{-- 2. HISTORIAL --}}
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0 text-muted"><i class="bi bi-clock-history"></i> Historial de Intervenciones</h6>
-                    <span class="badge rounded-pill bg-primary px-3">{{ $caso->intervenciones->count() }} Registros</span>
-                </div>
-
-                <div class="table-responsive shadow-sm rounded">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-dark">
-                            <tr class="small text-uppercase">
-                                <th style="width: 15%;">Fecha</th>
-                                <th style="width: 20%;">Tipo</th>
-                                <th style="width: 20%;">Profesional</th>
-                                <th style="width: 45%;">Detalle</th>
-                            </tr>
-                        </thead>
-                        <tbody class="small">
-                            @forelse($caso->intervenciones as $intervencion)
-                                <tr>
-                                    <td class="text-nowrap fw-bold">{{ \Carbon\Carbon::parse($intervencion->fecha_intervencion)->format('d/m/Y') }}</td>
-                                    <td><span class="badge bg-soft-secondary text-dark border w-100" style="background-color: #f0f0f0;">{{ $intervencion->tipo->nombre ?? 'S/D' }}</span></td>
-                                    <td>{{ $intervencion->encargado->apellido }}, {{ $intervencion->encargado->nombre }}</td>
-                                    <td class="text-wrap">{{ $intervencion->detalle }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted py-4">No hay intervenciones registradas.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+           <i class="bi bi-arrow-left"></i> Volver
+        </a>
     </div>
 </div>
+
+<form action="{{ route('masculinidades.update', $caso->id) }}" method="POST">
+@csrf
+@method('PUT')
+
+
+{{-- IDENTIFICACIÓN --}}
+<div class="card shadow-sm border-0 mb-4">
+
+<div class="card-header bg-white py-3">
+<h5 class="mb-0 text-primary">
+<i class="bi bi-person-badge me-2"></i>
+1. Identificación del Agresor y Responsables
+</h5>
+</div>
+
+<div class="card-body">
+
+<div class="row g-3">
+
+<div class="col-md-6">
+<label class="form-label fw-bold text-secondary">Agresor</label>
+
+<select name="persona_id" class="form-select" disabled>
+@foreach($agresores as $agresor)
+<option value="{{ $agresor->id }}"
+{{ $caso->persona_id == $agresor->id ? 'selected' : '' }}>
+{{ $agresor->apellido }}, {{ $agresor->nombre }} ({{ $agresor->dni }})
+</option>
+@endforeach
+</select>
+</div>
+
+<div class="col-md-6">
+<label class="form-label fw-bold text-secondary">Encargado/a</label>
+
+<select name="encargado_id" class="form-select border-primary-subtle">
+<option value="">Seleccione...</option>
+
+@foreach($encargados as $encargado)
+<option value="{{ $encargado->id }}"
+{{ $caso->encargado_id == $encargado->id ? 'selected' : '' }}>
+{{ $encargado->nombre }}
+</option>
+@endforeach
+
+</select>
+</div>
+
+</div>
+</div>
+</div>
+
+
+
+{{-- CONTEXTO --}}
+<div class="card shadow-sm border-0 mb-4">
+
+<div class="card-header bg-white py-3">
+<h5 class="mb-0 text-primary">
+<i class="bi bi-journal-text me-2"></i>
+2. Contexto del Caso
+</h5>
+</div>
+
+<div class="card-body bg-light-subtle">
+
+<div class="row g-3">
+
+<div class="col-md-4">
+<label class="form-label fw-bold">Derivación</label>
+
+<select name="derivacion_id" class="form-select">
+@foreach($derivaciones as $d)
+<option value="{{ $d->id }}"
+{{ $caso->derivacion_id == $d->id ? 'selected' : '' }}>
+{{ $d->nombre }}
+</option>
+@endforeach
+</select>
+</div>
+
+
+<div class="col-md-4">
+<label class="form-label fw-bold">Situación Habitacional</label>
+
+<select name="situacion_habitacional_id" class="form-select">
+
+<option value="">Seleccione...</option>
+
+@foreach($situacionesHabitacionales as $sh)
+<option value="{{ $sh->id }}"
+{{ $caso->situacion_habitacional_id == $sh->id ? 'selected' : '' }}>
+{{ $sh->nombre }}
+</option>
+@endforeach
+
+</select>
+</div>
+
+
+<div class="col-md-4">
+<label class="form-label fw-bold">Espacio Grupal</label>
+
+<select name="espacio_grupal_id" class="form-select">
+
+<option value="">Seleccione...</option>
+
+@foreach($espaciosGrupales as $espacio)
+<option value="{{ $espacio->id }}"
+{{ $caso->espacio_grupal_id == $espacio->id ? 'selected' : '' }}>
+{{ $espacio->nombre }}
+</option>
+@endforeach
+
+</select>
+</div>
+
+
+
+{{-- VIOLENCIA --}}
+<div class="col-md-12 my-3">
+
+<div class="p-3 border rounded bg-white">
+
+<label class="form-label fw-bold text-danger">
+<i class="bi bi-exclamation-triangle"></i>
+Tipos de Violencia Ejercida
+</label>
+
+<div class="row">
+
+@foreach($tipoViolencia as $tipo)
+
+<div class="col-md-3">
+
+<div class="form-check">
+
+<input class="form-check-input"
+type="checkbox"
+name="tipo_violencia_id[]"
+value="{{ $tipo->id }}"
+{{ $caso->tiposViolencia->contains($tipo->id) ? 'checked' : '' }}>
+
+<label class="form-check-label">
+{{ $tipo->nombre }}
+</label>
+
+</div>
+</div>
+
+@endforeach
+
+</div>
+</div>
+</div>
+
+
+<div class="col-md-4">
+<label class="form-label fw-bold">Reincidencia</label>
+
+<input type="number"
+name="reincidencia"
+class="form-control"
+value="{{ $caso->reincidencia }}">
+</div>
+
+
+
+<div class="col-md-4">
+
+<label class="form-label fw-bold">¿Debe realizar el dispositivo?</label>
+
+<select name="debe_dispositivo"
+id="debeDispositivo"
+class="form-select">
+
+<option value="">Seleccione...</option>
+
+<option value="1"
+{{ $caso->debe_dispositivo == 1 ? 'selected' : '' }}>
+Sí
+</option>
+
+<option value="0"
+{{ $caso->debe_dispositivo == 0 ? 'selected' : '' }}>
+No
+</option>
+
+</select>
+
+</div>
+
+
+<div id="camposDispositivo" class="row">
+
+<div class="col-md-4">
+
+<label class="form-label fw-bold">
+Asistencia al dispositivo
+</label>
+
+<select name="asistencia_dispositivo" class="form-select">
+
+<option value="">Seleccione...</option>
+
+<option value="1"
+{{ $caso->asistencia_dispositivo == 1 ? 'selected' : '' }}>
+Asistencia regular
+</option>
+
+<option value="2"
+{{ $caso->asistencia_dispositivo == 2 ? 'selected' : '' }}>
+Asistencia irregular
+</option>
+
+<option value="3"
+{{ $caso->asistencia_dispositivo == 3 ? 'selected' : '' }}>
+Abandonó
+</option>
+
+<option value="4"
+{{ $caso->asistencia_dispositivo == 4 ? 'selected' : '' }}>
+Finalizado
+</option>
+
+</select>
+
+</div>
+
+
+<div class="col-md-4">
+
+<label class="form-label fw-bold">
+Fecha de Finalización
+</label>
+
+<input type="date"
+name="fecha_finalizacion"
+class="form-control"
+value="{{ $caso->fecha_finalizacion ?? '' }}">
+
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+
+
+{{-- VICTIMAS --}}
+<div class="card shadow-sm border-0 mb-4 border-start border-4 border-danger">
+
+<div class="card-header bg-white py-3">
+
+<h5 class="mb-0 text-danger">
+<i class="bi bi-shield-exclamation me-2"></i>
+3. Información de la Víctima
+</h5>
+
+</div>
+
+<div class="card-body">
+
+<div class="row g-3">
+
+<div class="col-md-12 mt-2">
+
+<div class="p-3 rounded mb-3"
+style="background:#e6f2ff;color:#004085;display:flex;justify-content:space-between;align-items:center;">
+
+<h6 class="fw-bold mb-0">
+<i class="bi bi-person-heart me-2"></i>
+Víctimas Vinculadas
+</h6>
+
+<button type="button"
+class="btn btn-sm btn-primary shadow-sm"
+data-bs-toggle="modal"
+data-bs-target="#modalVictimas">
+
+<i class="bi bi-plus-circle me-1"></i>
+Vincular Víctima
+
+</button>
+
+</div>
+
+
+<div id="lista-victimas" class="row g-3">
+
+@foreach($caso->victimas as $victima)
+
+<div class="col-md-4"
+id="victima-item-{{ $victima->id }}">
+
+<div class="card border-0 shadow-sm p-2 d-flex flex-row align-items-center justify-content-between"
+style="background:#f0f8ff;">
+
+<div class="small">
+
+<a href="{{ route('genero.edit',$victima->id) }}"
+class="text-decoration-none"
+target="_blank">
+
+<span class="fw-bold text-primary">
+#{{ $victima->id }}
+</span>
+
+{{ $victima->persona->apellido }},
+{{ $victima->persona->nombre }}
+
+<i class="bi bi-box-arrow-up-right ms-1"></i>
+
+</a>
+
+<input type="hidden"
+name="victimas[]"
+value="{{ $victima->id }}">
+
+</div>
+
+<button type="button"
+class="btn btn-link text-danger p-0"
+onclick="quitarVictima({{ $victima->id }})">
+
+<i class="bi bi-x-circle-fill"></i>
+
+</button>
+
+</div>
+</div>
+
+@endforeach
+
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+{{-- FINAL --}}
+<div class="card shadow-sm border-0 mb-5">
+
+<div class="card-body">
+
+<div class="row g-3">
+
+<div class="col-md-6">
+
+<label class="form-label fw-bold text-secondary">
+Situación Judicial
+</label>
+
+<textarea name="situacion_judicial"
+class="form-control"
+rows="3">{{ $caso->situacion_judicial }}</textarea>
+
+</div>
+
+
+<div class="col-md-6">
+
+<label class="form-label fw-bold text-secondary">
+Observaciones
+</label>
+
+<textarea name="observaciones"
+class="form-control"
+rows="3">{{ $caso->observaciones }}</textarea>
+
+</div>
+
+</div>
+</div>
+
+
+<div class="card-footer bg-light text-end py-3">
+
+<button type="submit"
+class="btn btn-lg text-white px-5 shadow-sm"
+style="background:#5651A0">
+
+<i class="bi bi-save-fill me-2"></i>
+ACTUALIZAR CASO
+
+</button>
+
+</div>
+</div>
+
+</form>
+</div>
+
+
+
+<style>
+
+.card{
+border-radius:12px;
+transition:0.3s;
+}
+
+.form-label{
+font-size:0.9rem;
+}
+
+.form-control:focus,
+.form-select:focus{
+border-color:#5651A0;
+box-shadow:0 0 0 0.2rem rgba(86,81,160,0.25);
+}
+
+.bg-light-subtle{
+background:#f8f9fa;
+}
+
+.border-primary-subtle{
+border-color:#5651a055 !important;
+}
+
+</style>
+
 
 <script>
-// Buscador en tiempo real dentro del modal de víctimas
-document.getElementById('busquedaVictima').addEventListener('keyup', function() {
-    let filtro = this.value.toLowerCase();
-    let filas = document.querySelectorAll('#tablaResultadosVictimas .fila-victima');
-    
-    filas.forEach(fila => {
-        let texto = fila.innerText.toLowerCase();
-        fila.style.display = texto.includes(filtro) ? '' : 'none';
-    });
-});
 
-const urlBaseGenero = "{{ route('genero.edit', ':id') }}";
+function toggleDispositivo(){
 
-// Función para agregar la víctima a la lista visual
-function agregarVictima(id, nombre) {
-    if (document.getElementById('victima-item-' + id)) {
-        alert('Esta víctima ya ha sido seleccionada.');
-        return;
-    }
-    
-    const urlLegajo = urlBaseGenero.replace(':id', id);
+let valor=document.getElementById('debeDispositivo').value
+let bloque=document.getElementById('camposDispositivo')
 
-    const lista = document.getElementById('lista-victimas');
-    const html = `
-        <div class="col-md-4" id="victima-item-${id}">
-            <div class="card border-0 shadow-sm p-2 d-flex flex-row align-items-center justify-content-between" style="background: #f0f8ff;">
-                <div class="small">
-                    <a href="${urlLegajo}" class="text-decoration-none" target="_blank">
-                        <span class="fw-bold text-primary">#${id}</span> - ${nombre}
-                        <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.8rem;"></i>
-                    </a>
-                    <input type="hidden" name="victimas[]" value="${id}">
-                </div>
-                <button type="button" class="btn btn-link text-danger p-0" onclick="quitarVictima(${id})">
-                    <i class="bi bi-x-circle-fill"></i>
-                </button>
-            </div>
-        </div>
-    `;
-    lista.insertAdjacentHTML('beforeend', html);
+if(valor==1){
+bloque.style.display='flex'
+}else{
+bloque.style.display='none'
 }
 
-// Función para quitar de la lista
-function quitarVictima(id) {
-    const elemento = document.getElementById('victima-item-' + id);
-    if (elemento) {
-        elemento.remove();
-    }
 }
+
+document.getElementById('debeDispositivo').addEventListener('change',toggleDispositivo)
+
+window.addEventListener('load',toggleDispositivo)
+
 </script>
+
 @endsection
