@@ -245,6 +245,8 @@
     </div>
 </div>
 
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Lógica para mostrar/ocultar tipos de violencia
@@ -287,5 +289,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
 </script>
 @endsection

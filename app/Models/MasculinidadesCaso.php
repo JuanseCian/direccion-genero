@@ -19,6 +19,7 @@ class MasculinidadesCaso extends Model
         'situacion_habitacional_id',
         'nivel_estudio_id',
         'trabaja',
+        'detalle_trabajo',
         'red_contencion',
         'situacion_sanitaria_id',
         'realiza_tratamiento',
@@ -83,11 +84,18 @@ class MasculinidadesCaso extends Model
     public function victimas()
     {
         return $this->belongsToMany(
-            DireccionGeneroCaso::class, 
-            'vinculos_casos', 
-            'masculinidad_caso_id', 
+            DireccionGeneroCaso::class,
+            'vinculos_casos',
+            'masculinidad_caso_id',
             'genero_caso_id'
-        )->withPivot('hijos_en_comun', 'relacion_actual', 'descripcion_relacion', 'tipo_vinculo', 'observaciones');
+        )->withPivot([
+            'hijos_en_comun',
+            'relacion_actual',
+            'descripcion_relacion',
+            'tipo_vinculo',
+            'observaciones',
+            'fecha_vinculacion'
+        ]);
     }
 
     public function intervenciones() {
@@ -95,8 +103,8 @@ class MasculinidadesCaso extends Model
                     ->orderBy('fecha_intervencion', 'desc');
     }
     public function adjuntos()
-{
-    return $this->hasMany(Adjunto::class, 'entidad_id')
-        ->where('entidad_tipo', 'masculinidades');
-}
+    {
+        return $this->hasMany(Adjunto::class, 'entidad_id')
+            ->where('entidad_tipo', 'masculinidades');
+    }
 }

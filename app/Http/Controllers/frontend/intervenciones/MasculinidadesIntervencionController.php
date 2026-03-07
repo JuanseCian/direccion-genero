@@ -13,7 +13,7 @@ class MasculinidadesIntervencionController extends Controller
         $request->validate([
             'fecha_intervencion' => 'required|date',
             'tipo_intervencion_id' => 'required|exists:tipos_intervencion,id',
-            'encargado_id' => 'required|exists:personas,id',
+            'encargado_id' => 'required|exists:encargados,id',
             'detalle' => 'required|string',
         ]);
 

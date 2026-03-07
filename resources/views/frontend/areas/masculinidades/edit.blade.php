@@ -159,6 +159,87 @@
                             <input type="date" name="fecha_finalizacion" class="form-control" value="{{ $caso->fecha_finalizacion }}">
                         </div>
                     </div>
+
+                    {{-- COMPORTAMIENTOS Y CONDICIONES --}}
+                    <div class="col-md-12 mt-3">
+                        <label class="form-label fw-bold text-secondary text-uppercase small">
+                            Comportamientos y Condiciones
+                        </label>
+
+                        <div class="row g-2 p-3 rounded border bg-white shadow-sm">
+
+                            {{-- TRABAJA --}}
+                            <div class="col-md-4 border-end">
+                                <div class="text-center">
+                                    <div class="form-check form-switch d-inline-block">
+                                        <input class="form-check-input"
+                                            type="checkbox"
+                                            name="trabaja"
+                                            value="1"
+                                            id="trabajaSwitch"
+                                            {{ $caso->trabaja ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-bold">
+                                            ¿Trabaja?
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div id="detalleTrabajoContainer"
+                                    class="mt-2 px-2"
+                                    style="{{ $caso->trabaja ? '' : 'display:none;' }}">
+
+                                    <input type="text"
+                                        name="detalle_trabajo"
+                                        class="form-control form-control-sm"
+                                        placeholder="¿Dónde o de qué trabaja?"
+                                        value="{{ $caso->detalle_trabajo }}">
+                                </div>
+                            </div>
+
+                            {{-- CONSUMO --}}
+                            <div class="col-md-4 border-end text-center">
+                                <div class="form-check form-switch d-inline-block">
+                                    <input class="form-check-input"
+                                        type="checkbox"
+                                        name="consumo"
+                                        value="1"
+                                        {{ $caso->consumo ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-bold text-warning">
+                                        ¿Consumo?
+                                    </label>
+                                </div>
+                            </div>
+
+                            {{-- TERAPIA --}}
+                            <div class="col-md-4 text-center">
+                                <div class="form-check form-switch d-inline-block">
+                                    <input class="form-check-input"
+                                        type="checkbox"
+                                        name="terapia"
+                                        value="1"
+                                        {{ $caso->terapia ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-bold text-success">
+                                        ¿En Terapia?
+                                    </label>
+                                </div>
+                            </div>
+
+                            {{-- DESOBEDIENCIA --}}
+                            <div class="col-12 border-top mt-2 pt-2 text-center">
+                                <div class="form-check form-switch d-inline-block">
+                                    <input class="form-check-input"
+                                        type="checkbox"
+                                        name="desobediencia"
+                                        value="1"
+                                        {{ $caso->desobediencia ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-bold text-danger">
+                                        ¿Desobediencia?
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -355,6 +436,169 @@
         </div>
     </div>
 </div>
+{{-- MODAL INTERVENCIONES --}}
+<div class="modal fade" id="modalIntervenciones" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header text-white" style="background:#5651A0;">
+                <h5 class="modal-title">
+                    <i class="bi bi-journal-text"></i>
+                    Intervenciones: {{ $caso->persona->apellido }}, {{ $caso->persona->nombre }}
+                </h5>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <div class="modal-body p-4">
+
+                {{-- NUEVA INTERVENCIÓN --}}
+                <h6 class="fw-bold mb-3 text-success">
+                    <i class="bi bi-plus-circle"></i> Cargar Nueva Intervención
+                </h6>
+
+                <form action="{{ route('masculinidades.intervenciones.store', $caso->id) }}" method="POST">
+                    @csrf
+
+                    <div class="row g-3 bg-light p-3 rounded shadow-sm border">
+
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold small">Fecha</label>
+                            <input type="date"
+                                   name="fecha_intervencion"
+                                   class="form-control"
+                                   value="{{ date('Y-m-d') }}"
+                                   required>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold small">Tipo de Intervención</label>
+
+                            <select name="tipo_intervencion_id" class="form-select" required>
+                                <option value="">Seleccione...</option>
+
+                                @foreach($tiposIntervencion as $tipo)
+                                    <option value="{{ $tipo->id }}">
+                                        {{ $tipo->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-5">
+                            <label class="form-label fw-bold small">Profesional</label>
+
+                            <select name="encargado_id" class="form-select" required>
+                                <option value="">Seleccione...</option>
+
+                                @foreach($encargados as $encargado)
+                                    <option value="{{ $encargado->id }}">
+                                        {{ $encargado->apellido }}, {{ $encargado->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold small">Detalle / Evolución</label>
+
+                            <textarea name="detalle"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Detalle de la intervención..."
+                                      required></textarea>
+                        </div>
+
+                        <div class="col-12 text-end mt-3">
+                            <button type="button"
+                                    class="btn btn-secondary btn-sm me-2"
+                                    data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+
+                            <button type="submit"
+                                    class="btn btn-success btn-sm px-4">
+                                <i class="bi bi-save"></i> Guardar
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+
+                <hr class="my-4" style="opacity:0.1;">
+
+                {{-- HISTORIAL --}}
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold text-muted mb-0">
+                        <i class="bi bi-clock-history"></i> Historial de Intervenciones
+                    </h6>
+
+                    <span class="badge bg-primary">
+                        {{ $caso->intervenciones->count() }} Registros
+                    </span>
+                </div>
+
+                <div class="table-responsive shadow-sm rounded">
+
+                    <table class="table table-hover mb-0">
+
+                        <thead class="table-dark">
+                            <tr class="small text-uppercase">
+                                <th style="width:15%">Fecha</th>
+                                <th style="width:20%">Tipo</th>
+                                <th style="width:20%">Profesional</th>
+                                <th style="width:45%">Detalle</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="small">
+
+                            @forelse($caso->intervenciones as $intervencion)
+
+                                <tr>
+
+                                    <td class="fw-bold">
+                                        {{ \Carbon\Carbon::parse($intervencion->fecha_intervencion)->format('d/m/Y') }}
+                                    </td>
+
+                                    <td>
+                                        {{ $intervencion->tipo->nombre ?? 'S/D' }}
+                                    </td>
+
+                                    <td>
+                                        {{ $intervencion->encargado->apellido }},
+                                        {{ $intervencion->encargado->nombre }}
+                                    </td>
+
+                                    <td>
+                                        {{ $intervencion->detalle }}
+                                    </td>
+
+                                </tr>
+
+                            @empty
+
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        No hay intervenciones registradas
+                                    </td>
+                                </tr>
+
+                            @endforelse
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
     .card { border-radius:12px; transition:0.3s; }
@@ -503,6 +747,21 @@ function agregarFamiliar() {
     container.insertAdjacentHTML('beforeend', html);
     index++;
 }
+
+// Lógica Trabaja
+const trabajaSwitch = document.getElementById('trabajaSwitch');
+const detalleTrabajoContainer = document.getElementById('detalleTrabajoContainer');
+
+function toggleTrabajo(){
+    if(trabajaSwitch.checked){
+        detalleTrabajoContainer.style.display = 'block';
+    }else{
+        detalleTrabajoContainer.style.display = 'none';
+    }
+}
+
+trabajaSwitch?.addEventListener('change', toggleTrabajo);
+window.addEventListener('load', toggleTrabajo);
 </script>
 
 

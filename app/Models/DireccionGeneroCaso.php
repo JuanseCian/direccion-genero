@@ -79,11 +79,18 @@ class DireccionGeneroCaso extends Model
     public function agresores()
     {
         return $this->belongsToMany(
-            \App\Models\MasculinidadesCaso::class, 
-            'vinculos_casos',                  
-            'genero_caso_id',                   
-            'masculinidad_caso_id'               
-        )->withPivot('tipo_vinculo');            
+            \App\Models\MasculinidadesCaso::class,
+            'vinculos_casos',
+            'genero_caso_id',
+            'masculinidad_caso_id'
+        )->withPivot([
+            'hijos_en_comun',
+            'relacion_actual',
+            'descripcion_relacion',
+            'tipo_vinculo',
+            'observaciones',
+            'fecha_vinculacion'
+        ]);
     }
 
     public function intervenciones()

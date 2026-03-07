@@ -3,223 +3,272 @@
 @section('title', 'Nuevo Legajo de Género')
 
 @section('content')
-<div class="container py-4">
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-            <h3 class="mb-0" style="color: #5651A0; font-weight: 700;">
-                <i class="bi bi-file-earmark-plus-fill me-2"></i>Nuevo Legajo: Área Género
-            </h3>
-            <a href="{{ route('genero.index') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-                <i class="bi bi-arrow-left"></i> Volver
-            </a>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<div class="container-fluid py-4">
+    {{-- ENCABEZADO ESTILO MASCULINIDADES --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #5651A0;">
+                <i class="bi bi-file-earmark-plus-fill"></i> Nuevo Legajo: Área Género
+            </h2>
+            <p class="text-muted">Módulo de Género - Registro y Seguimiento</p>
+        </div>
+        <a href="{{ route('genero.index') }}" class="btn btn-outline-secondary shadow-sm">
+            <i class="bi bi-arrow-left"></i> Volver al Listado
+        </a>
+    </div>
+
+    <form action="{{ route('genero.store') }}" method="POST">
+        @csrf
+
+        {{-- Alerta IVE --}}
+        <div id="alerta-vinculacion" class="alert alert-warning border-0 shadow-sm mb-4 d-none animate__animated animate__fadeIn">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-person-exclamation me-3 fs-3"></i>
+                <div>
+                    <strong>Atención: Legajo en IVE Detectado</strong><br>
+                    Esta persona ya posee un registro activo en la <strong>Dirección de IVE</strong>.
+                </div>
+            </div>
         </div>
 
-        <div class="card-body p-4">
-            <form action="{{ route('genero.store') }}" method="POST">
-                @csrf
+        {{-- 1. IDENTIFICACIÓN Y UBICACIÓN --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-person-badge me-2"></i>1. Identificación y Ubicación</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold text-secondary">Persona <span class="text-danger">*</span></label>
+                        <select name="persona_id" id="persona_id" class="form-select @error('persona_id') is-invalid @enderror" required>
+                            <option value="">Seleccione una persona...</option>
+                            @foreach($personas as $persona)
+                                <option value="{{ $persona->id }}"
+                                    data-provincia="{{ $persona->provincia_id }}"
+                                    data-localidad="{{ $persona->localidad_id }}"
+                                    data-barrio="{{ $persona->barrio_id }}"
+                                    data-nivel="{{ $persona->nivel_estudio_id }}"
+                                    data-trabaja="{{ $persona->trabaja }}"
+                                    data-vinculada="{{ in_array($persona->id, $idsIve) ? 'true' : 'false' }}">
+                                    {{ $persona->apellido }}, {{ $persona->nombre }} (DNI {{ $persona->dni }})
+                                    {{ in_array($persona->id, $idsIve) ? ' ⚠️' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="genero" class="form-label fw-bold text-secondary">Género autopercibido</label>
+                        <input type="text" name="genero" id="genero" class="form-control" placeholder="Ej: Mujer Trans, No binario">
+                    </div>
 
-                {{-- SECCIÓN: IDENTIFICACIÓN --}}
-                <div class="mb-5">
-                    <h5 class="section-title">
-                        <i class="bi bi-person-badge me-2"></i>Identificación
-                    </h5>
-                    <div class="row g-3">
-                            <div id="alerta-vinculacion" class="alert alert-warning border-0 shadow-sm mb-3 d-none animate__animated animate__fadeIn">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-person-exclamation me-3 fs-3"></i>
-                                    <div>
-                                        <strong>Atención: Legajo en IVE Detectado</strong><br>
-                                        Esta persona ya posee un registro activo en la <strong>Dirección de IVE</strong>. 
-                                        Se recomienda realizar un abordaje integral entre ambas áreas.
-                                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Provincia</label>
+                        <select name="provincia_id" id="provincia_id" class="form-select">
+                            <option value="">Seleccione...</option>
+                            @foreach($provincias as $provincia)
+                                <option value="{{ $provincia->id }}">{{ $provincia->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Localidad</label>
+                        <select name="localidad_id" id="localidad_id" class="form-select">
+                            <option value="">Seleccione...</option>
+                            @foreach($localidades as $localidad)
+                                <option value="{{ $localidad->id }}">{{ $localidad->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Barrio</label>
+                        <select name="barrio_id" id="barrio_id" class="form-select">
+                            <option value="">Seleccione...</option>
+                            @foreach($barrios as $barrio)
+                                <option value="{{ $barrio->id }}">{{ $barrio->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- 2. SITUACIÓN SOCIO-EDUCATIVA Y ORGANIZACIÓN --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-info-circle me-2"></i>2. Situación Socio-Educativa y Organización</h5>
+            </div>
+            <div class="card-body bg-light-subtle">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Estado Civil</label>
+                        <select name="estado_civil_id" id="estado_civil_id" class="form-select">
+                            <option value="">Seleccione...</option>
+                            @foreach($estados_civiles as $estado)
+                                <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Nivel de Estudio</label>
+                        <select name="nivel_estudio_id" id="nivel_estudio_id" class="form-select">
+                            <option value="">Seleccione...</option>
+                            @foreach($niveles_estudio as $nivel)
+                                <option value="{{ $nivel->id }}">{{ $nivel->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-secondary">¿Trabaja actualmente?</label>
+                        <select name="trabaja" id="trabaja" class="form-select border-primary-subtle">
+                            <option value="0">No</option>
+                            <option value="1">Sí</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12 my-3">
+                        <div class="p-3 border rounded bg-white shadow-sm">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold text-secondary">¿Participa en organización social?</label>
+                                    <select name="organizacion_social" id="organizacion_social" class="form-select border-info">
+                                        <option value="0">No</option>
+                                        <option value="1">Sí</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label fw-bold text-secondary">Detalle de la organización</label>
+                                    <input type="text" name="organizacion_social_detalle" class="form-control" placeholder="Nombre de la institución o agrupación">
                                 </div>
                             </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Persona</label>
-                                <select name="persona_id" id="persona_id" class="form-select shadow-sm @error('persona_id') is-invalid @enderror" required>
-                                    <option value="" selected disabled>Seleccione una persona...</option>
-                                    @foreach($personas as $persona)
-<option value="{{ $persona->id }}"
-    data-provincia="{{ $persona->provincia_id }}"
-    data-localidad="{{ $persona->localidad_id }}"
-    data-barrio="{{ $persona->barrio_id }}"
-    data-nivel="{{ $persona->nivel_estudio_id }}"
-    data-trabaja="{{ $persona->trabaja }}"
-    data-vinculada="{{ in_array($persona->id, $idsIve) ? 'true' : 'false' }}">
-    
-    {{ $persona->apellido }}, {{ $persona->nombre }} (DNI {{ $persona->dni }})
-    {{ in_array($persona->id, $idsIve) ? ' ⚠️' : '' }}
-</option>
-@endforeach
-                                </select>
-                            </div>
-                        <div class="col-md-6">
-                            <label for="genero" class="form-label fw-bold text-secondary">Género autopercibido</label>
-                            <input type="text" name="genero" id="genero" class="form-control shadow-sm" placeholder="Ej: Mujer Trans, No binario, etc.">
                         </div>
                     </div>
                 </div>
-
-                {{-- SECCIÓN: UBICACIÓN --}}
-                <div class="mb-5 p-3 rounded-3" style="background-color: #f8f9fa;">
-                    <h5 class="section-title">
-                        <i class="bi bi-geo-alt me-2"></i>Ubicación
-                    </h5>
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label for="provincia_id" class="form-label fw-bold text-secondary">Provincia</label>
-                            <select name="provincia_id" id="provincia_id" class="form-select shadow-sm">
-                                <option value="">Seleccione...</option>
-                                @foreach($provincias as $provincia)
-                                    <option value="{{ $provincia->id }}">{{ $provincia->nombre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="localidad_id" class="form-label fw-bold text-secondary">Localidad</label>
-                            <select name="localidad_id" id="localidad_id" class="form-select shadow-sm">
-                                <option value="">Seleccione...</option>
-                                @foreach($localidades as $localidad)
-                                    <option value="{{ $localidad->id }}">{{ $localidad->nombre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="barrio_id" class="form-label fw-bold text-secondary">Barrio</label>
-                            <select name="barrio_id" id="barrio_id" class="form-select shadow-sm">
-                                <option value="">Seleccione...</option>
-                                @foreach($barrios as $barrio)
-                                    <option value="{{ $barrio->id }}">{{ $barrio->nombre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- SECCIÓN: SITUACIÓN --}}
-                <div class="mb-5">
-                    <h5 class="section-title">
-                        <i class="bi bi-info-circle me-2"></i>Situación Socio-Educativa
-                    </h5>
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label for="estado_civil_id" class="form-label fw-bold text-secondary">Estado Civil</label>
-                            <select name="estado_civil_id" id="estado_civil_id" class="form-select shadow-sm">
-                                <option value="">Seleccione...</option>
-                                @foreach($estados_civiles as $estado)
-                                    <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="nivel_estudio_id" class="form-label fw-bold text-secondary">Nivel de Estudio</label>
-                            <select name="nivel_estudio_id" id="nivel_estudio_id" class="form-select shadow-sm">
-                                <option value="">Seleccione...</option>
-                                @foreach($niveles_estudio as $nivel)
-                                    <option value="{{ $nivel->id }}">{{ $nivel->nombre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="trabaja" class="form-label fw-bold text-secondary">¿Trabaja actualmente?</label>
-                            <select name="trabaja" id="trabaja" class="form-select shadow-sm">
-                                <option value="0">No</option>
-                                <option value="1">Sí</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- SECCIÓN: ORGANIZACIÓN --}}
-                <div class="mb-5">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-4">
-                            <label for="organizacion_social" class="form-label fw-bold text-secondary">¿Participa en organización social?</label>
-                            <select name="organizacion_social" id="organizacion_social" class="form-select shadow-sm">
-                                <option value="0">No</option>
-                                <option value="1">Sí</option>
-                            </select>
-                        </div>
-                        <div class="col-md-8">
-                            <label for="organizacion_social_detalle" class="form-label fw-bold text-secondary">Detalle de la organización</label>
-                            <input type="text" name="organizacion_social_detalle" id="organizacion_social_detalle" class="form-control shadow-sm" placeholder="Nombre de la institución o agrupación">
-                        </div>
-                    </div>
-                </div>
-                {{-- ENCARGADO DEL CASO --}}
-                <div class="mb-3">
-                    <label>Encargado</label>
-                    <select name="encargado_id" class="form-control">
-                        <option value="">Seleccionar Encargado</option>
-                        @foreach($encargados as $encargado)
-                        <option value="{{ $encargado->id }}"> {{ $encargado->apellido }} {{ $encargado->nombre }} </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                {{-- OBSERVACIONES --}}
-                <div class="mb-4">
-                    <label for="observaciones" class="form-label fw-bold text-secondary">Observaciones adicionales</label>
-                    <textarea name="observaciones" id="observaciones" class="form-control shadow-sm" rows="3" placeholder="Notas importantes sobre el legajo..."></textarea>
-                </div>
-
-                <div class="text-end border-top pt-4">
-                    <button type="reset" class="btn btn-light px-4 me-2">Limpiar</button>
-                    <button type="submit" class="btn text-white px-5 shadow-sm" style="background-color: #5651A0;">
-                        <i class="bi bi-check-circle me-2"></i>Guardar Legajo
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
+
+        {{-- 3. GRUPO CONVIVIENTE (ESTILO MASCULINIDADES) --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-people me-2"></i>3. Grupo Conviviente</h5>
+                <button type="button" class="btn btn-sm btn-primary" onclick="agregarFamiliar()">
+                    <i class="bi bi-plus-circle"></i> Añadir Integrante
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="grupoFamiliarContainer">
+                    <p id="msgVacio" class="text-muted small text-center italic py-2">No hay integrantes registrados en este formulario.</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- 4. RESPONSABLE Y OBSERVACIONES --}}
+        <div class="card shadow-sm border-0 mb-5">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-person-check me-2"></i>4. Responsable y Cierre</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary">Profesional a Cargo</label>
+                        <select name="encargado_id" class="form-select border-primary-subtle">
+                            <option value="">Seleccione encargado...</option>
+                            @foreach($encargados as $encargado)
+                                <option value="{{ $encargado->id }}">{{ $encargado->apellido }} {{ $encargado->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary">Observaciones Adicionales</label>
+                        <textarea name="observaciones" class="form-control" rows="2" placeholder="Notas importantes..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-light text-end py-3">
+                <button type="submit" class="btn btn-lg text-white px-5 shadow-sm" style="background: #5651A0;">
+                    <i class="bi bi-save-fill me-2"></i> FINALIZAR Y GUARDAR LEGAJO
+                </button>
+            </div>
+        </div>
+    </form>
 </div>
 
 <style>
-    /* Estilos extra para pulir el diseño */
-    .section-title {
-        color: #5651A0;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        border-bottom: 2px solid #5651a021;
-        display: inline-block;
-        padding-bottom: 5px;
-    }
-    .form-control:focus, .form-select:focus {
-        border-color: #5651A0;
-        box-shadow: 0 0 0 0.25rem rgba(86, 81, 160, 0.25);
-    }
-    .card {
-        border-radius: 15px;
+    .card { border-radius: 12px; }
+    .form-control:focus, .form-select:focus { 
+        border-color: #5651A0; 
+        box-shadow: 0 0 0 0.2rem rgba(86, 81, 160, 0.25); 
     }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-
-    const selectPersona = document.getElementById('persona_id');
-    const alerta = document.getElementById('alerta-vinculacion');
-
-    selectPersona.addEventListener('change', function() {
-
-        const selectedOption = this.options[this.selectedIndex];
-
-        // Mostrar alerta IVE
-        if (selectedOption.dataset.vinculada === 'true') {
-            alerta.classList.remove('d-none');
-        } else {
-            alerta.classList.add('d-none');
-        }
-
-        // Autocompletar datos
-        document.getElementById('provincia_id').value = selectedOption.dataset.provincia || '';
-        document.getElementById('localidad_id').value = selectedOption.dataset.localidad || '';
-        document.getElementById('barrio_id').value = selectedOption.dataset.barrio || '';
-        document.getElementById('nivel_estudio_id').value = selectedOption.dataset.nivel || '';
-        document.getElementById('trabaja').value = selectedOption.dataset.trabaja ?? 0;
-
+$(document).ready(function() {
+    // Inicializar Select2 con el tema de Masculinidades
+    $('#persona_id').select2({
+        theme: 'bootstrap-5',
+        width: '100%',
+        placeholder: 'Escriba DNI, Nombre o Apellido...'
     });
 
+    // Lógica de autocompletado y alerta IVE (Adaptada para Select2)
+    $('#persona_id').on('change', function() {
+        const selectedOption = $(this).find(':selected')[0];
+        const alerta = document.getElementById('alerta-vinculacion');
+
+        if (selectedOption.value) {
+            // Mostrar alerta IVE
+            if (selectedOption.dataset.vinculada === 'true') {
+                alerta.classList.remove('d-none');
+            } else {
+                alerta.classList.add('d-none');
+            }
+
+            // Autocompletar datos
+            $('#provincia_id').val(selectedOption.dataset.provincia || '').trigger('change');
+            $('#localidad_id').val(selectedOption.dataset.localidad || '').trigger('change');
+            $('#barrio_id').val(selectedOption.dataset.barrio || '').trigger('change');
+            $('#nivel_estudio_id').val(selectedOption.dataset.nivel || '').trigger('change');
+            $('#trabaja').val(selectedOption.dataset.trabaja ?? 0);
+        }
+    });
 });
+
+// Lógica Grupo Familiar (Igual a Masculinidades)
+let index = 0;
+function agregarFamiliar() {
+    const container = document.getElementById('grupoFamiliarContainer');
+    const msgVacio = document.getElementById('msgVacio');
+    if(msgVacio) msgVacio.remove();
+
+    const html = `
+        <div class="card p-3 mt-3 border shadow-sm animate__animated animate__fadeInUp">
+            <div class="row g-2 align-items-center">
+                <div class="col-md-3"><input type="text" name="grupo[${index}][nombre]" class="form-control" placeholder="Nombre" required></div>
+                <div class="col-md-3"><input type="text" name="grupo[${index}][apellido]" class="form-control" placeholder="Apellido" required></div>
+                <div class="col-md-3"><input type="text" name="grupo[${index}][telefono]" class="form-control" placeholder="Teléfono"></div>
+                <div class="col-md-2">
+                    <select name="grupo[${index}][vinculo]" class="form-select" required>
+                        <option value="">Vínculo</option>
+                        <option value="padre">Padre</option>
+                        <option value="madre">Madre</option>
+                        <option value="hijo/a">Hijo/a</option>
+                        <option value="hermano/a">Hermano/a</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                <div class="col-md-1 text-end">
+                    <button type="button" class="btn btn-outline-danger btn-sm border-0" onclick="this.closest('.card').remove()">
+                        <i class="bi bi-trash fs-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    container.insertAdjacentHTML('beforeend', html);
+    index++;
+}
 </script>
 @endsection

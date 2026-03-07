@@ -233,28 +233,38 @@ class MasculinidadesCasoController extends Controller
     public function update(Request $request, $id)
     {
         $caso = MasculinidadesCaso::findOrFail($id);
-        
-        $datos = $request->all();
 
-        $camposCheckbox = ['trabaja', 'consumo', 'desobediencia', 'terapia', 'relacion_actual'];
+        $datos = $request->except(['victimas']);
+
+        $camposCheckbox = ['trabaja','consumo','desobediencia','terapia'];
         foreach ($camposCheckbox as $campo) {
             $datos[$campo] = $request->has($campo) ? 1 : 0;
         }
 
-        if (!$request->has('relacion_actual')) {
-            $datos['descripcion_relacion'] = null;
+        if ($request->has('grupo')) {
+            $datos['grupo_conviviente'] = json_encode(array_values($request->grupo));
+        } else {
+            $datos['grupo_conviviente'] = json_encode([]);
         }
 
         $caso->update($datos);
 
-        if ($request->has('tipo_violencia_id')) {
-            $caso->tiposViolencia()->sync($request->tipo_violencia_id);
-        } else {
-            $caso->tiposViolencia()->sync([]);
-        }
+        $caso->tiposViolencia()->sync($request->input('tipo_violencia_id', []));
 
         if ($request->has('victimas')) {
-            $caso->victimas()->sync($request->victimas);
+
+            $syncData = [];
+
+            foreach ($request->victimas as $victimaId => $v) {
+                $syncData[$victimaId] = [
+                    'hijos_en_comun' => $v['hijos_en_comun'] ?? 0,
+                    'relacion_actual' => $v['relacion_actual'] ?? 0,
+                    'descripcion_relacion' => $v['descripcion_relacion'] ?? null,
+                ];
+            }
+
+            $caso->victimas()->sync($syncData);
+
         } else {
             $caso->victimas()->sync([]);
         }
@@ -263,7 +273,6 @@ class MasculinidadesCasoController extends Controller
             ->route('masculinidades.listado')
             ->with('success', 'Caso actualizado correctamente.');
     }
-
     public function destroy(string $id)
     {
         $caso = MasculinidadesCaso::findOrFail($id);

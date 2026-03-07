@@ -11,7 +11,7 @@ class MasculinidadesIntervencion extends Model
         'caso_id',
         'fecha_intervencion',
         'tipo_intervencion_id',
-        'encargado_id', // Este ID debe ser de la tabla encargados según tu controlador
+        'encargado_id',
         'detalle'
     ];
 
