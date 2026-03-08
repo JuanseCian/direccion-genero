@@ -58,7 +58,7 @@ class EncargadoController extends Controller
         ->sync($request->areas);
 
         return redirect()
-        ->route('encargados.index')
+        ->route('backend.encargados.index')
         ->with('success','Actualizado');
     }
 
