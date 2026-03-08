@@ -14,27 +14,25 @@ class DireccionGeneroCaso extends Model
 {
     protected $table = 'direccion_genero_casos';
 
-    protected $fillable = [
-
-        'persona_id',
-        'estado_civil_id',
-        'genero',
-
-        'provincia_id',
-        'localidad_id',
-        'barrio_id',
-
-        'nivel_estudio_id',
-
-        'trabaja',
-
-        'organizacion_social',
-        'organizacion_social_detalle',
-
-        'encargado_id',
-
-        'observaciones'
-    ];
+   protected $fillable = [
+    'persona_id',
+    'estado_civil_id',
+    'genero',
+    'provincia_id',
+    'localidad_id',
+    'barrio_id',
+    'nivel_estudio_id',
+    'trabaja',
+    'organizacion_social',
+    'organizacion_social_detalle',
+    'debe_asistir_masculinidades',
+    'observaciones',
+    'encargado_id',
+    'agresor_id'
+];
+protected $casts = [
+    'debe_asistir_masculinidades' => 'boolean',
+];
 
     public function persona()
     {

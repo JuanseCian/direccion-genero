@@ -62,6 +62,14 @@
                         </select>
                     </div>
                     <div class="col-md-4">
+
+                        <a href="{{ route('personas.create') }}"target="_blank" 
+                        class="btn btn-primary">
+                        ➕ Nueva persona
+                        </a>
+
+                        </div>
+                    <div class="col-md-4">
                         <label for="genero" class="form-label fw-bold text-secondary">Género autopercibido</label>
                         <input type="text" name="genero" id="genero" class="form-control" placeholder="Ej: Mujer Trans, No binario">
                     </div>
@@ -96,7 +104,89 @@
                 </div>
             </div>
         </div>
+      <div class="card shadow-sm border-0 mb-4 p-3">
 
+    <h5 class="mt-2">Datos del agresor</h5>
+
+    <div class="row">
+
+        <div class="col-md-9">
+            <select name="agresor_id" id="agresor_select" class="form-control">
+
+                <option value="">Seleccione agresor</option>
+
+                @foreach($agresores as $agresor)
+                    <option value="{{ $agresor->id }}"
+                        data-dni="{{ $agresor->dni }}"
+                        data-telefono="{{ $agresor->telefono }}"
+                        data-domicilio="{{ $agresor->domicilio }}"
+                        {{ old('agresor_id') == $agresor->id ? 'selected' : '' }}>
+
+                        {{ $agresor->apellido }} {{ $agresor->nombre }} - DNI {{ $agresor->dni }}
+
+                    </option>
+                @endforeach
+
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <a href="{{ route('personas.create') }}" class="btn btn-primary w-100" target="_blank">
+                ➕ Nuevo agresor
+            </a>
+        </div>
+
+    </div>
+ <div class="row mt-3">
+
+        <div class="col-md-4">
+        <label>DNI</label>
+        <input type="text" id="agresor_dni" class="form-control" readonly>
+        </div>
+
+        <div class="col-md-4">
+        <label>Teléfono</label>
+        <input type="text" id="agresor_tel" class="form-control" readonly>
+        </div>
+
+        <div class="col-md-4">
+        <label>Domicilio</label>
+        <input type="text" id="agresor_dom" class="form-control" readonly>
+        </div>
+        <div class="col-md-3">
+<label>Casos previos</label>
+<input type="text" id="agresor_casos" class="form-control" readonly>
+</div>
+        </div>
+        <div class="form-check mt-4">
+
+            <input 
+                type="checkbox" 
+                name="debe_asistir_masculinidades"
+                value="1"
+                class="form-check-input"
+                id="masculinidades">
+
+            <label class="form-check-label" for="masculinidades">
+                Debe asistir al curso de masculinidades
+            </label>
+
+        </div>
+</div>
+           
+        <div class="d-flex gap-2">
+
+
+<a href="{{ route('personas.create') }}" 
+class="btn btn-primary"
+target="_blank">
+
+➕ Nuevo agresor
+
+</a>
+
+</div>
+        </div>
         {{-- 2. SITUACIÓN SOCIO-EDUCATIVA Y ORGANIZACIÓN --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-white py-3">
@@ -270,5 +360,18 @@ function agregarFamiliar() {
     container.insertAdjacentHTML('beforeend', html);
     index++;
 }
+</script>
+<script>
+
+document.getElementById('agresor_select').addEventListener('change', function(){
+
+let selected = this.options[this.selectedIndex];
+
+document.getElementById('agresor_dni').value = selected.dataset.dni || '';
+document.getElementById('agresor_tel').value = selected.dataset.telefono || '';
+document.getElementById('agresor_dom').value = selected.dataset.domicilio || '';
+document.getElementById('agresor_casos').value = selected.dataset.casos || '0';
+});
+
 </script>
 @endsection

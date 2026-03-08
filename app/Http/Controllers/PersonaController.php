@@ -45,26 +45,47 @@ class PersonaController extends Controller
     }
 
 
-    public function store(Request $request)
-    {
+   public function store(Request $request)
+{
 
-        $request->validate([
-            'nombre'=>'required',
-            'apellido'=>'required',
-            'dni' => 'required|unique:personas,dni',
-            'fecha_nacimiento'=>'nullable|date',
-            'barrio_id'=>'nullable',
-            'trabaja'=>'nullable',
-            'nivel_estudio_id' => 'nullable|exists:niveles_estudio,id',
-            'provincia_id' => 'nullable|exists:provincia,id',
-            'localidad_id' => 'nullable|exists:localidad,id',
-            'grupo_sanguineo'=>'nullable'
-        ]);
+    $request->validate([
+        'nombre' => 'required',
+        'apellido' => 'required',
+        'dni' => 'required|unique:personas,dni',
+        'fecha_nacimiento' => 'nullable|date',
+        'barrio_id' => 'nullable',
+        'trabaja' => 'nullable',
+        'nivel_estudio_id' => 'nullable|exists:niveles_estudio,id',
+        'provincia_id' => 'nullable|exists:provincia,id',
+        'localidad_id' => 'nullable|exists:localidad,id',
+        'grupo_sanguineo' => 'nullable',
+    ]);
 
-        Persona::create($request->all());
+    Persona::create([
+        'nombre' => $request->nombre,
+        'apellido' => $request->apellido,
+        'dni' => $request->dni,
+        'fecha_nacimiento' => $request->fecha_nacimiento,
+        'sexo' => $request->sexo,
 
-        return redirect()->route('personas.index')
+        'telefono' => $request->telefono,
+        'domicilio' => $request->domicilio,
+
+        'provincia_id' => $request->provincia_id,
+        'localidad_id' => $request->localidad_id,
+        'barrio_id' => $request->barrio_id,
+
+        'trabaja' => $request->trabaja,
+        'nivel_estudio_id' => $request->nivel_estudio_id,
+        'grupo_sanguineo' => $request->grupo_sanguineo,
+
+        'agresor' => $request->has('agresor'),
+        'victima' => $request->has('victima'),
+    ]);
+
+    return redirect()
+        ->route('personas.index')
         ->with('success','Persona creada correctamente');
-    }
+}
 
 }

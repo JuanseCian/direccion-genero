@@ -28,38 +28,40 @@ class MasculinidadesCasoController extends Controller
         return view('frontend.areas.masculinidades.listado', compact('casos'));
     }
 
-    public function create()
-    {
-        // Solo traemos hombres para el selector de agresor
-        $agresores = Persona::select('id','apellido','nombre','dni')
-            ->where('sexo', 'Masculino')
-            ->orderBy('apellido')
-            ->get();
+   public function create()
+{
+  
+    $agresores = Persona::join('direccion_genero_casos', 'personas.id', '=', 'direccion_genero_casos.agresor_id')
+        ->where('personas.agresor', 1)
+        ->where('direccion_genero_casos.debe_asistir_masculinidades', 1)
+        ->select('personas.*')
+        ->distinct()
+        ->get();
 
-        $derivaciones = MasculinidadesDerivacion::orderBy('nombre')->get();
-        $situacionesHabitacionales = SituacionHabitacional::orderBy('nombre')->get();
-        $nivelesEstudio = NivelEstudio::orderBy('nombre')->get();
-        $medidasCautelares = MedidaCautelar::orderBy('nombre')->get();
-        $tipoViolencia = TipoViolencia::orderBy('nombre')->get();
-        $situacionSanitaria = SituacionSanitaria::orderBy('nombre')->get();
-        $espacioGrupal = EspacioGrupal::orderBy('nombre')->get();
+    $derivaciones = MasculinidadesDerivacion::orderBy('nombre')->get();
+    $situacionesHabitacionales = SituacionHabitacional::orderBy('nombre')->get();
+    $nivelesEstudio = NivelEstudio::orderBy('nombre')->get();
+    $medidasCautelares = MedidaCautelar::orderBy('nombre')->get();
+    $tipoViolencia = TipoViolencia::orderBy('nombre')->get();
+    $situacionSanitaria = SituacionSanitaria::orderBy('nombre')->get();
+    $espacioGrupal = EspacioGrupal::orderBy('nombre')->get();
 
-        $encargados = Encargado::whereHas('areas', function($q){
-            $q->where('areas.id', 4);
-        })->orderBy('apellido')->get();
+    $encargados = Encargado::whereHas('areas', function($q){
+        $q->where('areas.id', 4);
+    })->orderBy('apellido')->get();
 
-        return view('frontend.areas.masculinidades.create', compact(
-            'agresores',
-            'derivaciones',
-            'situacionesHabitacionales',
-            'situacionSanitaria',
-            'nivelesEstudio',
-            'encargados', 
-            'medidasCautelares',
-            'tipoViolencia',
-            'espacioGrupal'
-        ));
-    }
+    return view('frontend.areas.masculinidades.create', compact(
+        'agresores',
+        'derivaciones',
+        'situacionesHabitacionales',
+        'situacionSanitaria',
+        'nivelesEstudio',
+        'encargados', 
+        'medidasCautelares',
+        'tipoViolencia',
+        'espacioGrupal'
+    ));
+}
 
     public function store(Request $request)
     {

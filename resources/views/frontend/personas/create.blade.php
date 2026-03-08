@@ -73,6 +73,27 @@
             </div>
 
         </div>
+           <div class="col-md-3">
+
+            <div class="form-check mt-4">
+                <input class="form-check-input" type="checkbox" name="agresor" value="1" id="agresor">
+                <label class="form-check-label" for="agresor">
+                    Es agresor
+                </label>
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="form-check mt-4">
+                <input class="form-check-input" type="checkbox" name="victima" value="1" id="victima">
+                <label class="form-check-label" for="victima">
+                    Es víctima
+                </label>
+            </div>
+
+        </div>
 
         <h5 class="mt-4 mb-3">Contacto</h5>
 

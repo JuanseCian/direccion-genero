@@ -39,11 +39,12 @@ class DireccionGeneroController extends Controller
                 'barrio_id',
                 'nivel_estudio_id',
                 'trabaja'
+                
             )
-            ->where('sexo','Femenino')
+            ->where('victima','1')
             ->orderBy('apellido')
             ->get();
-
+        $agresores = Persona::where('agresor',1)->withCount(['casosAgresor'])->get();
         $idsIve = IveCaso::pluck('persona_id')->toArray();
 
         $provincias = Provincia::orderBy('nombre')->get();
@@ -64,36 +65,41 @@ class DireccionGeneroController extends Controller
             'estados_civiles',
             'niveles_estudio',
             'idsIve',
-            'encargados'
+            'encargados',
+            'agresores'
         ));
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'persona_id' => 'required|exists:personas,id',
-        ]);
+  public function store(Request $request)
+{
+    $request->validate([
+        'persona_id' => 'required|exists:personas,id',
+        'agresor_id' => 'nullable|exists:personas,id'
+    ]);
 
-        $trabaja = $request->has('trabaja') ? 1 : 0;
-        $orgSocial = $request->has('organizacion_social') ? 1 : 0;
-        
-        DireccionGeneroCaso::create([
-            'persona_id' => $request->persona_id,
-            'estado_civil_id' => $request->estado_civil_id,
-            'genero' => $request->genero,
-            'provincia_id' => $request->provincia_id,
-            'localidad_id' => $request->localidad_id,
-            'barrio_id' => $request->barrio_id,
-            'nivel_estudio_id' => $request->nivel_estudio_id,
-            'trabaja' => $trabaja,
-            'organizacion_social' => $orgSocial,
-            'organizacion_social_detalle' => $request->organizacion_social_detalle,
-            'observaciones' => $request->observaciones,
-            'encargado_id' => $request->encargado_id
-        ]);
+    $trabaja = $request->has('trabaja') ? 1 : 0;
+    $orgSocial = $request->has('organizacion_social') ? 1 : 0;
+    $cursoMasculinidades = $request->has('debe_asistir_masculinidades') ? 1 : 0;
 
-        return redirect()->route('genero.listado')->with('success','Legajo creado correctamente');
-    }
+    DireccionGeneroCaso::create([
+        'persona_id' => $request->persona_id,
+        'estado_civil_id' => $request->estado_civil_id,
+        'genero' => $request->genero,
+        'provincia_id' => $request->provincia_id,
+        'localidad_id' => $request->localidad_id,
+        'barrio_id' => $request->barrio_id,
+        'nivel_estudio_id' => $request->nivel_estudio_id,
+        'trabaja' => $trabaja,
+        'organizacion_social' => $orgSocial,
+        'organizacion_social_detalle' => $request->organizacion_social_detalle,
+        'debe_asistir_masculinidades' => $cursoMasculinidades,
+        'observaciones' => $request->observaciones,
+        'encargado_id' => $request->encargado_id,
+        'agresor_id' => $request->agresor_id
+    ]);
+
+    return redirect()->route('genero.listado')->with('success','Legajo creado correctamente');
+}
 
     public function edit($id)
     {

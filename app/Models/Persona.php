@@ -22,14 +22,19 @@ class Persona extends Model
     'nivel_estudio_id',
     'localidad_id',
     'provincia_id',
-    'grupo_sanguineo'
+    'grupo_sanguineo',
+    'victima',
+    'agresor'
     ];
 
     public function barrio()
     {
         return $this->belongsTo(Barrio::class);
     }
-
+    public function casosAgresor()
+{
+    return $this->hasMany(DireccionGeneroCaso::class,'agresor_id');
+}
     public function casosIve() {
         return $this->hasMany(IveCaso::class, 'persona_id');
     }

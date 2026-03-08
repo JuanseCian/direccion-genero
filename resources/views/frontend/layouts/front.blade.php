@@ -193,8 +193,8 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navGenero">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item dropdown">
+            <ul class="navbar-nav me-auto ">
+                <li class="nav-item dropdown ">
                     <a class="nav-link dropdown-toggle nav-diversidad"
                     href="#"
                     id="dropdownAreas"
@@ -202,7 +202,7 @@
                     data-bs-toggle="dropdown"
                     aria-expanded="false">
 
-                        <i class="bi bi-grid"></i> Áreas
+                        <i class="bi bi-grid mx-1 "></i> Áreas
                     </a>
 
                     <ul class="dropdown-menu dropdown-genero">
@@ -228,7 +228,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item">
+                <li class="nav-item mx-1">
                     <a class="nav-link nav-destacado" href="{{ route('frontend.stats.index') }}">
                         <i class="bi bi-bar-chart"></i> Estadísticas
                     </a>
@@ -236,14 +236,14 @@
                 
                 
                 @auth
-                    <li class="nav-item">
+                    <li class="nav-item mx-1">
                         <a class="nav-link nav-destacado" href="{{ route('manuales') }}">
                             <i class="bi bi-journal-text"></i> Manuales
                         </a>
                     </li>
 
                     @if(auth()->user()->esAdmin())
-                        <li class="nav-item">
+                        <li class="nav-item mx-1">
                             <a class="nav-link nav-admin" href="{{ route('admin.users.index') }}">
                                 <i class="bi bi-shield-lock"></i> Panel Administrador
                             </a>
