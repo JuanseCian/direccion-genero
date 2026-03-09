@@ -59,6 +59,7 @@ class PersonaController extends Controller
         'provincia_id' => 'nullable|exists:provincia,id',
         'localidad_id' => 'nullable|exists:localidad,id',
         'grupo_sanguineo' => 'nullable',
+        
     ]);
 
     Persona::create([
@@ -81,6 +82,7 @@ class PersonaController extends Controller
 
         'agresor' => $request->has('agresor'),
         'victima' => $request->has('victima'),
+        'debe_asistir_masculinidades' => $request->has('debe_asistir_masculinidades'),
     ]);
 
     return redirect()

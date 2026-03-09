@@ -3,252 +3,267 @@
 @section('title','Registrar Atención IVE')
 
 @section('content')
+{{-- Assets de Select2 --}}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-
-<div class="card card-soft p-4 shadow-sm border-0">
+<div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0" style="color: #5651A0;">
-            <i class="bi bi-clipboard2-plus"></i> Nueva Atención IVE
-        </h2>
-        <a href="{{ route('frontend.areas.ive.index') }}" class="btn btn-light border-0">
-            <i class="bi bi-arrow-left"></i> Volver
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #5651A0;">
+                <i class="bi bi-clipboard2-plus"></i> Nueva Atención IVE
+            </h2>
+            <p class="text-muted">Registro de Interrupción Voluntaria del Embarazo</p>
+        </div>
+        <a href="{{ route('frontend.areas.ive.index') }}" class="btn btn-outline-secondary shadow-sm">
+            <i class="bi bi-arrow-left"></i> Volver al Listado
         </a>
     </div>
 
     <form action="{{ route('frontend.areas.ive.store') }}" method="POST">
         @csrf
-        <div class="row g-3">
-            {{-- SECCIÓN: Identificación --}}
-            <div class="col-12">
-                <div id="alerta-vinculacion-genero" class="alert alert-warning border-0 shadow-sm mb-3 d-none animate__animated animate__fadeIn">
+
+        {{-- 1. IDENTIFICACIÓN Y ALERTA --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-person-badge me-2"></i>1. Identificación de la Persona</h5>
+            </div>
+            <div class="card-body">
+                {{-- Alerta de Género --}}
+                <div id="alerta-vinculacion-genero" class="alert alert-warning border-0 shadow-sm mb-4 d-none animate__animated animate__fadeIn">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-person-exclamation me-3 fs-3"></i>
                         <div>
                             <strong>Atención: Caso en Género Detectado</strong><br>
-                            Esta persona ya posee un registro activo en la <strong>Dirección de Género</strong>. 
-                            Se recomienda realizar un abordaje integral entre ambas áreas.
-                        </div>
-                    </div>
-                </div>
-                <div class="p-3 rounded" style="background: #f8f9fa;">
-                    <label class="form-label fw-bold">Seleccionar Persona (Solo Femenino)</label>
-                    <select name="persona_id" id="persona_id_ive" class="form-select shadow-sm" required>
-                        <option value="" selected disabled>Seleccione una persona...</option>
-                        @foreach($personas as $persona)
-                            <option value="{{ $persona->id }}" 
-                                    data-vinculada="{{ in_array($persona->id, $idsEnGenero) ? 'true' : 'false' }}">
-                                {{ $persona->apellido }}, {{ $persona->nombre }} (DNI {{ $persona->dni }})
-                                {{ in_array($persona->id, $idsEnGenero) ? ' ⚠️' : '' }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <small class="text-muted">Solo se listan personas de sexo femenino según protocolo.</small>
-                </div>
-            </div>
-
-            {{-- SECCIÓN: Datos Médicos --}}
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Fecha de Última Menstruación (FUM)</label>
-                <input type="date" name="fum" class="form-control border-0 shadow-sm"> {{-- --}}
-            </div>
-            <div class="col-md-6">
-                <label class="form-label fw-bold">Semanas (ECO)</label>
-                <input type="number" name="eco_semanas" class="form-control border-0 shadow-sm" placeholder="Semanas por ecografía"> {{-- --}}
-            </div>
-            <div class="col-md-12 mt-4">
-                <label class="form-label fw-bold">Medicación administrada</label>
-
-                <div id="medicaciones-container">
-                    <div class="row g-2 mb-2 medicacion-item">
-                        <div class="col-md-6">
-                            <input type="text"
-                                name="medicaciones[0][nombre]"
-                                class="form-control"
-                                placeholder="Nombre de la medicación">
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text"
-                                name="medicaciones[0][numero_lote]"
-                                class="form-control"
-                                placeholder="Número de lote">
-                        </div>
-                        <div class="col-md-2">
-                            <button type="button" class="btn btn-danger w-100 remove-medicacion">X</button>
+                            Esta persona posee un registro activo en la <strong>Dirección de Género</strong>. Se recomienda abordaje integral.
                         </div>
                     </div>
                 </div>
 
-                <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-medicacion">
-                    + Agregar medicación
-                </button>
-            </div>
-            {{-- SECCIÓN: Antecedentes y Social --}}
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Cantidad de Hijos</label>
-                <input type="number" name="cantidad_hijos" value="0" class="form-control border-0 shadow-sm"> {{-- --}}
-            </div>
-            <div class="col-md-4 mt-auto">
-                <div class="form-check form-switch p-3 bg-light rounded shadow-sm">
-                    <input class="form-check-input mx-1" type="checkbox" name="obra_social" value="1" id="os"> {{-- --}}
-                    <label class="form-check-label fw-bold" for="os">¿Posee Obra Social?</label>
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold text-secondary">Seleccionar Persona (Solo Femenino)</label>
+                        <select name="persona_id" id="persona_id_ive" class="form-select" required>
+                            <option value="" selected disabled>Buscar por DNI o Nombre...</option>
+                            @foreach($personas as $persona)
+                                <option value="{{ $persona->id }}" 
+                                        data-vinculada="{{ in_array($persona->id, $idsEnGenero) ? 'true' : 'false' }}">
+                                    {{ $persona->apellido }}, {{ $persona->nombre }} (DNI {{ $persona->dni }})
+                                    {{ in_array($persona->id, $idsEnGenero) ? ' ⚠️' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-muted italic">Solo se listan personas de sexo femenino según protocolo.</small>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-secondary">Profesional Encargado</label>
+                        <select name="encargado_id" class="form-select border-primary-subtle shadow-sm">
+                            <option value="">Seleccione encargado...</option>
+                            @foreach($encargados as $encargado)
+                                <option value="{{ $encargado->id }}">{{ $encargado->apellido }} {{ $encargado->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-4 mt-auto">
-                <div class="form-check form-switch p-3 bg-light rounded shadow-sm">
-                    <input class="form-check-input mx-1" type="checkbox" name="interrupcion_previa" value="1" id="ip"> {{-- --}}
-                    <label class="form-check-label fw-bold" for="ip">Interrupción Previa</label>
-                </div>
-            </div>
-
-            <div class="col-md-4 mt-2">
-            <div class="form-check form-switch p-3 bg-light rounded shadow-sm">
-                    <input class="form-check-input mx-1" 
-                        type="checkbox" 
-                        name="violencia_previa" 
-                        value="1" 
-                        id="violencia_previa">
-                    <label class="form-check-label fw-bold" for="violencia_previa">
-                        ¿Vivió violencia previa?
-                    </label>
-                </div>
-            </div>
-
-           <div class="col-md-12 mt-3" id="violencia-container" style="display: none;">
-                <label class="form-label fw-bold mb-2 text-danger">
-                    Tipos de violencia
-                </label>
-
-                <div class="d-flex flex-wrap gap-2">
-                    @foreach($tiposViolencia as $tipo)
-                        <input type="checkbox"
-                            class="btn-check"
-                            name="tipos_violencia[]"
-                            value="{{ $tipo->id }}"
-                            id="violencia_{{ $tipo->id }}"
-                            autocomplete="off"
-                            @if(isset($caso) && $caso->tiposViolencia->contains($tipo->id)) checked @endif>
-
-                        <label class="violencia-chip"
-                            for="violencia_{{ $tipo->id }}">
-                            {{ $tipo->nombre }}
-                        </label>
-                    @endforeach
-                </div>
-            </div>
-            
-         <div class="col-md-12 mt-3">
-            <label class="form-label fw-bold mb-2">Red de contención</label>
-
-            <div class="d-flex flex-wrap gap-2">
-                @foreach($redes as $red)
-                    <input type="checkbox"
-                        class="btn-check"
-                        name="redes_contencion[]"
-                        value="{{ $red->id }}"
-                        id="red_{{ $red->id }}"
-                        autocomplete="off"
-                        @if(isset($caso) && $caso->redesContencion->contains($red->id)) checked @endif>
-
-                    <label class="red-chip"
-                        for="red_{{ $red->id }}">
-                        {{ $red->nombre }}
-                    </label>
-                @endforeach
             </div>
         </div>
-                <label>Encargado</label>
-                <select name="encargado_id" class="form-control">
-                    <option value="">Seleccionar Encargado</option>
-                    @foreach($encargados as $encargado)
-                    <option value="{{ $encargado->id }}"> {{ $encargado->apellido }} {{ $encargado->nombre }} </option>
-                    @endforeach
-                </select>
-            </div>
 
-            <div class="col-12 mt-4">
-                <hr style="opacity: 0.1;">
-                <button type="submit" class="btn text-white px-5 py-2 shadow-sm" style="background: #5651A0;">
-                    <i class="bi bi-save"></i> Guardar Registro IVE
+        {{-- 2. DATOS MÉDICOS Y SOCIALES --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-擧-activity me-2"></i>2. Datos Médicos y Antecedentes</h5>
+            </div>
+            <div class="card-body bg-light-subtle">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Fecha Última Menstruación (FUM)</label>
+                        <input type="date" name="fum" class="form-control border-0 shadow-sm">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Semanas (ECO)</label>
+                        <input type="number" name="eco_semanas" class="form-control border-0 shadow-sm" placeholder="Cantidad de semanas">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Cantidad de Hijos</label>
+                        <input type="number" name="cantidad_hijos" value="0" class="form-control border-0 shadow-sm">
+                    </div>
+                    <div class="col-md-3 mt-auto">
+                        <div class="form-check form-switch p-2 bg-white rounded shadow-sm border text-center">
+                            <input class="form-check-input ms-0 me-2" type="checkbox" name="obra_social" value="1" id="os">
+                            <label class="form-check-label fw-bold" for="os">¿Posee Obra Social?</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        <div class="form-check form-switch p-3 bg-white rounded shadow-sm border h-100">
+                            <input class="form-check-input mx-1" type="checkbox" name="interrupcion_previa" value="1" id="ip">
+                            <label class="form-check-label fw-bold" for="ip">Interrupción Previa</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mt-3">
+                        <div class="form-check form-switch p-3 bg-white rounded shadow-sm border h-100">
+                            <input class="form-check-input mx-1 text-danger" type="checkbox" name="violencia_previa" value="1" id="violencia_previa">
+                            <label class="form-check-label fw-bold text-danger" for="violencia_previa">¿Vivió violencia previa?</label>
+                        </div>
+                    </div>
+
+                    {{-- Tipos de Violencia (Condicional) --}}
+                    <div class="col-md-12 mt-3" id="violencia-container" style="display: none;">
+                        <div class="p-3 border rounded bg-white shadow-sm">
+                            <label class="form-label fw-bold mb-3 text-danger"><i class="bi bi-exclamation-triangle"></i> Tipos de Violencia Detectada</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach($tiposViolencia as $tipo)
+                                    <input type="checkbox" class="btn-check" name="tipos_violencia[]" value="{{ $tipo->id }}" id="violencia_{{ $tipo->id }}" autocomplete="off">
+                                    <label class="violencia-chip" for="violencia_{{ $tipo->id }}">{{ $tipo->nombre }}</label>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- 3. MEDICACIÓN --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-capsule me-2"></i>3. Medicación Administrada</h5>
+                <button type="button" class="btn btn-sm btn-primary" id="add-medicacion">
+                    <i class="bi bi-plus-circle"></i> Agregar Medicación
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="medicaciones-container">
+                    {{-- Primera fila por defecto --}}
+                    <div class="row g-2 mb-2 medicacion-item bg-light p-2 rounded">
+                        <div class="col-md-6">
+                            <input type="text" name="medicaciones[0][nombre]" class="form-control border-0 shadow-sm" placeholder="Nombre de la medicación">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" name="medicaciones[0][numero_lote]" class="form-control border-0 shadow-sm" placeholder="Número de lote">
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <button type="button" class="btn btn-outline-danger w-100 remove-medicacion"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- 4. RED DE CONTENCIÓN --}}
+        <div class="card shadow-sm border-0 mb-5">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-heart-pulse me-2"></i>4. Red de Contención y Cierre</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-secondary mb-3">¿Con qué redes cuenta la persona?</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach($redes as $red)
+                            <input type="checkbox" class="btn-check" name="redes_contencion[]" value="{{ $red->id }}" id="red_{{ $red->id }}" autocomplete="off">
+                            <label class="red-chip" for="red_{{ $red->id }}">{{ $red->nombre }}</label>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-light text-end py-3">
+                <button type="submit" class="btn btn-lg text-white px-5 shadow-sm" style="background: #5651A0;">
+                    <i class="bi bi-save-fill me-2"></i> GUARDAR REGISTRO IVE
                 </button>
             </div>
         </div>
     </form>
 </div>
 
+<style>
+    .card { border-radius: 12px; }
+    .form-control:focus, .form-select:focus { border-color: #5651A0; box-shadow: 0 0 0 0.2rem rgba(86, 81, 160, 0.25); }
+    
+    /* Estilos para Chips (Checkboxes estéticos) */
+    .violencia-chip, .red-chip {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 50px;
+        border: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .btn-check:checked + .violencia-chip {
+        background-color: #dc3545;
+        color: white;
+        border-color: #dc3545;
+    }
+
+    .btn-check:checked + .red-chip {
+        background-color: #5651A0;
+        color: white;
+        border-color: #5651A0;
+    }
+
+    .violencia-chip:hover, .red-chip:hover { background-color: #e9ecef; }
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const selectPersonaIve = document.getElementById('persona_id_ive');
-    const alertaGenero = document.getElementById('alerta-vinculacion-genero');
-
-    if(selectPersonaIve) {
-        selectPersonaIve.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            
-            // Si el atributo data-vinculada es true, mostramos el aviso
-            if (selectedOption.dataset.vinculada === 'true') {
-                alertaGenero.classList.remove('d-none');
-            } else {
-                alertaGenero.classList.add('d-none');
-            }
-        });
-    }
-});
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const checkbox = document.querySelector('input[name="violencia_previa"]');
-    const container = document.getElementById('violencia-container');
-
-    function toggleViolencia() {
-        if (checkbox.checked) {
-            container.style.display = 'block';
-            container.style.opacity = 0;
-            container.style.transition = 'opacity 0.3s ease';
-            setTimeout(() => container.style.opacity = 1, 10);
+    // Select2 con el tema de Masculinidades
+    $('#persona_id_ive').select2({
+        theme: 'bootstrap-5',
+        width: '100%',
+        placeholder: 'Escriba DNI, Nombre o Apellido...'
+    }).on('change', function() {
+        const selectedOption = $(this).find(':selected')[0];
+        const alertaGenero = document.getElementById('alerta-vinculacion-genero');
+        
+        if (selectedOption.dataset.vinculada === 'true') {
+            alertaGenero.classList.remove('d-none');
         } else {
-            container.style.opacity = 0;
-            setTimeout(() => container.style.display = 'none', 300);
+            alertaGenero.classList.add('d-none');
         }
-    }
+    });
 
-    toggleViolencia();
-    checkbox.addEventListener('change', toggleViolencia);
-});
-</script>
-<script>
-let index = 1;
+    // Lógica mostrar/ocultar violencia
+    const checkboxViolencia = document.querySelector('input[name="violencia_previa"]');
+    const containerViolencia = document.getElementById('violencia-container');
 
-document.getElementById('add-medicacion').addEventListener('click', function () {
-    const container = document.getElementById('medicaciones-container');
+    checkboxViolencia.addEventListener('change', function() {
+        if (this.checked) {
+            $(containerViolencia).fadeIn();
+        } else {
+            $(containerViolencia).fadeOut();
+        }
+    });
 
-    const html = `
-        <div class="row g-2 mb-2 medicacion-item">
-            <div class="col-md-6">
-                <input type="text"
-                       name="medicaciones[${index}][nombre]"
-                       class="form-control"
-                       placeholder="Nombre de la medicación">
-            </div>
-            <div class="col-md-4">
-                <input type="text"
-                       name="medicaciones[${index}][numero_lote]"
-                       class="form-control"
-                       placeholder="Número de lote">
-            </div>
-            <div class="col-md-2">
-                <button type="button" class="btn btn-danger w-100 remove-medicacion">X</button>
-            </div>
-        </div>
-    `;
+    // Lógica dinámica de Medicaciones
+    let medIndex = 1;
+    document.getElementById('add-medicacion').addEventListener('click', function () {
+        const container = document.getElementById('medicaciones-container');
+        const html = `
+            <div class="row g-2 mb-2 medicacion-item animate__animated animate__fadeIn bg-light p-2 rounded">
+                <div class="col-md-6">
+                    <input type="text" name="medicaciones[${medIndex}][nombre]" class="form-control border-0 shadow-sm" placeholder="Nombre de la medicación">
+                </div>
+                <div class="col-md-4">
+                    <input type="text" name="medicaciones[${medIndex}][numero_lote]" class="form-control border-0 shadow-sm" placeholder="Número de lote">
+                </div>
+                <div class="col-md-2 text-end">
+                    <button type="button" class="btn btn-outline-danger w-100 remove-medicacion"><i class="bi bi-trash"></i></button>
+                </div>
+            </div>`;
+        container.insertAdjacentHTML('beforeend', html);
+        medIndex++;
+    });
 
-    container.insertAdjacentHTML('beforeend', html);
-    index++;
-});
-
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('remove-medicacion')) {
-        e.target.closest('.medicacion-item').remove();
-    }
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-medicacion')) {
+            e.target.closest('.medicacion-item').remove();
+        }
+    });
 });
 </script>
 @endsection

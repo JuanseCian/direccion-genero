@@ -254,45 +254,74 @@
             </div>
             <div class="card-body">
                 <div id="grupoFamiliarContainer">
-                    @php 
-                        $convivientes = json_decode($caso->grupo_conviviente, true) ?? []; 
-                    @endphp
 
-                    @if(count($convivientes) == 0)
-                        <p class="text-muted small text-center italic py-2">No hay integrantes registrados en este formulario.</p>
+                    @if($caso->grupoFamiliar->count() == 0)
+                    <p class="text-muted small text-center italic py-2">
+                        No hay integrantes registrados en este formulario.
+                    </p>
                     @endif
 
-                    @foreach($convivientes as $idx => $f)
-                        <div class="card p-3 mt-3 border shadow-sm">
-                            <div class="row g-2">
-                                <div class="col-md-3">
-                                    <input type="text" name="grupo[{{$idx}}][nombre]" class="form-control" placeholder="Nombre" value="{{ $f['nombre'] ?? '' }}">
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="text" name="grupo[{{$idx}}][apellido]" class="form-control" placeholder="Apellido" value="{{ $f['apellido'] ?? '' }}">
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="text" name="grupo[{{$idx}}][telefono]" class="form-control" placeholder="Teléfono" value="{{ $f['telefono'] ?? '' }}">
-                                </div>
-                                <div class="col-md-2">
-                                    <select name="grupo[{{$idx}}][vinculo]" class="form-select">
-                                        <option value="">Vínculo</option>
-                                        <option value="padre" {{ ($f['vinculo'] ?? '') == 'padre' ? 'selected' : '' }}>Padre</option>
-                                        <option value="madre" {{ ($f['vinculo'] ?? '') == 'madre' ? 'selected' : '' }}>Madre</option>
-                                        <option value="hijo/a" {{ ($f['vinculo'] ?? '') == 'hijo/a' ? 'selected' : '' }}>Hijo/a</option>
-                                        <option value="hermano/a" {{ ($f['vinculo'] ?? '') == 'hermano/a' ? 'selected' : '' }}>Hermano/a</option>
-                                        <option value="otro" {{ ($f['vinculo'] ?? '') == 'otro' ? 'selected' : '' }}>Otro</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-1 text-end">
-                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.closest('.card').remove()">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    @foreach($caso->grupoFamiliar as $idx => $f)
+
+                    <div class="card p-3 mt-3 border shadow-sm">
+                    <div class="row g-2">
+
+                    <div class="col-md-2">
+                    <input type="text" name="grupo[{{$idx}}][nombre]"
+                    class="form-control"
+                    value="{{ $f->nombre }}"
+                    placeholder="Nombre">
+                    </div>
+
+                    <div class="col-md-2">
+                    <input type="text" name="grupo[{{$idx}}][apellido]"
+                    class="form-control"
+                    value="{{ $f->apellido }}"
+                    placeholder="Apellido">
+                    </div>
+
+                    <div class="col-md-2">
+                    <input type="text" name="grupo[{{$idx}}][dni]"
+                    class="form-control"
+                    value="{{ $f->dni }}"
+                    placeholder="DNI">
+                    </div>
+
+                    <div class="col-md-3">
+                    <input type="text" name="grupo[{{$idx}}][telefono]"
+                    class="form-control"
+                    value="{{ $f->telefono }}"
+                    placeholder="Teléfono">
+                    </div>
+
+                    <div class="col-md-2">
+                    <select name="grupo[{{$idx}}][vinculo]" class="form-select">
+
+                    <option value="">Vínculo</option>
+
+                    <option value="padre" {{ $f->vinculo_actual=='padre'?'selected':'' }}>Padre</option>
+                    <option value="madre" {{ $f->vinculo_actual=='madre'?'selected':'' }}>Madre</option>
+                    <option value="hijo/a" {{ $f->vinculo_actual=='hijo/a'?'selected':'' }}>Hijo/a</option>
+                    <option value="hermano/a" {{ $f->vinculo_actual=='hermano/a'?'selected':'' }}>Hermano/a</option>
+                    <option value="otro" {{ $f->vinculo_actual=='otro'?'selected':'' }}>Otro</option>
+
+                    </select>
+                    </div>
+
+                    <div class="col-md-1 text-end">
+                    <button type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    onclick="this.closest('.card').remove()">
+                    <i class="bi bi-trash"></i>
+                    </button>
+                    </div>
+
+                    </div>
+                    </div>
+
                     @endforeach
-                </div>
+
+                    </div>
             </div>
         </div>
 
@@ -623,7 +652,7 @@ document.getElementById('debeDispositivo').addEventListener('change', toggleDisp
 window.addEventListener('load', toggleDispositivo);
 
 // 2. Lógica Grupo Conviviente
-let integranteIdx = {{ count($convivientes) }};
+let integranteIdx = {{ $caso->grupoFamiliar->count() }};
 function agregarIntegrante() {
     const html = `
         <tr>
@@ -713,7 +742,7 @@ document.getElementById('busquedaVictima')?.addEventListener('keyup', function()
     });
 });
 
-let index = {{ count($convivientes) }}; 
+let index = {{ $caso->grupoFamiliar ? $caso->grupoFamiliar->count() : 0 }};
 
 function agregarFamiliar() {
     const container = document.getElementById('grupoFamiliarContainer');

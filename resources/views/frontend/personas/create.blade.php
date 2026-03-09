@@ -84,6 +84,25 @@
 
         </div>
 
+        <div class="col-md-3 d-none" id="campo_masculinidades">
+
+        <div class="form-check mt-4">
+
+                <input 
+                    class="form-check-input"
+                    type="checkbox"
+                    name="debe_asistir_masculinidades"
+                    value="1"
+                    id="masculinidades">
+
+                <label class="form-check-label" for="masculinidades">
+                    Debe asistir a curso de masculinidades
+                </label>
+
+            </div>
+
+        </div>
+
         <div class="col-md-3">
 
             <div class="form-check mt-4">
@@ -215,5 +234,26 @@
     </form>
 
 </div>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function(){
+
+    const chkAgresor = document.getElementById('agresor');
+    const campoMasculinidades = document.getElementById('campo_masculinidades');
+
+    chkAgresor.addEventListener('change', function(){
+
+        if(this.checked){
+            campoMasculinidades.classList.remove('d-none');
+        }else{
+            campoMasculinidades.classList.add('d-none');
+        }
+
+    });
+
+});
+
+</script>
 
 @endsection

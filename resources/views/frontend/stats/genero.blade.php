@@ -86,6 +86,42 @@
                 </h2>
             </div>
         </div>
+        <div class="card border-0 shadow-sm p-4 mb-4">
+            <h5 class="mb-3 text-muted">
+                Distribución por Rango de Edad
+            </h5>
+
+            @foreach($edades as $edad)
+                <div class="d-flex justify-content-between border-bottom py-2">
+                    <span>{{ $edad->rango }}</span>
+                    <span class="badge bg-secondary">{{ $edad->total }}</span>
+                </div>
+            @endforeach
+        </div>
+        <div class="card border-0 shadow-sm p-4 mb-4">
+            <h5 class="mb-3 text-muted">
+                Tipos de Violencia Registrados
+            </h5>
+
+            @foreach($violencias as $v)
+                <div class="d-flex justify-content-between border-bottom py-2">
+                    <span>{{ $v->nombre }}</span>
+                    <span class="badge bg-danger">{{ $v->total }}</span>
+                </div>
+            @endforeach
+        </div>
+        <div class="card border-0 shadow-sm p-4 mb-4">
+            <h5 class="mb-3 text-muted">
+                Medidas Cautelares Aplicadas
+            </h5>
+
+            @foreach($medidas as $m)
+                <div class="d-flex justify-content-between border-bottom py-2">
+                    <span>{{ $m->nombre }}</span>
+                    <span class="badge bg-warning text-dark">{{ $m->total }}</span>
+                </div>
+            @endforeach
+        </div>
 
     </div>
 

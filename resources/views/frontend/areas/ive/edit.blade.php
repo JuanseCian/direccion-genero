@@ -3,292 +3,235 @@
 @section('title','Editar Atención IVE')
 
 @section('content')
-<div class="card card-soft p-4 shadow-sm border-0">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0" style="color: #5651A0;">
-            <i class="bi bi-pencil-square"></i> Editar Legajo IVE: {{ $caso->persona->apellido }}, {{ $caso->persona->nombre }} <br><small>{{$caso->persona->dni}}</small>
-        </h2>
-        <div>
-            <button type="button" class="btn text-white shadow-sm me-2" style="background: #17a2b8;" data-bs-toggle="modal" data-bs-target="#modalIntervenciones">
-                <i class="bi bi-chat-left-text-fill me-1"></i> Intervenciones
-            </button>
+{{-- Assets de Select2 --}}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-            <a href="{{ route('frontend.areas.ive.listado') }}" class="btn btn-light border-0 shadow-sm">
-                <i class="bi bi-arrow-left"></i> Volver al Listado
-            </a>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #5651A0;">
+                <i class="bi bi-pencil-square"></i> Editar Atención IVE
+            </h2>
+            <p class="text-muted">Actualizando registro de: <strong>{{ $caso->persona->apellido }}, {{ $caso->persona->nombre }}</strong></p>
         </div>
+        <a href="{{ route('frontend.areas.ive.index') }}" class="btn btn-outline-secondary shadow-sm">
+            <i class="bi bi-arrow-left"></i> Volver al Listado
+        </a>
     </div>
 
     <form action="{{ route('frontend.areas.ive.update', $caso->id) }}" method="POST">
         @csrf
         @method('PUT')
-        
-        <div class="row g-3">
-            {{-- PERSONA --}}
-            <div class="col-12">
-                <div class="p-3 rounded" style="background: #ecebfa; color: #5651A0;">
-                    <h6 class="fw-bold mb-0"><i class="bi bi-person-badge me-2"></i> Persona Vinculada</h6>
+
+        {{-- 1. IDENTIFICACIÓN Y ALERTA --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-person-badge me-2"></i>1. Identificación de la Persona</h5>
+            </div>
+            <div class="card-body">
+                {{-- Alerta de Género (Basada en la variable $existeEnGenero del controlador) --}}
+                <div id="alerta-vinculacion-genero" class="alert alert-warning border-0 shadow-sm mb-4 {{ $existeEnGenero ? '' : 'd-none' }} animate__animated animate__fadeIn">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-person-exclamation me-3 fs-3"></i>
+                        <div>
+                            <strong>Atención: Caso en Género Detectado</strong><br>
+                            Esta persona posee un registro activo en la <strong>Dirección de Género</strong>. Se recomienda abordaje integral.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold text-secondary">Persona (Solo Femenino)</label>
+                        <select name="persona_id" id="persona_id_ive" class="form-select" required>
+                            @foreach($personas as $persona)
+                                <option value="{{ $persona->id }}" 
+                                    {{ $caso->persona_id == $persona->id ? 'selected' : '' }}
+                                    data-vinculada="{{ ($persona->id == $caso->persona_id && $existeEnGenero) ? 'true' : 'false' }}">
+                                    {{ $persona->apellido }}, {{ $persona->nombre }} (DNI {{ $persona->dni }})
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-muted italic">Solo se listan personas de sexo femenino según protocolo.</small>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-secondary">Profesional Encargado</label>
+                        <select name="encargado_id" class="form-select border-primary-subtle shadow-sm">
+                            <option value="">Seleccione encargado...</option>
+                            @foreach($encargados as $encargado)
+                                <option value="{{ $encargado->id }}" {{ $caso->encargado_id == $encargado->id ? 'selected' : '' }}>
+                                    {{ $encargado->apellido }} {{ $encargado->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            {{-- DATOS MÉDICOS --}}
-            <div class="col-md-4">
-                <label class="form-label fw-bold">FUM</label>
-                <input type="date" name="fum" class="form-control border-0 shadow-sm" value="{{ $caso->fum }}">
+        {{-- 2. DATOS MÉDICOS Y SOCIALES --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-activity me-2"></i>2. Datos Médicos y Antecedentes</h5>
             </div>
+            <div class="card-body bg-light-subtle">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Fecha Última Menstruación (FUM)</label>
+                        <input type="date" name="fum" value="{{ $caso->fum }}" class="form-control border-0 shadow-sm">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Semanas (ECO)</label>
+                        <input type="number" name="eco_semanas" value="{{ $caso->eco_semanas }}" class="form-control border-0 shadow-sm">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Cantidad de Hijos</label>
+                        <input type="number" name="cantidad_hijos" value="{{ $caso->cantidad_hijos ?? 0 }}" class="form-control border-0 shadow-sm">
+                    </div>
+                    <div class="col-md-3 mt-auto">
+                        <div class="form-check form-switch p-2 bg-white rounded shadow-sm border text-center">
+                            <input class="form-check-input ms-0 me-2" type="checkbox" name="obra_social" value="1" id="os" {{ $caso->obra_social ? 'checked' : '' }}>
+                            <label class="form-check-label fw-bold" for="os">¿Posee Obra Social?</label>
+                        </div>
+                    </div>
 
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Semanas (ECO)</label>
-                <input type="number" name="eco_semanas" class="form-control border-0 shadow-sm" value="{{ $caso->eco_semanas }}">
-            </div>
+                    <div class="col-md-4 mt-3">
+                        <div class="form-check form-switch p-3 bg-white rounded shadow-sm border h-100">
+                            <input class="form-check-input mx-1" type="checkbox" name="interrupcion_previa" value="1" id="ip" {{ $caso->interrupcion_previa ? 'checked' : '' }}>
+                            <label class="form-check-label fw-bold" for="ip">Interrupción Previa</label>
+                        </div>
+                    </div>
 
-            <div class="col-md-4">
-                <label class="form-label fw-bold text-success">Fecha Alta</label>
-                <input type="date" name="alta" class="form-control border-start border-success border-3 shadow-sm" value="{{ $caso->alta }}">
-            </div>
+                    <div class="col-md-4 mt-3">
+                        <div class="form-check form-switch p-3 bg-white rounded shadow-sm border h-100">
+                            <input class="form-check-input mx-1 text-danger" type="checkbox" name="violencia_previa" value="1" id="violencia_previa" {{ $caso->violencia_previa ? 'checked' : '' }}>
+                            <label class="form-check-label fw-bold text-danger" for="violencia_previa">¿Vivió violencia previa?</label>
+                        </div>
+                    </div>
 
-            {{-- SOCIALES --}}
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Cantidad de Hijos</label>
-                <input type="number" name="cantidad_hijos" class="form-control border-0 shadow-sm" value="{{ $caso->cantidad_hijos }}">
-            </div>
-
-            <div class="col-md-4 mt-auto">
-                <div class="form-check form-switch p-3 bg-white rounded shadow-sm border">
-                    <input class="form-check-input mx-1" type="checkbox" name="obra_social" value="1" {{ $caso->obra_social ? 'checked' : '' }}>
-                    <label class="form-check-label fw-bold">¿Posee Obra Social?</label>
-                </div>
-            </div>
-
-            <div class="col-md-4 mt-auto">
-                <div class="form-check form-switch p-3 bg-white rounded shadow-sm border">
-                    <input class="form-check-input mx-1"  type="checkbox" name="interrupcion_previa" value="1" {{ $caso->interrupcion_previa ? 'checked' : '' }}>
-                    <label class="form-check-label fw-bold">Interrupción Previa</label>
-                </div>
-            </div>
-
-            {{-- VIOLENCIA PREVIA --}}
-            <div class="col-md-4 mt-2">
-                <div class="form-check form-switch p-3 bg-white rounded shadow-sm border">
-                    <input class="form-check-input mx-1" type="checkbox" id="violencia_previa" name="violencia_previa" value="1" {{ $caso->violencia_previa ? 'checked' : '' }}>
-                    <label class="form-check-label fw-bold text-danger">Violencia Previa</label>
-                </div>
-            </div>
-
-            {{-- TIPOS DE VIOLENCIA --}}
-            <div class="col-12 mt-3" id="violencia-container" style="{{ $caso->violencia_previa ? '' : 'display:none;' }}">
-                <label class="form-label fw-bold text-danger mb-2">Tipos de Violencia</label>
-                <div class="d-flex flex-wrap gap-2">
-                    @foreach($tiposViolencia as $tipo)
-                        <input type="checkbox" class="btn-check" name="tipos_violencia[]" value="{{ $tipo->id }}" id="violencia_{{ $tipo->id }}" autocomplete="off" {{ $caso->tiposViolencia->contains($tipo->id) ? 'checked' : '' }}>
-                        <label class="violencia-chip btn btn-outline-danger btn-sm" for="violencia_{{ $tipo->id }}">{{ $tipo->nombre }}</label>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- RED DE CONTENCIÓN --}}
-            <div class="col-12 mt-4">
-                <label class="form-label fw-bold mb-2">Red de Contención</label>
-                <div class="d-flex flex-wrap gap-2">
-                    @foreach($redes as $red)
-                        <input type="checkbox" class="btn-check" name="redes_contencion[]" value="{{ $red->id }}" id="red_{{ $red->id }}" autocomplete="off" {{ $caso->redesContencion->contains($red->id) ? 'checked' : '' }}>
-                        <label class="red-chip btn btn-outline-secondary btn-sm" for="red_{{ $red->id }}">{{ $red->nombre }}</label>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- MEDICACIONES --}}
-            <div class="col-12 mt-4">
-                <div class="p-3 rounded mb-2" style="background: #f8f9fa;">
-                    <h6 class="fw-bold mb-0 text-muted"><i class="bi bi-capsule me-2"></i> Medicaciones</h6>
-                </div>
-                <div id="medicaciones-container">
-                    @foreach($caso->medicaciones as $index => $med)
-                        <div class="row g-2 mb-2 medicacion-item">
-                            <div class="col-md-6">
-                                <input type="text" name="medicaciones[{{ $index }}][nombre]" class="form-control border-0 shadow-sm" value="{{ $med->nombre }}" placeholder="Nombre medicación">
-                            </div>
-                            <div class="col-md-4">
-                                <input type="text" name="medicaciones[{{ $index }}][numero_lote]" class="form-control border-0 shadow-sm" value="{{ $med->numero_lote }}" placeholder="Número lote">
-                            </div>
-                            <div class="col-md-2">
-                                <button type="button" class="btn btn-danger w-100 remove-medicacion"><i class="bi bi-trash"></i></button>
+                    {{-- Tipos de Violencia (Condicional) --}}
+                    <div class="col-md-12 mt-3" id="violencia-container" style="{{ $caso->violencia_previa ? '' : 'display: none;' }}">
+                        <div class="p-3 border rounded bg-white shadow-sm">
+                            <label class="form-label fw-bold mb-3 text-danger"><i class="bi bi-exclamation-triangle"></i> Tipos de Violencia Detectada</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                @php $tiposSeleccionados = $caso->tiposViolencia->pluck('id')->toArray(); @endphp
+                                @foreach($tiposViolencia as $tipo)
+                                    <input type="checkbox" class="btn-check" name="tipos_violencia[]" value="{{ $tipo->id }}" id="violencia_{{ $tipo->id }}" autocomplete="off" {{ in_array($tipo->id, $tiposSeleccionados) ? 'checked' : '' }}>
+                                    <label class="violencia-chip" for="violencia_{{ $tipo->id }}">{{ $tipo->nombre }}</label>
+                                @endforeach
                             </div>
                         </div>
-                    @endforeach
+                    </div>
                 </div>
-                <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-medicacion">
-                    <i class="bi bi-plus-lg"></i> Agregar medicación
+            </div>
+        </div>
+
+        {{-- 3. MEDICACIÓN --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-capsule me-2"></i>3. Medicación Administrada</h5>
+                <button type="button" class="btn btn-sm btn-primary" id="add-medicacion">
+                    <i class="bi bi-plus-circle"></i> Agregar Medicación
                 </button>
             </div>
-
-            {{-- ENCARGADO --}}
-            <div class="col-12 mt-3">
-                <label class="fw-bold">Encargado del Caso</label>
-                <select name="encargado_id" class="form-select border-0 shadow-sm">
-                    @foreach($encargados as $encargado)
-                        <option value="{{ $encargado->id }}" {{ $caso->encargado_id == $encargado->id ? 'selected' : '' }}>
-                            {{ $encargado->apellido }} {{ $encargado->nombre }}
-                        </option>
-                    @endforeach
-                </select>
+            <div class="card-body">
+                <div id="medicaciones-container">
+                    @forelse($caso->medicaciones as $index => $med)
+                        <div class="row g-2 mb-2 medicacion-item bg-light p-2 rounded">
+                            <div class="col-md-6">
+                                <input type="text" name="medicaciones[{{ $index }}][nombre]" value="{{ $med->nombre }}" class="form-control border-0 shadow-sm" placeholder="Nombre de la medicación">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" name="medicaciones[{{ $index }}][numero_lote]" value="{{ $med->numero_lote }}" class="form-control border-0 shadow-sm" placeholder="Número de lote">
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <button type="button" class="btn btn-outline-danger w-100 remove-medicacion"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="row g-2 mb-2 medicacion-item bg-light p-2 rounded">
+                            <div class="col-md-6"><input type="text" name="medicaciones[0][nombre]" class="form-control border-0 shadow-sm" placeholder="Nombre"></div>
+                            <div class="col-md-4"><input type="text" name="medicaciones[0][numero_lote]" class="form-control border-0 shadow-sm" placeholder="Lote"></div>
+                            <div class="col-md-2 text-end"><button type="button" class="btn btn-outline-danger w-100 remove-medicacion"><i class="bi bi-trash"></i></button></div>
+                        </div>
+                    @endforelse
+                </div>
             </div>
+        </div>
 
-            <div class="col-12 mt-4 text-end">
-                <hr style="opacity: 0.1;">
-                <button type="submit" class="btn text-white px-5 py-2 shadow-sm" style="background: #5651A0;">
-                    <i class="bi bi-save me-2"></i> Actualizar Caso
+        {{-- 4. RED DE CONTENCIÓN --}}
+        <div class="card shadow-sm border-0 mb-5">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-heart-pulse me-2"></i>4. Red de Contención y Cierre</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-secondary mb-3">¿Con qué redes cuenta la persona?</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        @php $redesSeleccionadas = $caso->redesContencion->pluck('id')->toArray(); @endphp
+                        @foreach($redes as $red)
+                            <input type="checkbox" class="btn-check" name="redes_contencion[]" value="{{ $red->id }}" id="red_{{ $red->id }}" autocomplete="off" {{ in_array($red->id, $redesSeleccionadas) ? 'checked' : '' }}>
+                            <label class="red-chip" for="red_{{ $red->id }}">{{ $red->nombre }}</label>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-light text-end py-3">
+                <button type="submit" class="btn btn-lg text-white px-5 shadow-sm" style="background: #5651A0;">
+                    <i class="bi bi-save-fill me-2"></i> ACTUALIZAR REGISTRO IVE
                 </button>
             </div>
         </div>
     </form>
 </div>
 
-{{-- MODAL INTERVENCIONES --}}
-<div class="modal fade" id="modalIntervenciones" tabindex="-1" aria-labelledby="modalIntervencionesLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header text-white" style="background: #5651A0;">
-                <h5 class="modal-title" id="modalIntervencionesLabel">
-                    <i class="bi bi-journal-text"></i> Intervenciones: {{ $caso->persona->apellido }}, {{ $caso->persona->nombre }}
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            
-            <div class="modal-body p-4">
-                {{-- FORMULARIO NUEVA INTERVENCIÓN --}}
-                <h6 class="fw-bold mb-3 text-success"><i class="bi bi-plus-circle"></i> Cargar Nueva Intervención</h6>
-                
-                <form action="{{ route('frontend.areas.ive.intervenciones.store', $caso->id) }}" method="POST" class="mb-5">
-                    @csrf
-                    <div class="row g-3 bg-light p-3 rounded shadow-sm border">
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small">Fecha</label>
-                            <input type="date" name="fecha_intervencion" class="form-control border-0 shadow-sm" required value="{{ date('Y-m-d') }}">
-                        </div>
-                        
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold small">Tipo de Intervención</label>
-                            <select name="tipo_intervencion_id" class="form-select border-0 shadow-sm" required>
-                                <option value="">Seleccione...</option>
-                                @foreach($tiposIntervencion as $tipo)
-                                    <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        
-                        <div class="col-md-5">
-                            <label class="form-label fw-bold small">Profesional a cargo</label>
-                            <select name="encargado_id" class="form-select border-0 shadow-sm" required>
-                                <option value="">Seleccione...</option>
-                                @foreach($encargados as $encargado)
-                                    <option value="{{ $encargado->id }}">
-                                        {{ $encargado->apellido }}, {{ $encargado->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        
-                        <div class="col-12">
-                            <label class="form-label fw-bold small">Detalle / Evolución</label>
-                            <textarea name="detalle" class="form-control border-0 shadow-sm" rows="3" required placeholder="Escriba el detalle de la intervención aquí..."></textarea>
-                        </div>
-                        
-                        <div class="col-12 text-end mt-3">
-                            <button type="button" class="btn btn-secondary btn-sm me-2" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-success btn-sm shadow-sm px-4">
-                                <i class="bi bi-save"></i> Guardar Intervención
-                            </button>
-                        </div>
-                    </div>
-                </form>
-
-                <hr class="my-4" style="opacity: 0.1;">
-
-                {{-- HISTORIAL --}}
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0 text-muted"><i class="bi bi-clock-history"></i> Historial de Intervenciones</h6>
-                    <span class="badge rounded-pill bg-primary px-3">{{ $caso->intervenciones->count() }} Registros</span>
-                </div>
-
-                <div class="table-responsive shadow-sm rounded">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-dark">
-                            <tr class="small text-uppercase">
-                                <th style="width: 15%;">Fecha</th>
-                                <th style="width: 20%;">Tipo</th>
-                                <th style="width: 20%;">Profesional</th>
-                                <th style="width: 45%;">Detalle</th>
-                            </tr>
-                        </thead>
-                        <tbody class="small">
-                            @forelse($caso->intervenciones as $intervencion)
-                                <tr>
-                                    <td class="text-nowrap fw-bold">{{ \Carbon\Carbon::parse($intervencion->fecha_intervencion)->format('d/m/Y') }}</td>
-                                    <td><span class="badge bg-soft-secondary text-dark border w-100" style="background-color: #f0f0f0;">{{ $intervencion->tipo->nombre ?? 'S/D' }}</span></td>
-                                    <td>{{ $intervencion->encargado->apellido }}, {{ $intervencion->encargado->nombre }}</td>
-                                    <td class="text-wrap">{{ $intervencion->detalle }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted py-4">
-                                        <i class="bi bi-info-circle d-block fs-4 mb-2"></i>
-                                        No hay intervenciones registradas para este caso.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div> 
-        </div>
-    </div>
-</div>
-
-
+<style>
+    .card { border-radius: 12px; }
+    .form-control:focus, .form-select:focus { border-color: #5651A0; box-shadow: 0 0 0 0.2rem rgba(86, 81, 160, 0.25); }
+    .violencia-chip, .red-chip {
+        display: inline-block; padding: 8px 16px; border-radius: 50px; border: 1px solid #dee2e6;
+        background-color: #f8f9fa; cursor: pointer; transition: all 0.2s; font-size: 0.9rem; font-weight: 500;
+    }
+    .btn-check:checked + .violencia-chip { background-color: #dc3545; color: white; border-color: #dc3545; }
+    .btn-check:checked + .red-chip { background-color: #5651A0; color: white; border-color: #5651A0; }
+    .violencia-chip:hover, .red-chip:hover { background-color: #e9ecef; }
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Lógica para mostrar/ocultar tipos de violencia
-    const checkViolencia = document.getElementById('violencia_previa');
+    // Select2
+    $('#persona_id_ive').select2({ theme: 'bootstrap-5', width: '100%' });
+
+    // Lógica mostrar/ocultar violencia
+    const checkboxViolencia = document.querySelector('input[name="violencia_previa"]');
     const containerViolencia = document.getElementById('violencia-container');
+    checkboxViolencia.addEventListener('change', function() {
+        this.checked ? $(containerViolencia).fadeIn() : $(containerViolencia).fadeOut();
+    });
 
-    if(checkViolencia) {
-        checkViolencia.addEventListener('change', function() {
-            containerViolencia.style.display = this.checked ? 'block' : 'none';
-        });
-    }
+    // Lógica dinámica de Medicaciones
+    let medIndex = {{ $caso->medicaciones->count() > 0 ? $caso->medicaciones->count() : 1 }};
+    document.getElementById('add-medicacion').addEventListener('click', function () {
+        const container = document.getElementById('medicaciones-container');
+        const html = `
+            <div class="row g-2 mb-2 medicacion-item animate__animated animate__fadeIn bg-light p-2 rounded">
+                <div class="col-md-6"><input type="text" name="medicaciones[${medIndex}][nombre]" class="form-control border-0 shadow-sm" placeholder="Nombre"></div>
+                <div class="col-md-4"><input type="text" name="medicaciones[${medIndex}][numero_lote]" class="form-control border-0 shadow-sm" placeholder="Lote"></div>
+                <div class="col-md-2 text-end"><button type="button" class="btn btn-outline-danger w-100 remove-medicacion"><i class="bi bi-trash"></i></button></div>
+            </div>`;
+        container.insertAdjacentHTML('beforeend', html);
+        medIndex++;
+    });
 
-    // Lógica para agregar/quitar medicaciones
-    let medIndex = {{ $caso->medicaciones->count() }};
-    const addBtn = document.getElementById('add-medicacion');
-    const containerMed = document.getElementById('medicaciones-container');
-
-    if(addBtn) {
-        addBtn.addEventListener('click', function() {
-            const html = `
-                <div class="row g-2 mb-2 medicacion-item">
-                    <div class="col-md-6">
-                        <input type="text" name="medicaciones[${medIndex}][nombre]" class="form-control border-0 shadow-sm" placeholder="Nombre medicación">
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" name="medicaciones[${medIndex}][numero_lote]" class="form-control border-0 shadow-sm" placeholder="Número lote">
-                    </div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-danger w-100 remove-medicacion"><i class="bi bi-trash"></i></button>
-                    </div>
-                </div>`;
-            containerMed.insertAdjacentHTML('beforeend', html);
-            medIndex++;
-        });
-    }
-
-    containerMed.addEventListener('click', function(e) {
+    document.addEventListener('click', function(e) {
         if (e.target.closest('.remove-medicacion')) {
-            e.target.closest('.medicacion-item').remove();
+            const items = document.querySelectorAll('.medicacion-item');
+            if(items.length > 1) e.target.closest('.medicacion-item').remove();
         }
     });
 });
-
 </script>
 @endsection

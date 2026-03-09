@@ -178,6 +178,23 @@
             padding-bottom:18px !important;
             font-size:.9rem;
         }
+
+            
+
+        .fade-page{
+            animation: fadePage .85s ease;
+        }
+
+        @keyframes fadePage{
+            from{
+                opacity:0;
+                transform:translateY(10px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -291,7 +308,7 @@
     </div>
 </nav>
 
-<main class="container flex-grow-1 py-4">
+<main class="container flex-grow-1 py-4 fade-page">
     @yield('content')
 </main>
 
@@ -301,7 +318,56 @@
     </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3500,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+});
+
+@if(session('success'))
+Toast.fire({
+    icon: 'success',
+    title: "{{ session('success') }}"
+});
+@endif
+
+@if(session('error'))
+Toast.fire({
+    icon: 'error',
+    title: "{{ session('error') }}"
+});
+@endif
+
+@if(session('warning'))
+Toast.fire({
+    icon: 'warning',
+    title: "{{ session('warning') }}"
+});
+@endif
+
+@if(session('info'))
+Toast.fire({
+    icon: 'info',
+    title: "{{ session('info') }}"
+});
+@endif
+
+</script>
+
+
+
+
 <script>
 document.querySelectorAll('.form-eliminar').forEach(form => {
 

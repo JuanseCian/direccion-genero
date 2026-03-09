@@ -28,40 +28,47 @@ class MasculinidadesCasoController extends Controller
         return view('frontend.areas.masculinidades.listado', compact('casos'));
     }
 
-   public function create()
-{
-  
-    $agresores = Persona::join('direccion_genero_casos', 'personas.id', '=', 'direccion_genero_casos.agresor_id')
-        ->where('personas.agresor', 1)
-        ->where('direccion_genero_casos.debe_asistir_masculinidades', 1)
-        ->select('personas.*')
-        ->distinct()
-        ->get();
+    public function create()
+    {
+    
+        $personasConCaso = MasculinidadesCaso::pluck('persona_id');
 
-    $derivaciones = MasculinidadesDerivacion::orderBy('nombre')->get();
-    $situacionesHabitacionales = SituacionHabitacional::orderBy('nombre')->get();
-    $nivelesEstudio = NivelEstudio::orderBy('nombre')->get();
-    $medidasCautelares = MedidaCautelar::orderBy('nombre')->get();
-    $tipoViolencia = TipoViolencia::orderBy('nombre')->get();
-    $situacionSanitaria = SituacionSanitaria::orderBy('nombre')->get();
-    $espacioGrupal = EspacioGrupal::orderBy('nombre')->get();
+        $agresores = Persona::leftJoin('direccion_genero_casos', 'personas.id', '=', 'direccion_genero_casos.agresor_id')
+            ->where('personas.agresor', 1)
+            ->where(function($q){
+                $q->where('personas.debe_asistir_masculinidades', 1)
+                ->orWhere('direccion_genero_casos.debe_asistir_masculinidades', 1);
+            })
+            ->whereNotIn('personas.id', $personasConCaso)
+            ->select('personas.*')
+            ->distinct()
+            ->orderBy('personas.apellido')
+            ->get();
 
-    $encargados = Encargado::whereHas('areas', function($q){
-        $q->where('areas.id', 4);
-    })->orderBy('apellido')->get();
+        $derivaciones = MasculinidadesDerivacion::orderBy('nombre')->get();
+        $situacionesHabitacionales = SituacionHabitacional::orderBy('nombre')->get();
+        $nivelesEstudio = NivelEstudio::orderBy('nombre')->get();
+        $medidasCautelares = MedidaCautelar::orderBy('nombre')->get();
+        $tipoViolencia = TipoViolencia::orderBy('nombre')->get();
+        $situacionSanitaria = SituacionSanitaria::orderBy('nombre')->get();
+        $espacioGrupal = EspacioGrupal::orderBy('nombre')->get();
 
-    return view('frontend.areas.masculinidades.create', compact(
-        'agresores',
-        'derivaciones',
-        'situacionesHabitacionales',
-        'situacionSanitaria',
-        'nivelesEstudio',
-        'encargados', 
-        'medidasCautelares',
-        'tipoViolencia',
-        'espacioGrupal'
-    ));
-}
+        $encargados = Encargado::whereHas('areas', function($q){
+            $q->where('areas.id', 4);
+        })->orderBy('apellido')->get();
+
+        return view('frontend.areas.masculinidades.create', compact(
+            'agresores',
+            'derivaciones',
+            'situacionesHabitacionales',
+            'situacionSanitaria',
+            'nivelesEstudio',
+            'encargados', 
+            'medidasCautelares',
+            'tipoViolencia',
+            'espacioGrupal'
+        ));
+    }
 
     public function store(Request $request)
     {
@@ -112,8 +119,9 @@ class MasculinidadesCasoController extends Controller
                     $caso->grupoFamiliar()->create([
                         'nombre' => $familiar['nombre'],
                         'apellido' => $familiar['apellido'] ?? null,
+                        'dni' => $familiar['dni'] ?? null,
                         'telefono' => $familiar['telefono'] ?? null,
-                        'vinculo' => $familiar['vinculo'] ?? null,
+                        'vinculo_actual' => $familiar['vinculo'] ?? null,
                     ]);
                 }
             }
@@ -194,6 +202,7 @@ class MasculinidadesCasoController extends Controller
             'intervenciones.encargado'
         ])->findOrFail($id);
 
+
         $tiposIntervencion = TipoIntervencion::all();
 
         $agresores = Persona::where('sexo', 'Masculino')->get();
@@ -243,10 +252,20 @@ class MasculinidadesCasoController extends Controller
             $datos[$campo] = $request->has($campo) ? 1 : 0;
         }
 
+        $caso->grupoFamiliar()->delete();
+
         if ($request->has('grupo')) {
-            $datos['grupo_conviviente'] = json_encode(array_values($request->grupo));
-        } else {
-            $datos['grupo_conviviente'] = json_encode([]);
+            foreach ($request->grupo as $familiar) {
+                if (!empty($familiar['nombre'])) {
+                    $caso->grupoFamiliar()->create([
+                        'nombre' => $familiar['nombre'],
+                        'apellido' => $familiar['apellido'] ?? null,
+                        'dni' => $familiar['dni'] ?? null,
+                        'telefono' => $familiar['telefono'] ?? null,
+                        'vinculo_actual' => $familiar['vinculo'] ?? null,
+                    ]);
+                }
+            }
         }
 
         $caso->update($datos);

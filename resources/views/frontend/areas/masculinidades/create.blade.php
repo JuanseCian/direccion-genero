@@ -263,8 +263,9 @@ function agregarFamiliar() {
     const html = `
         <div class="card p-3 mt-3 border shadow-sm">
             <div class="row g-2">
-                <div class="col-md-3"><input type="text" name="grupo[${index}][nombre]" class="form-control" placeholder="Nombre"></div>
-                <div class="col-md-3"><input type="text" name="grupo[${index}][apellido]" class="form-control" placeholder="Apellido"></div>
+                <div class="col-md-2"><input type="text" name="grupo[${index}][nombre]" class="form-control" placeholder="Nombre"></div>
+                <div class="col-md-2"><input type="text" name="grupo[${index}][apellido]" class="form-control" placeholder="Apellido"></div>
+                <div class="col-md-2"><input type="text" name="grupo[${index}][dni]" class="form-control" placeholder="DNI"></div>
                 <div class="col-md-3"><input type="text" name="grupo[${index}][telefono]" class="form-control" placeholder="Teléfono"></div>
                 <div class="col-md-2">
                     <select name="grupo[${index}][vinculo]" class="form-select">

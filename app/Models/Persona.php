@@ -24,7 +24,8 @@ class Persona extends Model
     'provincia_id',
     'grupo_sanguineo',
     'victima',
-    'agresor'
+    'agresor',
+    'debe_asistir_masculinidades'
     ];
 
     public function barrio()
@@ -32,9 +33,9 @@ class Persona extends Model
         return $this->belongsTo(Barrio::class);
     }
     public function casosAgresor()
-{
-    return $this->hasMany(DireccionGeneroCaso::class,'agresor_id');
-}
+    {
+        return $this->hasMany(DireccionGeneroCaso::class,'agresor_id');
+    }
     public function casosIve() {
         return $this->hasMany(IveCaso::class, 'persona_id');
     }

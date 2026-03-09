@@ -53,6 +53,42 @@ class StatsController extends Controller
                 'total' => $z->total
             ];
         });
+        
+        $edades = DB::table('direccion_genero_casos')
+            ->join('personas', 'direccion_genero_casos.persona_id', '=', 'personas.id')
+            ->select(
+                DB::raw("
+                    CASE
+                        WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) < 18 THEN 'Menor de 18'
+                        WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 18 AND 25 THEN '18-25'
+                        WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 26 AND 35 THEN '26-35'
+                        WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 36 AND 50 THEN '36-50'
+                        ELSE '50+'
+                    END as rango
+                "),
+                DB::raw('count(*) as total')
+            )
+            ->whereNotNull('personas.fecha_nacimiento')
+            ->groupBy('rango')
+            ->get();
+            
+        $violencias = DB::table('direccion_genero_casos')
+            ->join('tipos_violencia', 'direccion_genero_casos.tipo_violencia', '=', 'tipos_violencia.id')
+            ->select('tipos_violencia.nombre', DB::raw('count(*) as total'))
+            ->groupBy('tipos_violencia.nombre')
+            ->orderByDesc('total')
+            ->get();
+
+        $medidas = DB::table('direccion_genero_intervenciones')
+            ->join('tipos_intervencion', 'direccion_genero_intervenciones.tipo_intervencion_id', '=', 'tipos_intervencion.id')
+            ->whereIn('tipos_intervencion.nombre', [
+                'Restricción de acercamiento',
+                'Exclusión del hogar',
+                'Botón antipánico'
+            ])
+            ->select('tipos_intervencion.nombre', DB::raw('count(*) as total'))
+            ->groupBy('tipos_intervencion.nombre')
+            ->get();
 
         $vinculadosMasculinidades = MasculinidadesCaso::count();
         $vinculadosIve = IveCaso::count();
@@ -66,7 +102,10 @@ class StatsController extends Controller
             'desde',
             'hasta',
             'vinculadosMasculinidades',
-            'vinculadosIve'
+            'vinculadosIve',
+            'edades',
+            'violencias',
+            'medidas'
         ));
     }
 
