@@ -29,7 +29,7 @@
             <div class="col-md-3">
 
                 <label class="form-label">DNI</label>
-                <input type="text" name="dni" class="form-control @error('dni') is-invalid @enderror" required>
+                <input type="text" name="dni" class="form-control @error('dni') is-invalid @enderror" >
                 @error('dni')
                 <div class="invalid-feedback">
                     {{ $message }}
@@ -42,7 +42,7 @@
             <div class="col-md-3">
 
                 <label class="form-label">Apellido</label>
-                <input type="text" name="apellido" class="form-control" required>
+                <input type="text" name="apellido" class="form-control" >
 
             </div>
 
@@ -50,7 +50,7 @@
             <div class="col-md-3">
 
                 <label class="form-label">Nombre</label>
-                <input type="text" name="nombre" class="form-control" required>
+                <input type="text" name="nombre" class="form-control" >
 
             </div>
 
@@ -58,14 +58,14 @@
             <div class="col-md-3">
 
                 <label class="form-label">Fecha nacimiento</label>
-                <input type="date" name="fecha_nacimiento" class="form-control" required>
+                <input type="date" name="fecha_nacimiento" class="form-control" >
 
             </div>
             
             <div class="col-md-3">
 
                 <label class="form-label">Sexo</label>
-                <select name="sexo" class="form-control" required>
+                <select name="sexo" class="form-control" >
                     <option value="">Seleccione</option>
                     <option value="Masculino">Masculino</option>
                     <option value="Femenino">Femenino</option>
@@ -180,7 +180,7 @@
             <div class="col-md-6">
 
                 <label class="form-label">Trabaja</label>
-                <select name="trabaja" class="form-control" required>
+                <select name="trabaja" class="form-control" >
                     <option value="">Seleccione</option>
                     <option value="1">Sí</option>
                     <option value="0">No</option>
@@ -191,7 +191,7 @@
             <div class="col-md-6">
 
                 <label class="form-label">Nivel Estudio</label>
-                <select name="nivel_estudio_id" class="form-control" required>
+                <select name="nivel_estudio_id" class="form-control" >
                     @foreach($nivelEstudio as $nivel)
                         <option value="{{ $nivel->id }}">{{ $nivel->nombre }}</option>
                     @endforeach

@@ -64,7 +64,7 @@
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label fw-bold">Derivación</label>
-                        <select name="derivacion_id" class="form-select" required>
+                        <select name="derivacion_id" class="form-select" >
                             <option value="">Seleccione...</option>
                             @foreach($derivaciones as $d)
                                 <option value="{{ $d->id }}">{{ $d->nombre }}</option>

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\{DireccionGeneroCaso, Persona, Provincia, Localidad, Barrio, EstadoCivil, NivelEstudio, IveCaso, MasculinidadesCaso, Encargado, TipoViolencia, RedContencion, TipoIntervencion};
+use App\Models\{DireccionGeneroCaso, Persona, Provincia, Localidad, Barrio, EstadoCivil, NivelEstudio, IveCaso, MasculinidadesCaso, Encargado, TipoViolencia, RedContencion, TipoIntervencion,SituacionHabitacional};
 use Illuminate\Http\Request;
 
 class DireccionGeneroController extends Controller
@@ -46,7 +46,6 @@ class DireccionGeneroController extends Controller
             ->get();
         $agresores = Persona::where('agresor',1)->withCount(['casosAgresor'])->get();
         $idsIve = IveCaso::pluck('persona_id')->toArray();
-
         $provincias = Provincia::orderBy('nombre')->get();
         $localidades = Localidad::orderBy('nombre')->get();
         $barrios = Barrio::orderBy('nombre')->get();
@@ -66,7 +65,7 @@ class DireccionGeneroController extends Controller
             'niveles_estudio',
             'idsIve',
             'encargados',
-            'agresores'
+            'agresores',
         ));
     }
 
@@ -74,7 +73,8 @@ class DireccionGeneroController extends Controller
 {
     $request->validate([
         'persona_id' => 'required|exists:personas,id',
-        'agresor_id' => 'nullable|exists:personas,id'
+        'agresor_id' => 'nullable|exists:personas,id',
+        'situacion_habitacional'=> 'nullable|text:50'
     ]);
 
     $trabaja = $request->has('trabaja') ? 1 : 0;
@@ -95,7 +95,8 @@ class DireccionGeneroController extends Controller
         'debe_asistir_masculinidades' => $cursoMasculinidades,
         'observaciones' => $request->observaciones,
         'encargado_id' => $request->encargado_id,
-        'agresor_id' => $request->agresor_id
+        'agresor_id' => $request->agresor_id,
+        'situacion_habitacional_id' => $request->situacion_habitacional
     ]);
 
     return redirect()->route('genero.listado')->with('success','Legajo creado correctamente');

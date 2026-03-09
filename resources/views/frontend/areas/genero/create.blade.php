@@ -105,7 +105,12 @@
             </div>
         </div>
       <div class="card shadow-sm border-0 mb-4 p-3">
-
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="col-md-4">
+                        <label class="form-label fw-bold">Situación Habitacional</label>
+                        <textarea name="situacion_habitacional" id="" cols="30" rows="10"></textarea>
+                    </div>
+        </div>
     <h5 class="mt-2">Datos del agresor</h5>
 
     <div class="row">
