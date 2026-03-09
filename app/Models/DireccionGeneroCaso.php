@@ -9,7 +9,7 @@ use App\Models\NivelEstudio;
 use App\Models\Provincia;
 use App\Models\Localidad;
 use App\Models\Barrio;
-
+use App\Models\medidaCautelar;
 class DireccionGeneroCaso extends Model
 {
     protected $table = 'direccion_genero_casos';
@@ -25,15 +25,33 @@ class DireccionGeneroCaso extends Model
     'trabaja',
     'organizacion_social',
     'organizacion_social_detalle',
-    'situacion_habitacional',
     'debe_asistir_masculinidades',
+    'medida_cautelar_id',
     'observaciones',
     'encargado_id',
-    'agresor_id'
+    'agresor_id',
+    'agresor_trabajo',
+    'servicios_luz',
+    'servicios_cable',
+    'servicios_gas_natural',
+    'denuncio_antes',
+    'denuncio_antes_detalle',
+    'amenaza_con_arma',
+    'fecha_ultima_denuncia',
+    'amenaza_tipo_arma',
+    'boton_panico_numero',
+    'servicios_agua_potable',
+    'servicios_internet',
+    'situacion_habitacional_id'
 ];
 protected $casts = [
     'debe_asistir_masculinidades' => 'boolean',
 ];
+
+public function medidaCautelar()
+{
+    return $this->belongsTo(medidaCautelar::class);
+}
 
     public function persona()
     {

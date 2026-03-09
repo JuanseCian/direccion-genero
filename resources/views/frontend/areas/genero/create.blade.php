@@ -104,13 +104,47 @@
                 </div>
             </div>
         </div>
-      <div class="card shadow-sm border-0 mb-4 p-3">
-        <div class="card shadow-sm border-0 mb-4">
+         <div class="card shadow-sm border-0 mb-4">
             <div class="col-md-4">
                         <label class="form-label fw-bold">Situación Habitacional</label>
-                        <textarea name="situacion_habitacional" id="" cols="30" rows="10"></textarea>
+                        <select name="situacion_habitacional_id" class="form-select">
+                            <option value="">Seleccione...</option>
+                            @foreach($situacionesHabitacionales as $sh)
+                                <option value="{{ $sh->id }}">{{ $sh->nombre }}</option>
+                            @endforeach
+                        </select>
                     </div>
+                    <div class="col-md-12">
+    <label class="form-label fw-bold">Servicios</label>
+
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="servicios_luz" value="1">
+        <label class="form-check-label">Luz</label>
+    </div>
+
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="servicios_cable" value="1">
+        <label class="form-check-label">Cable</label>
+    </div>
+
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="servicios_gas_natural" value="1">
+        <label class="form-check-label">Gas Natural</label>
+    </div>
+
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="servicios_agua_potable" value="1">
+        <label class="form-check-label">Agua potable</label>
+    </div>
+
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="servicios_internet" value="1">
+        <label class="form-check-label">Internet</label>
+    </div>
+</div>
         </div>
+      <div class="card shadow-sm border-0 mb-4 p-3">
+       
     <h5 class="mt-2">Datos del agresor</h5>
 
     <div class="row">
@@ -163,6 +197,10 @@
 <input type="text" id="agresor_casos" class="form-control" readonly>
 </div>
         </div>
+        <div class="col-md-6">
+    <label class="form-label fw-bold">Trabajo del agresor</label>
+    <textarea name="agresor_trabajo" class="form-control" rows="2"></textarea>
+</div>
         <div class="form-check mt-4">
 
             <input 
@@ -179,18 +217,7 @@
         </div>
 </div>
            
-        <div class="d-flex gap-2">
-
-
-<a href="{{ route('personas.create') }}" 
-class="btn btn-primary"
-target="_blank">
-
-➕ Nuevo agresor
-
-</a>
-
-</div>
+        
         </div>
         {{-- 2. SITUACIÓN SOCIO-EDUCATIVA Y ORGANIZACIÓN --}}
         <div class="card shadow-sm border-0 mb-4">
@@ -260,6 +287,46 @@ target="_blank">
                 </div>
             </div>
         </div>
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="col-md-3">
+    <label class="form-label fw-bold">¿Denunció antes?</label>
+    <input type="checkbox" class="form-check-input" name="denuncio_antes" value="1">
+</div>
+<div class="col-md-3">
+    <div class="col-md-4">
+                        <label class="form-label fw-bold">Medida Cautelar</label>
+                        <select name="medida_cautelar_id" class="form-select">
+                            <option value="">Seleccione...</option>
+                            @foreach($medida as $med)
+                                <option value="{{ $med->id }}">{{ $med->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+</div>
+
+<div class="col-md-9">
+    <label class="form-label fw-bold">Detalle de denuncias anteriores</label>
+    <textarea name="denuncio_antes_detalle" class="form-control"></textarea>
+</div>
+
+<div class="col-md-3">
+    <label class="form-label fw-bold">¿Amenaza con arma?</label>
+    <input type="checkbox" class="form-check-input" name="amenaza_con_arma" value="1">
+</div>
+<div class="col-md-4">
+    <label class="form-label fw-bold">Tipo de arma</label>
+    <input type="text" name="amenaza_tipo_arma" class="form-control">
+</div>
+<div class="col-md-3">
+    <label class="form-label fw-bold">Fecha última denuncia</label>
+    <input type="date" name="fecha_ultima_denuncia" class="form-control">
+</div>
+
+<div class="col-md-3">
+    <label class="form-label fw-bold">Número botón de pánico</label>
+    <input type="text" name="boton_panico_numero" class="form-control">
+</div>
+        </div>
 
         {{-- 4. RESPONSABLE Y OBSERVACIONES --}}
         <div class="card shadow-sm border-0 mb-5">
@@ -288,6 +355,7 @@ target="_blank">
                     <i class="bi bi-save-fill me-2"></i> FINALIZAR Y GUARDAR LEGAJO
                 </button>
             </div>
+            
         </div>
     </form>
 </div>

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\{DireccionGeneroCaso, Persona, Provincia, Localidad, Barrio, EstadoCivil, NivelEstudio, IveCaso, MasculinidadesCaso, Encargado, TipoViolencia, RedContencion, TipoIntervencion,SituacionHabitacional};
+use App\Models\{DireccionGeneroCaso, Persona, Provincia, Localidad, Barrio, EstadoCivil, NivelEstudio, IveCaso, MasculinidadesCaso, Encargado, TipoViolencia, RedContencion, TipoIntervencion,SituacionHabitacional,MedidaCautelar};
 use Illuminate\Http\Request;
 
 class DireccionGeneroController extends Controller
@@ -11,6 +11,7 @@ class DireccionGeneroController extends Controller
     public function index()
     {
         $casos = DireccionGeneroCaso::with('persona')->orderBy('id', 'desc')->get();
+        
         return view('frontend.areas.genero.index', compact('casos'));
     }
 
@@ -44,6 +45,7 @@ class DireccionGeneroController extends Controller
             ->where('victima','1')
             ->orderBy('apellido')
             ->get();
+        $medida = MedidaCautelar::orderBy('nombre')->get();
         $agresores = Persona::where('agresor',1)->withCount(['casosAgresor'])->get();
         $idsIve = IveCaso::pluck('persona_id')->toArray();
         $provincias = Provincia::orderBy('nombre')->get();
@@ -51,7 +53,7 @@ class DireccionGeneroController extends Controller
         $barrios = Barrio::orderBy('nombre')->get();
         $estados_civiles = EstadoCivil::orderBy('nombre')->get();
         $niveles_estudio = NivelEstudio::orderBy('nombre')->get();
-
+        $situacionesHabitacionales = SituacionHabitacional::orderBy('nombre')->get();
         $encargados = Encargado::whereHas('areas', function($q){
             $q->where('areas.id',1);
         })->get();
@@ -66,6 +68,8 @@ class DireccionGeneroController extends Controller
             'idsIve',
             'encargados',
             'agresores',
+            'medida',
+            'situacionesHabitacionales'
         ));
     }
 
@@ -74,8 +78,19 @@ class DireccionGeneroController extends Controller
     $request->validate([
         'persona_id' => 'required|exists:personas,id',
         'agresor_id' => 'nullable|exists:personas,id',
-        'situacion_habitacional'=> 'nullable|text:50'
+        'situacion_habitacional_id' => 'nullable|exists:situaciones_habitacionales,id',
+        
     ]);
+    
+    $denuncioAntes = $request->has('denuncio_antes') ? 1 : 0;
+    $medida_cautelar_id = $request->medida_cautelar_id;
+    
+    $amenazaArma = $request->has('amenaza_con_arma') ? 1 : 0;
+    $servicios_luz = $request->has('servicios_luz') ? 1 : 0;
+    $servicios_cable = $request->has('servicios_cable') ? 1 : 0;
+    $servicios_gas = $request->has('servicios_gas_natural') ? 1 : 0;
+    $servicios_agua = $request->has('servicios_agua_potable') ? 1 : 0;
+    $servicios_internet = $request->has('servicios_internet') ? 1 : 0;
 
     $trabaja = $request->has('trabaja') ? 1 : 0;
     $orgSocial = $request->has('organizacion_social') ? 1 : 0;
@@ -85,9 +100,11 @@ class DireccionGeneroController extends Controller
         'persona_id' => $request->persona_id,
         'estado_civil_id' => $request->estado_civil_id,
         'genero' => $request->genero,
+        'amenaza_tipo_arma' => $request->amenaza_tipo_arma,
         'provincia_id' => $request->provincia_id,
         'localidad_id' => $request->localidad_id,
         'barrio_id' => $request->barrio_id,
+        'medida_cautelar_id' => $request->medida_cautelar_id,
         'nivel_estudio_id' => $request->nivel_estudio_id,
         'trabaja' => $trabaja,
         'organizacion_social' => $orgSocial,
@@ -96,7 +113,18 @@ class DireccionGeneroController extends Controller
         'observaciones' => $request->observaciones,
         'encargado_id' => $request->encargado_id,
         'agresor_id' => $request->agresor_id,
-        'situacion_habitacional_id' => $request->situacion_habitacional
+        'servicios_luz' => $servicios_luz,
+        'servicios_cable' => $servicios_cable,
+        'servicios_gas_natural' => $servicios_gas,
+        'servicios_agua_potable' => $servicios_agua,
+        'servicios_internet' => $servicios_internet,
+        'denuncio_antes' => $denuncioAntes,
+        'denuncio_antes_detalle' => $request->denuncio_antes_detalle,
+        'amenaza_con_arma' => $amenazaArma,
+        'fecha_ultima_denuncia' => $request->fecha_ultima_denuncia,
+        'boton_panico_numero' => $request->boton_panico_numero,
+        'situacion_habitacional_id' => $request->situacion_habitacional_id,
+        'agresor_trabajo' => $request->agresor_trabajo
     ]);
 
     return redirect()->route('genero.listado')->with('success','Legajo creado correctamente');
