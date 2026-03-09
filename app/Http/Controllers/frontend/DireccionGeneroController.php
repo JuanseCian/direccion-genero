@@ -101,6 +101,7 @@ class DireccionGeneroController extends Controller
         'estado_civil_id' => $request->estado_civil_id,
         'genero' => $request->genero,
         'amenaza_tipo_arma' => $request->amenaza_tipo_arma,
+        'tipo_violencia' => $request->tipo_violencia,
         'provincia_id' => $request->provincia_id,
         'localidad_id' => $request->localidad_id,
         'barrio_id' => $request->barrio_id,

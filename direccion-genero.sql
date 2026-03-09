@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 09-03-2026 a las 18:36:02
+-- Tiempo de generación: 09-03-2026 a las 18:39:46
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.1.10
 
@@ -300,7 +300,8 @@ CREATE TABLE `direccion_genero_casos` (
 INSERT INTO `direccion_genero_casos` (`id`, `persona_id`, `estado_civil_id`, `genero`, `provincia_id`, `localidad_id`, `barrio_id`, `situacion_habitacional_id`, `nivel_estudio_id`, `trabaja`, `organizacion_social`, `organizacion_social_detalle`, `observaciones`, `created_at`, `updated_at`, `estado_id`, `nivel_riesgo_id`, `situacion_sanitaria`, `servicios_luz`, `servicios_cable`, `servicios_gas_natural`, `servicios_agua_potable`, `servicios_internet`, `tipo_violencia`, `denuncio_antes`, `denuncio_antes_detalle`, `amenaza_con_arma`, `amenaza_tipo_arma`, `fecha_ultima_denuncia`, `boton_panico_numero`, `encargado_id`, `agresor_id`, `agresor_trabajo`, `debe_asistir_masculinidades`, `medida_cautelar_id`) VALUES
 (2, 97, 2, 'MUJER', 1, 36, 99, NULL, 1, 1, 1, 'no se', 'a', '2026-03-07 17:08:22', '2026-03-07 17:08:22', 1, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, NULL, NULL, NULL, 1, NULL, NULL, 0, NULL),
 (11, 108, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 1, NULL, NULL, '2026-03-09 21:29:22', '2026-03-09 21:29:22', 1, NULL, NULL, 0, 0, 0, 0, 0, NULL, 0, NULL, 0, 'asdasd', NULL, NULL, NULL, NULL, NULL, 0, NULL),
-(12, 108, 2, 'asd', 3, 90, 99, 1, 5, 1, 1, 'asd', 'asd', '2026-03-09 21:30:59', '2026-03-09 21:30:59', 1, NULL, NULL, 1, 1, 1, 1, 1, NULL, 1, 'asd', 1, 'asd', '2026-03-03', 'asd', 1, 102, 'asd', 1, 2);
+(12, 108, 2, 'asd', 3, 90, 99, 1, 5, 1, 1, 'asd', 'asd', '2026-03-09 21:30:59', '2026-03-09 21:30:59', 1, NULL, NULL, 1, 1, 1, 1, 1, NULL, 1, 'asd', 1, 'asd', '2026-03-03', 'asd', 1, 102, 'asd', 1, 2),
+(13, 108, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 1, NULL, NULL, '2026-03-09 21:39:09', '2026-03-09 21:39:09', 1, NULL, NULL, 0, 0, 0, 0, 0, 'asdasd', 0, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -1869,7 +1870,7 @@ ALTER TABLE `barrio`
 -- AUTO_INCREMENT de la tabla `direccion_genero_casos`
 --
 ALTER TABLE `direccion_genero_casos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `direccion_genero_caso_programa`

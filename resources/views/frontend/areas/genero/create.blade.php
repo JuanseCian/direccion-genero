@@ -317,6 +317,10 @@
     <label class="form-label fw-bold">Tipo de arma</label>
     <input type="text" name="amenaza_tipo_arma" class="form-control">
 </div>
+<div class="col-md-4">
+    <label class="form-label fw-bold">Tipo de violencia</label>
+    <input type="text" name="tipo_violencia" class="form-control">
+</div>
 <div class="col-md-3">
     <label class="form-label fw-bold">Fecha última denuncia</label>
     <input type="date" name="fecha_ultima_denuncia" class="form-control">

@@ -39,6 +39,7 @@ class DireccionGeneroCaso extends Model
     'amenaza_con_arma',
     'fecha_ultima_denuncia',
     'amenaza_tipo_arma',
+    'tipo_violencia',
     'boton_panico_numero',
     'servicios_agua_potable',
     'servicios_internet',
