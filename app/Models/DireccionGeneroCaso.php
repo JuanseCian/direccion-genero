@@ -25,6 +25,7 @@ class DireccionGeneroCaso extends Model
     'trabaja',
     'organizacion_social',
     'organizacion_social_detalle',
+    'situacion_habitacional',
     'debe_asistir_masculinidades',
     'observaciones',
     'encargado_id',

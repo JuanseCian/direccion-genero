@@ -49,12 +49,12 @@ class PersonaController extends Controller
 {
 
     $request->validate([
-        'nombre' => 'required',
-        'apellido' => 'required',
-        'dni' => 'required|unique:personas,dni',
-        'fecha_nacimiento' => 'nullable|date',
-        'barrio_id' => 'nullable',
-        'trabaja' => 'nullable',
+        'nombre',
+        'apellido',
+        'dni' ,
+        'fecha_nacimiento',
+        'barrio_id' ,
+        'trabaja',
         'nivel_estudio_id' => 'nullable|exists:niveles_estudio,id',
         'provincia_id' => 'nullable|exists:provincia,id',
         'localidad_id' => 'nullable|exists:localidad,id',
