@@ -73,7 +73,7 @@
             </div>
 
         </div>
-           <div class="col-md-3">
+            <div class="col-md-3">
 
             <div class="form-check mt-4">
                 <input class="form-check-input" type="checkbox" name="agresor" value="1" id="agresor">
@@ -219,6 +219,16 @@
                 </select>
 
             </div>
+            <div class="col-md-6">
+
+                <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" id="tiene_cud">
+                    <label class="form-check-label">
+                        Posee CUD (Certificado Único de Discapacidad)
+                    </label>
+                </div>
+
+            </div>
 
         </div>
 
@@ -231,6 +241,52 @@
         </div>
 
 
+        <!-- Modal CUD -->
+        <div class="modal fade" id="modalCud" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Certificado Único de Discapacidad</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+                            <label class="form-label">Número de CUD</label>
+                            <input type="text" name="numero_cud" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Fecha emisión</label>
+                            <input type="date" name="fecha_emision_cud" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Fecha vencimiento</label>
+                            <input type="date" name="fecha_vencimiento_cud" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Observaciones</label>
+                            <textarea name="observaciones_cud" class="form-control"></textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Guardar CUD</button>
+
+                    </div>
+                    <span id="cudCargado" class="badge bg-success d-none">
+                    CUD cargado
+                    </span>
+
+                </div>
+            </div>
+        </div>
     </form>
 
 </div>
@@ -254,6 +310,25 @@ document.addEventListener('DOMContentLoaded', function(){
 
 });
 
+const chkCud = document.getElementById('tiene_cud');
+
+chkCud.addEventListener('change', function(){
+
+    if(this.checked){
+
+        const modal = new bootstrap.Modal(document.getElementById('modalCud'));
+        modal.show();
+
+    }
+
+});
+
+document.querySelector('#modalCud .btn-success').addEventListener('click', function(){
+
+    document.getElementById('cudCargado').classList.remove('d-none');
+
+});
 </script>
+
 
 @endsection

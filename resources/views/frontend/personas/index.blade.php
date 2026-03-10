@@ -79,9 +79,9 @@
                     </div>
                 </td>
                 <td>
-                    <a href="#"
+                    <a href="{{ route('personas.edit', $p->id) }}"
                     class="btn btn-sm btn-secondary">
-                        Ver
+                        Ver / Editar
                     </a>
                 </td>
             </tr>

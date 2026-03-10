@@ -63,6 +63,58 @@
                         </select>
                     </div>
                 </div>
+                @if($caso->persona && $caso->persona->cud)
+
+                <div class="mt-3">
+
+                    @php
+                        $cud = $caso->persona->cud;
+                        $vencido = $cud->fecha_vencimiento 
+                                    && \Carbon\Carbon::parse($cud->fecha_vencimiento)->isPast();
+                    @endphp
+
+                    <div class="alert d-flex justify-content-between align-items-center shadow-sm"
+                        style="background:#f0f7ff;border-left:5px solid #0d6efd;">
+
+                        <div>
+
+                            <strong class="text-primary">
+                                <i class="bi bi-person-wheelchair me-2"></i>
+                                Certificado Único de Discapacidad (CUD)
+                            </strong>
+
+                            <div class="small mt-1">
+
+                                <strong>N°:</strong>
+                                {{ $cud->numero_cud ?? '—' }}
+
+                                <br>
+
+                                <strong>Emisión:</strong>
+                                {{ $cud->fecha_emision 
+                                    ? \Carbon\Carbon::parse($cud->fecha_emision)->format('d/m/Y') 
+                                    : '—' }}
+
+                                <br>
+
+                                <strong>Vencimiento:</strong>
+                                {{ $cud->fecha_vencimiento 
+                                    ? \Carbon\Carbon::parse($cud->fecha_vencimiento)->format('d/m/Y') 
+                                    : '—' }}
+
+                            </div>
+
+                        </div>
+
+                        <span class="badge {{ $vencido ? 'bg-danger' : 'bg-success' }} fs-6">
+                            {{ $vencido ? 'CUD Vencido' : 'CUD Vigente' }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                @endif
             </div>
         </div>
 

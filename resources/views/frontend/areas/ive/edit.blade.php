@@ -125,6 +125,46 @@
                             </div>
                         </div>
                     </div>
+                    {{-- CUD de la persona --}}
+                    @if($caso->persona && $caso->persona->cud)
+
+                    <div class="col-md-12 mt-4">
+                        <div class="alert border shadow-sm d-flex justify-content-between align-items-center"
+                            style="background:#f0f7ff;border-left:5px solid #0d6efd;">
+
+                            <div>
+                                <strong class="text-primary">
+                                    <i class="bi bi-person-wheelchair me-2"></i>
+                                    Certificado Único de Discapacidad (CUD)
+                                </strong>
+
+                                <div class="small mt-1">
+                                    <strong>N°:</strong>
+                                    {{ $caso->persona->cud->numero_cud ?? '—' }}
+                                    <br>
+
+                                    <strong>Fecha emisión:</strong>
+                                    {{ $caso->persona->cud->fecha_emision 
+                                        ? \Carbon\Carbon::parse($caso->persona->cud->fecha_emision)->format('d/m/Y') 
+                                        : '—' }}
+
+                                    <br>
+
+                                    <strong>Vencimiento:</strong>
+                                    {{ $caso->persona->cud->fecha_vencimiento 
+                                        ? \Carbon\Carbon::parse($caso->persona->cud->fecha_vencimiento)->format('d/m/Y') 
+                                        : '—' }}
+                                </div>
+                            </div>
+
+                            <span class="badge bg-primary fs-6">
+                                Persona con CUD
+                            </span>
+
+                        </div>
+                    </div>
+
+                    @endif
                 </div>
             </div>
         </div>

@@ -54,4 +54,8 @@ class Persona extends Model
         return $this->belongsTo(\App\Models\Barrio::class);
     }
 
+    public function cud()
+    {
+        return $this->hasOne(Cud::class);
+    }
 }

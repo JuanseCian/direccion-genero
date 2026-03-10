@@ -142,6 +142,43 @@
                     </div>
                 </div>
             </div>
+            {{-- CUD --}}
+            @if($legajo->persona->cud)
+
+            <div class="col-md-12 mt-3">
+                <div class="alert border shadow-sm" style="background:#f0f7ff;border-left:4px solid #0d6efd;">
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        
+                        <div>
+                            <strong class="text-primary">
+                                <i class="bi bi-person-wheelchair me-2"></i>
+                                Certificado Único de Discapacidad (CUD)
+                            </strong>
+
+                            <div class="small mt-1">
+                                <strong>N°:</strong> {{ $legajo->persona->cud->numero_cud ?? '—' }} <br>
+
+                                <strong>Emisión:</strong>
+                                {{ $legajo->persona->cud->fecha_emision ? \Carbon\Carbon::parse($legajo->persona->cud->fecha_emision)->format('d/m/Y') : '—' }}
+
+                                <br>
+
+                                <strong>Vencimiento:</strong>
+                                {{ $legajo->persona->cud->fecha_vencimiento ? \Carbon\Carbon::parse($legajo->persona->cud->fecha_vencimiento)->format('d/m/Y') : '—' }}
+                            </div>
+                        </div>
+
+                        <span class="badge bg-primary">
+                            Persona con CUD
+                        </span>
+
+                    </div>
+
+                </div>
+            </div>
+
+            @endif
         </div>
 
         {{-- 3. VIVIENDA Y SERVICIOS --}}
@@ -431,6 +468,223 @@
             </div>
         </div>
     </div>
+</div>
+
+{{-- MODAL INTERVENCIONES --}}
+<div class="modal fade" id="modalIntervenciones" tabindex="-1" aria-hidden="true">
+
+    <div class="modal-dialog modal-xl">
+
+        <div class="modal-content border-0 shadow">
+
+            {{-- HEADER --}}
+            <div class="modal-header text-white" style="background-color:#5651A0;">
+                <h5 class="modal-title">
+                    <i class="bi bi-chat-right-text me-2"></i>
+                    Intervenciones - {{ $legajo->persona->nombre }}, {{ $legajo->persona->apellido }}
+                </h5>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            {{-- BODY --}}
+            <div class="modal-body bg-light">
+
+                {{-- NUEVA INTERVENCIÓN --}}
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-white">
+                        <strong class="text-success">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            Nueva Intervención
+                        </strong>
+                    </div>
+
+                    <div class="card-body">
+
+                        <form action="{{ route('masculinidades.intervenciones.store', $legajo->id) }}" method="POST">
+                        @csrf
+
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold small">Fecha</label>
+
+                                <input type="date"
+                                       name="fecha_intervencion"
+                                       class="form-control"
+                                       value="{{ date('Y-m-d') }}"
+                                       required>
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <label class="form-label fw-bold small">Tipo de Intervención</label>
+
+                                <select name="tipo_intervencion_id"
+                                        class="form-select"
+                                        required>
+
+                                    <option value="">Seleccione...</option>
+
+                                    @foreach($tiposIntervencion as $tipo)
+                                        <option value="{{ $tipo->id }}">
+                                            {{ $tipo->nombre }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+
+                            </div>
+
+                            <div class="col-md-5">
+
+                                <label class="form-label fw-bold small">Profesional</label>
+
+                                <select name="encargado_id"
+                                        class="form-select"
+                                        required>
+
+                                    <option value="">Seleccione...</option>
+
+                                    @foreach($encargados as $encargado)
+                                        <option value="{{ $encargado->id }}">
+                                            {{ $encargado->apellido }}, {{ $encargado->nombre }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+
+                            </div>
+
+                            <div class="col-12">
+
+                                <label class="form-label fw-bold small">
+                                    Detalle / Evolución
+                                </label>
+
+                                <textarea name="detalle"
+                                          class="form-control"
+                                          rows="3"
+                                          placeholder="Detalle de la intervención..."
+                                          required></textarea>
+
+                            </div>
+
+                        </div>
+
+                        <div class="text-end mt-3">
+
+                            <button type="button"
+                                    class="btn btn-secondary btn-sm"
+                                    data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+
+                            <button type="submit"
+                                    class="btn btn-success btn-sm px-4">
+                                <i class="bi bi-save"></i>
+                                Guardar
+                            </button>
+
+                        </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                {{-- HISTORIAL --}}
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+
+                        <strong class="text-primary">
+                            <i class="bi bi-clock-history me-2"></i>
+                            Historial de Intervenciones
+                        </strong>
+
+                        <span class="badge bg-primary">
+                            {{ $legajo->intervenciones->count() }} registros
+                        </span>
+
+                    </div>
+
+                    <div class="card-body p-0">
+
+                        <div class="table-responsive">
+
+                            <table class="table table-hover mb-0">
+
+                                <thead class="table-light">
+
+                                    <tr class="small text-uppercase">
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th>Profesional</th>
+                                        <th>Detalle</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody class="small">
+
+                                @forelse($legajo->intervenciones as $intervencion)
+
+                                    <tr>
+
+                                        <td class="fw-bold">
+                                            {{ \Carbon\Carbon::parse($intervencion->fecha_intervencion)->format('d/m/Y') }}
+                                        </td>
+
+                                        <td>
+                                            {{ $intervencion->tipo->nombre ?? '—' }}
+                                        </td>
+
+                                        <td>
+                                            {{ $intervencion->encargado->apellido }},
+                                            {{ $intervencion->encargado->nombre }}
+                                        </td>
+
+                                        <td>
+                                            {{ $intervencion->detalle }}
+                                        </td>
+
+                                    </tr>
+
+                                @empty
+
+                                    <tr>
+                                        <td colspan="4"
+                                            class="text-center text-muted py-4">
+
+                                            No hay intervenciones registradas
+
+                                        </td>
+                                    </tr>
+
+                                @endforelse
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
 {{-- ESTILOS UNIFICADOS --}}
