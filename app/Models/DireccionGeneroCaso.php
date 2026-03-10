@@ -39,7 +39,7 @@ class DireccionGeneroCaso extends Model
     'amenaza_con_arma',
     'fecha_ultima_denuncia',
     'amenaza_tipo_arma',
-    'tipo_violencia',
+    'tipo_violencia_id',
     'boton_panico_numero',
     'servicios_agua_potable',
     'servicios_internet',
@@ -49,10 +49,15 @@ protected $casts = [
     'debe_asistir_masculinidades' => 'boolean',
 ];
 
-public function medidaCautelar()
-{
-    return $this->belongsTo(medidaCautelar::class);
-}
+    public function tipoViolencia()
+    {
+        return $this->belongsTo(TipoViolencia::class, 'tipo_violencia_id');
+    }
+
+    public function medidaCautelar()
+    {
+        return $this->belongsTo(medidaCautelar::class);
+    }
 
     public function persona()
     {

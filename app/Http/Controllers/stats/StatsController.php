@@ -73,21 +73,18 @@ class StatsController extends Controller
             ->get();
             
         $violencias = DB::table('direccion_genero_casos')
-            ->join('tipos_violencia', 'direccion_genero_casos.tipo_violencia', '=', 'tipos_violencia.id')
+            ->join('tipos_violencia', 'direccion_genero_casos.tipo_violencia_id', '=', 'tipos_violencia.id')
             ->select('tipos_violencia.nombre', DB::raw('count(*) as total'))
             ->groupBy('tipos_violencia.nombre')
             ->orderByDesc('total')
             ->get();
 
-        $medidas = DB::table('direccion_genero_intervenciones')
-            ->join('tipos_intervencion', 'direccion_genero_intervenciones.tipo_intervencion_id', '=', 'tipos_intervencion.id')
-            ->whereIn('tipos_intervencion.nombre', [
-                'Restricción de acercamiento',
-                'Exclusión del hogar',
-                'Botón antipánico'
-            ])
-            ->select('tipos_intervencion.nombre', DB::raw('count(*) as total'))
-            ->groupBy('tipos_intervencion.nombre')
+        $medidas = DB::table('direccion_genero_casos')
+            ->join('medidas_cautelares', 'direccion_genero_casos.medida_cautelar_id', '=', 'medidas_cautelares.id')
+            ->whereNotNull('direccion_genero_casos.medida_cautelar_id')
+            ->select('medidas_cautelares.nombre', DB::raw('count(*) as total'))
+            ->groupBy('medidas_cautelares.nombre')
+            ->orderByDesc('total')
             ->get();
 
         $vinculadosMasculinidades = MasculinidadesCaso::count();

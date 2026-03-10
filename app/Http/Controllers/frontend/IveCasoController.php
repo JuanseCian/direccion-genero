@@ -26,7 +26,10 @@ class IveCasoController extends Controller
 
     public function create()
     {
+        $idsConCaso = IveCaso::pluck('persona_id')->toArray();
+
         $personas = Persona::where('sexo', 'Femenino')
+            ->whereNotIn('id', $idsConCaso)
             ->orderBy('apellido')
             ->get();
 

@@ -10,7 +10,7 @@
 
 <div class="container-fluid py-4">
 
-    {{-- ENCABEZADO ESTILO CREATE --}}
+    {{-- ENCABEZADO --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-0" style="color: #5651A0;">
@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    {{-- ALERTA IVE ESTILO CREATE --}}
+    {{-- ALERTA IVE --}}
     @if(isset($existeEnIve) && $existeEnIve)
         <div class="alert alert-warning border-0 shadow-sm mb-4 animate__animated animate__fadeIn">
             <div class="d-flex align-items-center">
@@ -120,41 +120,145 @@
                         </select>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="trabaja" class="form-label fw-bold">¿Trabaja actualmente?</label>
-                            <select name="trabaja" id="trabaja" class="form-select shadow-sm border-secondary-subtle">
-                                <option value="" selected disabled>Seleccione...</option>
-                                <option value="1">Sí</option>
-                                <option value="0">No</option>
-                            </select>
-                        </div>
+                    <div class="col-md-4">
+                        <label for="trabaja" class="form-label fw-bold">¿Trabaja actualmente?</label>
+                        <select name="trabaja" id="trabaja" class="form-select shadow-sm border-secondary-subtle">
+                            <option value="1" {{ $legajo->trabaja == 1 ? 'selected' : '' }}>Sí</option>
+                            <option value="0" {{ $legajo->trabaja == 0 ? 'selected' : '' }}>No</option>
+                        </select>
+                    </div>
 
-                        <div class="col-md-6 mb-3"></div>
+                    <div class="col-md-6 mb-3">
+                        <label for="participa_organizacion" class="form-label fw-bold">¿Participa en organización social?</label>
+                        <select name="organizacion_social" id="participa_organizacion" class="form-select shadow-sm border-secondary-subtle" onchange="toggleOrganizacion()">
+                            <option value="1" {{ $legajo->organizacion_social == 1 ? 'selected' : '' }}>Sí</option>
+                            <option value="0" {{ $legajo->organizacion_social == 0 ? 'selected' : '' }}>No</option>
+                        </select>
+                    </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="participa_organizacion" class="form-label fw-bold">¿Participa en organización social?</label>
-                            <select name="participa_organizacion" id="participa_organizacion" class="form-select shadow-sm border-secondary-subtle" onchange="toggleOrganizacion()">
-                                <option value="" selected disabled>Seleccione...</option>
-                                <option value="1">Sí</option>
-                                <option value="0">No</option>
-                            </select>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="detalle_organizacion" class="form-label fw-bold">Detalle de la organización</label>
+                        <input type="text" name="organizacion_social_detalle" id="detalle_organizacion" class="form-control shadow-sm border-secondary-subtle" placeholder="Nombre de la organización" value="{{ $legajo->organizacion_social_detalle }}" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="detalle_organizacion" class="form-label fw-bold">Detalle de la organización</label>
-                            <input type="text" name="detalle_organizacion" id="detalle_organizacion" class="form-control shadow-sm border-secondary-subtle" placeholder="Nombre de la organización" disabled>
+        {{-- 3. VIVIENDA Y SERVICIOS --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-house-door me-2"></i>3. Vivienda y Servicios</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Situación Habitacional</label>
+                        <select name="situacion_habitacional_id" class="form-select select2-init">
+                            <option value="">Seleccione...</option>
+                            @foreach($situacionesHabitacionales as $sh)
+                                <option value="{{ $sh->id }}" {{ $legajo->situacion_habitacional_id == $sh->id ? 'selected' : '' }}>
+                                    {{ $sh->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold d-block mb-3">Servicios disponibles en la vivienda</label>
+                        <div class="d-flex flex-wrap gap-4">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="servicios_luz" id="servicios_luz" value="1" {{ $legajo->servicios_luz ? 'checked' : '' }}>
+                                <label class="form-check-label" for="servicios_luz">Luz</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="servicios_gas_natural" id="servicios_gas_natural" value="1" {{ $legajo->servicios_gas_natural ? 'checked' : '' }}>
+                                <label class="form-check-label" for="servicios_gas_natural">Gas Natural</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="servicios_agua_potable" id="servicios_agua_potable" value="1" {{ $legajo->servicios_agua_potable ? 'checked' : '' }}>
+                                <label class="form-check-label" for="servicios_agua_potable">Agua</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="servicios_cable" id="servicios_cable" value="1" {{ $legajo->servicios_cable ? 'checked' : '' }}>
+                                <label class="form-check-label" for="servicios_cable">Cable</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="servicios_internet" id="servicios_internet" value="1" {{ $legajo->servicios_internet ? 'checked' : '' }}>
+                                <label class="form-check-label" for="servicios_internet">Internet</label>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- 3. AGRESORES VINCULADOS (Lógica original, diseño adaptado) --}}
+        {{-- 4. ANTECEDENTES Y VIOLENCIA --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-shield-exclamation me-2"></i>4. Antecedentes y Violencia</h5>
+            </div>
+            <div class="card-body bg-light-subtle">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Tipo de violencia principal</label>
+                        <select name="tipo_violencia_id" class="form-select">
+                            <option value="">Seleccione...</option>
+                            @foreach($tipos_violencia as $tv)
+                                <option value="{{ $tv->id }}" {{ $legajo->tipo_violencia_id == $tv->id ? 'selected' : '' }}>
+                                    {{ $tv->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Medida Cautelar</label>
+                        <select name="medida_cautelar_id" class="form-select">
+                            <option value="">Ninguna</option>
+                            @foreach($medida as $m)
+                                <option value="{{ $m->id }}" {{ $legajo->medida_cautelar_id == $m->id ? 'selected' : '' }}>
+                                    {{ $m->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Botón Antipánico (Número)</label>
+                        <input type="text" name="boton_panico_numero" class="form-control" value="{{ $legajo->boton_panico_numero }}" placeholder="Dejar vacío si no posee">
+                    </div>
+
+                    <div class="col-md-3 mt-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="denuncio_antes" id="denuncio_antes" value="1" {{ $legajo->denuncio_antes ? 'checked' : '' }}>
+                            <label class="form-check-label fw-bold" for="denuncio_antes">¿Denunció antes?</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5 mt-4">
+                        <input type="text" name="denuncio_antes_detalle" class="form-control form-control-sm" placeholder="Detalle de denuncias previas..." value="{{ $legajo->denuncio_antes_detalle }}">
+                    </div>
+
+                    <div class="col-md-4 mt-4">
+                        <label class="form-label fw-bold small mb-1">Fecha última denuncia</label>
+                        <input type="date" name="fecha_ultima_denuncia" class="form-control form-control-sm" value="{{ $legajo->fecha_ultima_denuncia }}">
+                    </div>
+                    
+                    <div class="col-md-12 mt-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="amenaza_con_arma" id="amenaza_con_arma" value="1" {{ $legajo->amenaza_con_arma ? 'checked' : '' }}>
+                            <label class="form-check-label fw-bold text-danger" for="amenaza_con_arma">¿Hubo amenaza con arma?</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- 5. AGRESORES VINCULADOS --}}
         <div class="card shadow-sm border-0 mb-4 border-start border-4" style="border-color:#dc3545!important;">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 text-danger">
-                    <i class="bi bi-person-exclamation me-2"></i>3. Agresores Vinculados
+                    <i class="bi bi-person-exclamation me-2"></i>5. Agresores Vinculados
                 </h5>
                 <button type="button" class="btn btn-sm btn-outline-danger shadow-sm" data-bs-toggle="modal" data-bs-target="#modalAgresores">
                     <i class="bi bi-plus-circle"></i> Vincular Agresor
@@ -190,25 +294,26 @@
                 </div>
             </div>
         </div>
-        {{-- 4. GRUPO CONVIVIENTE (PENÚLTIMA SECCIÓN) --}}
+
+        {{-- 6. GRUPO CONVIVIENTE --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-                <h5 class="mb-0 text-primary fw-bold"><i class="bi bi-house-heart me-2"></i>4. Grupo Conviviente</h5>
+                <h5 class="mb-0 text-primary fw-bold"><i class="bi bi-house-heart me-2"></i>6. Grupo Conviviente</h5>
                 <button type="button" class="btn btn-sm btn-primary px-3 shadow-sm" onclick="agregarFamiliar()">
                     <i class="bi bi-plus-circle me-1"></i> Añadir Integrante
                 </button>
             </div>
             <div class="card-body">
                 <div id="grupoFamiliarContainer">
-                    <p id="msgVacio" class="text-muted small text-center italic py-2">No hay integrantes registrados para este legajo.</p>
+                    <p id="msgVacio" class="text-muted small text-center py-2" style="font-style: italic;">No hay integrantes registrados para este legajo.</p>
                 </div>
             </div>
         </div>
 
-        {{-- 5. RESPONSABLE Y CIERRE --}}
+        {{-- 7. RESPONSABLE Y CIERRE --}}
         <div class="card shadow-sm border-0 mb-5">
             <div class="card-header bg-white py-3">
-                <h5 class="mb-0 text-primary"><i class="bi bi-person-check me-2"></i>5. Responsable y Cierre</h5>
+                <h5 class="mb-0 text-primary"><i class="bi bi-person-check me-2"></i>7. Responsable y Cierre</h5>
             </div>
             <div class="card-body">
                 <div class="row g-3">
@@ -289,8 +394,6 @@
     </div>
 </div>
 
-
-
 {{-- MODAL INFO VÍNCULO --}}
 <div class="modal fade" id="modalInfoVinculo">
     <div class="modal-dialog">
@@ -342,14 +445,17 @@
 {{-- SCRIPTS --}}
 <script>
     $(document).ready(function() {
-        // Inicializar Select2 en los desplegables comunes
+        // Inicializar Select2
         $('.select2-init').select2({
             theme: 'bootstrap-5',
             width: '100%'
         });
+        
+        // Disparar validación visual de la organización social al cargar la página
+        toggleOrganizacion();
     });
 
-    // --- LOGICA ORIGINAL DE AGRESORES MANTENIDA INTACTA ---
+    // --- LÓGICA DE AGRESORES ---
     const urlBaseMasculinidades = "{{ route('masculinidades.edit', ':id') }}";
 
     function agregarAgresor(id, nombre) {
@@ -432,11 +538,14 @@ function toggleOrganizacion() {
     
     if (participa === "1") {
         detalle.disabled = false;
-        detalle.classList.remove('bg-light'); // Para que visualmente se note activo
+        detalle.classList.remove('bg-light');
     } else {
         detalle.disabled = true;
-        detalle.value = "";
-        detalle.classList.add('bg-light'); // Color grisáceo cuando está desactivado
+        // Solo vaciamos si no tenía un valor previo cargado y lo estamos desactivando manualmente
+        if(!detalle.defaultValue || participa === "0") {
+             detalle.value = "";
+        }
+        detalle.classList.add('bg-light');
     }
 }
 </script>
