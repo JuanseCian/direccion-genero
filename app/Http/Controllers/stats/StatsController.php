@@ -111,7 +111,7 @@ class StatsController extends Controller
         $desde = $request->desde;
         $hasta = $request->hasta;
 
-        $query = \App\Models\MasculinidadesCaso::with('persona.barrio.zona');
+        $query = \App\Models\MasculinidadesCaso::query();
 
         if ($desde && $hasta) {
             $query->whereBetween('created_at', [$desde, $hasta]);
@@ -119,47 +119,69 @@ class StatsController extends Controller
 
         $totalCasos = (clone $query)->count();
 
+        // KPIs Básicos
         $trabajan = (clone $query)->where('trabaja', 1)->count();
         $noTrabajan = (clone $query)->where('trabaja', 0)->count();
-
         $conConsumo = (clone $query)->where('consumo', 1)->count();
         $conDesobediencia = (clone $query)->where('desobediencia', 1)->count();
+        $conTerapia = (clone $query)->where('terapia', 1)->count();
 
-        $zonas = \App\Models\ZonaBarrio::with(['barrios' => function($q) use ($desde,$hasta){
-            $q->whereHas('personas.masculinidadesCasos', function($sub) use ($desde,$hasta){
-                if($desde && $hasta){
-                    $sub->whereBetween('created_at', [$desde,$hasta]);
-                }
-            })
-            ->withCount(['personas as total_casos' => function($sub) use ($desde,$hasta){
-                $sub->whereHas('masculinidadesCasos', function($s) use ($desde,$hasta){
-                    if($desde && $hasta){
-                        $s->whereBetween('created_at', [$desde,$hasta]);
-                    }
+        // Seguridad y Reincidencia
+        $reincidencias = (clone $query)->where('reincidencia', 1)->count();
+        $conAmenazas = (clone $query)->where('amenazas', 1)->count();
+        $conArmas = (clone $query)->where('armas', 1)->count();
+
+        // Estado del Programa
+        $asisten = (clone $query)->where('estado_programa', 'Asiste')->count();
+        $finalizaron = (clone $query)->where('estado_programa', 'Finalizado')->count();
+        $abandono = (clone $query)->where('estado_programa', 'Abandono')->count();
+
+        // Datos Judiciales
+        $conDenuncia = (clone $query)->where('hay_denuncia', 1)->count();
+        $procesosJudiciales = (clone $query)->select('tipo_proceso', DB::raw('count(*) as total'))
+            ->whereNotNull('tipo_proceso')
+            ->groupBy('tipo_proceso')->get();
+
+        // Vivienda y Relación
+        $tiposVivienda = (clone $query)->select('tipo_vivienda', DB::raw('count(*) as total'))
+            ->groupBy('tipo_vivienda')->get();
+        
+        $relacionesVictima = (clone $query)->select('relacion_victima', DB::raw('count(*) as total'))
+            ->groupBy('relacion_victima')->get();
+
+        // Rangos de Edad (vía Join con Persona)
+        $edades = DB::table('masculinidades_casos')
+            ->join('personas', 'masculinidades_casos.persona_id', '=', 'personas.id')
+            ->select(DB::raw("
+                CASE 
+                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) < 18 THEN 'Menor de 18'
+                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 18 AND 25 THEN '18-25'
+                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 26 AND 40 THEN '26-40'
+                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 41 AND 60 THEN '41-60'
+                    ELSE '60+' 
+                END as rango
+            "), DB::raw('count(*) as total'))
+            ->groupBy('rango')->get();
+
+        // Geografía (Zonas y Barrios)
+        $zonas = \App\Models\ZonaBarrio::with(['barrios' => function($q) use ($desde, $hasta) {
+            $q->withCount(['personas as total_casos' => function($sub) use ($desde, $hasta) {
+                $sub->whereHas('masculinidadesCasos', function($s) use ($desde, $hasta) {
+                    if($desde && $hasta) $s->whereBetween('created_at', [$desde, $hasta]);
                 });
             }]);
-        }])->get()->map(function($zona){
+        }])->get()->map(function($zona) {
             $zona->total = $zona->barrios->sum('total_casos');
             return $zona;
         });
 
-        $casosPorZona = $zonas->map(function($z){
-            return [
-                'nombre' => $z->nombre,
-                'total' => $z->total
-            ];
-        });
+        $casosPorZona = $zonas->map(fn($z) => ['nombre' => $z->nombre, 'total' => $z->total]);
 
         return view('frontend.stats.masculinidades', compact(
-            'totalCasos',
-            'trabajan',
-            'noTrabajan',
-            'conConsumo',
-            'conDesobediencia',
-            'zonas',
-            'casosPorZona',
-            'desde',
-            'hasta'
+            'totalCasos', 'trabajan', 'noTrabajan', 'conConsumo', 'conDesobediencia', 'conTerapia',
+            'reincidencias', 'conAmenazas', 'conArmas', 'asisten', 'finalizaron', 'abandono',
+            'conDenuncia', 'procesosJudiciales', 'tiposVivienda', 'relacionesVictima',
+            'edades', 'zonas', 'casosPorZona', 'desde', 'hasta'
         ));
     }
 

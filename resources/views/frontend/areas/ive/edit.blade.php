@@ -10,6 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <div class="container-fluid py-4">
+    {{-- ENCABEZADO --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-0" style="color: #5651A0;">
@@ -32,7 +33,6 @@
                 <h5 class="mb-0 text-primary"><i class="bi bi-person-badge me-2"></i>1. Identificación de la Persona</h5>
             </div>
             <div class="card-body">
-                {{-- Alerta de Género (Basada en la variable $existeEnGenero del controlador) --}}
                 <div id="alerta-vinculacion-genero" class="alert alert-warning border-0 shadow-sm mb-4 {{ $existeEnGenero ? '' : 'd-none' }} animate__animated animate__fadeIn">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-person-exclamation me-3 fs-3"></i>
@@ -112,7 +112,6 @@
                         </div>
                     </div>
 
-                    {{-- Tipos de Violencia (Condicional) --}}
                     <div class="col-md-12 mt-3" id="violencia-container" style="{{ $caso->violencia_previa ? '' : 'display: none;' }}">
                         <div class="p-3 border rounded bg-white shadow-sm">
                             <label class="form-label fw-bold mb-3 text-danger"><i class="bi bi-exclamation-triangle"></i> Tipos de Violencia Detectada</label>
@@ -125,45 +124,20 @@
                             </div>
                         </div>
                     </div>
-                    {{-- CUD de la persona --}}
+
                     @if($caso->persona && $caso->persona->cud)
-
                     <div class="col-md-12 mt-4">
-                        <div class="alert border shadow-sm d-flex justify-content-between align-items-center"
-                            style="background:#f0f7ff;border-left:5px solid #0d6efd;">
-
+                        <div class="alert border shadow-sm d-flex justify-content-between align-items-center" style="background:#f0f7ff;border-left:5px solid #0d6efd;">
                             <div>
-                                <strong class="text-primary">
-                                    <i class="bi bi-person-wheelchair me-2"></i>
-                                    Certificado Único de Discapacidad (CUD)
-                                </strong>
-
+                                <strong class="text-primary"><i class="bi bi-person-wheelchair me-2"></i>CUD Detectado</strong>
                                 <div class="small mt-1">
-                                    <strong>N°:</strong>
-                                    {{ $caso->persona->cud->numero_cud ?? '—' }}
-                                    <br>
-
-                                    <strong>Fecha emisión:</strong>
-                                    {{ $caso->persona->cud->fecha_emision 
-                                        ? \Carbon\Carbon::parse($caso->persona->cud->fecha_emision)->format('d/m/Y') 
-                                        : '—' }}
-
-                                    <br>
-
-                                    <strong>Vencimiento:</strong>
-                                    {{ $caso->persona->cud->fecha_vencimiento 
-                                        ? \Carbon\Carbon::parse($caso->persona->cud->fecha_vencimiento)->format('d/m/Y') 
-                                        : '—' }}
+                                    <strong>N°:</strong> {{ $caso->persona->cud->numero_cud ?? '—' }} | 
+                                    <strong>Vencimiento:</strong> {{ $caso->persona->cud->fecha_vencimiento ? \Carbon\Carbon::parse($caso->persona->cud->fecha_vencimiento)->format('d/m/Y') : '—' }}
                                 </div>
                             </div>
-
-                            <span class="badge bg-primary fs-6">
-                                Persona con CUD
-                            </span>
-
+                            <span class="badge bg-primary fs-6">Vigente</span>
                         </div>
                     </div>
-
                     @endif
                 </div>
             </div>
@@ -181,15 +155,9 @@
                 <div id="medicaciones-container">
                     @forelse($caso->medicaciones as $index => $med)
                         <div class="row g-2 mb-2 medicacion-item bg-light p-2 rounded">
-                            <div class="col-md-6">
-                                <input type="text" name="medicaciones[{{ $index }}][nombre]" value="{{ $med->nombre }}" class="form-control border-0 shadow-sm" placeholder="Nombre de la medicación">
-                            </div>
-                            <div class="col-md-4">
-                                <input type="text" name="medicaciones[{{ $index }}][numero_lote]" value="{{ $med->numero_lote }}" class="form-control border-0 shadow-sm" placeholder="Número de lote">
-                            </div>
-                            <div class="col-md-2 text-end">
-                                <button type="button" class="btn btn-outline-danger w-100 remove-medicacion"><i class="bi bi-trash"></i></button>
-                            </div>
+                            <div class="col-md-6"><input type="text" name="medicaciones[{{ $index }}][nombre]" value="{{ $med->nombre }}" class="form-control border-0 shadow-sm"></div>
+                            <div class="col-md-4"><input type="text" name="medicaciones[{{ $index }}][numero_lote]" value="{{ $med->numero_lote }}" class="form-control border-0 shadow-sm"></div>
+                            <div class="col-md-2 text-end"><button type="button" class="btn btn-outline-danger w-100 remove-medicacion"><i class="bi bi-trash"></i></button></div>
                         </div>
                     @empty
                         <div class="row g-2 mb-2 medicacion-item bg-light p-2 rounded">
@@ -203,27 +171,80 @@
         </div>
 
         {{-- 4. RED DE CONTENCIÓN --}}
-        <div class="card shadow-sm border-0 mb-5">
+        <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-white py-3">
-                <h5 class="mb-0 text-primary"><i class="bi bi-heart-pulse me-2"></i>4. Red de Contención y Cierre</h5>
+                <h5 class="mb-0 text-primary"><i class="bi bi-heart-pulse me-2"></i>4. Red de Contención</h5>
             </div>
             <div class="card-body">
-                <div class="mb-4">
-                    <label class="form-label fw-bold text-secondary mb-3">¿Con qué redes cuenta la persona?</label>
-                    <div class="d-flex flex-wrap gap-2">
-                        @php $redesSeleccionadas = $caso->redesContencion->pluck('id')->toArray(); @endphp
-                        @foreach($redes as $red)
-                            <input type="checkbox" class="btn-check" name="redes_contencion[]" value="{{ $red->id }}" id="red_{{ $red->id }}" autocomplete="off" {{ in_array($red->id, $redesSeleccionadas) ? 'checked' : '' }}>
-                            <label class="red-chip" for="red_{{ $red->id }}">{{ $red->nombre }}</label>
-                        @endforeach
-                    </div>
+                <div class="d-flex flex-wrap gap-2">
+                    @php $redesSeleccionadas = $caso->redesContencion->pluck('id')->toArray(); @endphp
+                    @foreach($redes as $red)
+                        <input type="checkbox" class="btn-check" name="redes_contencion[]" value="{{ $red->id }}" id="red_{{ $red->id }}" autocomplete="off" {{ in_array($red->id, $redesSeleccionadas) ? 'checked' : '' }}>
+                        <label class="red-chip" for="red_{{ $red->id }}">{{ $red->nombre }}</label>
+                    @endforeach
                 </div>
             </div>
-            <div class="card-footer bg-light text-end py-3">
-                <button type="submit" class="btn btn-lg text-white px-5 shadow-sm" style="background: #5651A0;">
-                    <i class="bi bi-save-fill me-2"></i> ACTUALIZAR REGISTRO IVE
-                </button>
+        </div>
+
+        {{-- 5. HISTORIAL DE INTERVENCIONES (NUEVO) --}}
+        <div class="card shadow-sm border-0 mb-4 border-start border-4" style="border-color:#198754!important;">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0 text-success fw-bold">
+                    <i class="bi bi-clock-history me-2"></i>5. Historial de Intervenciones
+                </h5>
+                <a href="{{ route('frontend.areas.ive.intervenciones.create', $caso->id) }}" class="btn btn-sm btn-success px-3 shadow-sm">
+                    <i class="bi bi-plus-circle me-1"></i> Nueva Intervención
+                </a>
             </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr class="small text-uppercase">
+                                <th style="width:15%">Fecha</th>
+                                <th style="width:20%">Tipo</th>
+                                <th style="width:20%">Profesional</th>
+                                <th style="width:30%">Detalle</th>
+                                <th style="width:15%" class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="small">
+                            @forelse($caso->intervenciones as $intervencion)
+                                <tr>
+                                    <td class="fw-bold align-middle">
+                                        {{ \Carbon\Carbon::parse($intervencion->fecha_intervencion)->format('d/m/Y') }}
+                                    </td>
+                                    <td class="align-middle">{{ $intervencion->tipo->nombre ?? 'S/D' }}</td>
+                                    <td class="align-middle">
+                                        {{ $intervencion->encargado->apellido }}, {{ $intervencion->encargado->nombre }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ \Illuminate\Support\Str::limit($intervencion->detalle, 60) }}
+                                    </td>
+                                    <td class="text-end align-middle">
+                                        <a href="{{ route('frontend.areas.ive.intervenciones.edit', $intervencion->id) }}" class="btn btn-sm btn-outline-secondary shadow-sm">
+                                            <i class="bi bi-pencil-square"></i> Editar
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4" style="font-style: italic;">
+                                        No hay intervenciones registradas para este caso.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {{-- CIERRE --}}
+        <div class="card-footer bg-transparent border-0 text-end pb-5">
+            <button type="submit" class="btn btn-lg text-white px-5 shadow-sm" style="background: #5651A0;">
+                <i class="bi bi-save-fill me-2"></i> ACTUALIZAR REGISTRO IVE
+            </button>
         </div>
     </form>
 </div>
@@ -237,22 +258,18 @@
     }
     .btn-check:checked + .violencia-chip { background-color: #dc3545; color: white; border-color: #dc3545; }
     .btn-check:checked + .red-chip { background-color: #5651A0; color: white; border-color: #5651A0; }
-    .violencia-chip:hover, .red-chip:hover { background-color: #e9ecef; }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Select2
     $('#persona_id_ive').select2({ theme: 'bootstrap-5', width: '100%' });
 
-    // Lógica mostrar/ocultar violencia
     const checkboxViolencia = document.querySelector('input[name="violencia_previa"]');
     const containerViolencia = document.getElementById('violencia-container');
     checkboxViolencia.addEventListener('change', function() {
         this.checked ? $(containerViolencia).fadeIn() : $(containerViolencia).fadeOut();
     });
 
-    // Lógica dinámica de Medicaciones
     let medIndex = {{ $caso->medicaciones->count() > 0 ? $caso->medicaciones->count() : 1 }};
     document.getElementById('add-medicacion').addEventListener('click', function () {
         const container = document.getElementById('medicaciones-container');

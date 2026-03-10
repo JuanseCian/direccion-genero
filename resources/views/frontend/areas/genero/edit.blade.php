@@ -20,9 +20,7 @@
         </div>
 
         <div>
-            <button type="button" class="btn btn-info btn-sm text-white shadow-sm me-2" data-bs-toggle="modal" data-bs-target="#modalIntervenciones">
-                <i class="bi bi-chat-right-text"></i> Intervenciones
-            </button>
+            {{-- Los botones de intervención se movieron a la Sección 7 --}}
             <a href="{{ route('genero.index') }}" class="btn btn-outline-secondary shadow-sm">
                 <i class="bi bi-arrow-left"></i> Volver al Listado
             </a>
@@ -365,10 +363,77 @@
             </div>
         </div>
 
-        {{-- 7. RESPONSABLE Y CIERRE --}}
+        {{-- 7. INTERVENCIONES --}}
+        <div class="card shadow-sm border-0 mb-4 border-start border-4" style="border-color:#198754!important;">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0 text-success fw-bold">
+                    <i class="bi bi-clock-history me-2"></i>7. Historial de Intervenciones
+                </h5>
+                <a href="{{ route('genero.intervenciones.create', $legajo->id) }}" class="btn btn-sm btn-success px-3 shadow-sm">
+                    <i class="bi bi-plus-circle me-1"></i> Nueva Intervención
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr class="small text-uppercase">
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Profesional</th>
+                                <th>Detalle</th>
+                                <th>Archivo</th>
+                                <th class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="small">
+                            @forelse($legajo->intervenciones as $intervencion)
+                                <tr>
+                                    <td class="fw-bold align-middle">
+                                        {{ \Carbon\Carbon::parse($intervencion->fecha_intervencion)->format('d/m/Y') }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ $intervencion->tipo->nombre ?? '—' }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ $intervencion->encargado->apellido }}, {{ $intervencion->encargado->nombre }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ \Illuminate\Support\Str::limit($intervencion->detalle, 50) }}
+                                    </td>
+                                    <td class="align-middle">
+                                        @if($intervencion->certificado)
+                                            <a href="{{ asset('storage/'.$intervencion->certificado) }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Ver archivo adjunto">
+                                                <i class="bi bi-paperclip"></i>
+                                            </a>
+                                        @else
+                                            <span class="text-muted">—</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-end align-middle">
+                                        {{-- Asumiendo la ruta de edición. Ajústala si se llama diferente en tu web.php --}}
+                                        <a href="{{ route('genero.intervenciones.edit', $intervencion->id) }}" class="btn btn-sm btn-outline-secondary shadow-sm">
+                                            <i class="bi bi-pencil-square"></i> Editar
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4" style="font-style: italic;">
+                                        No hay intervenciones registradas en este legajo.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {{-- 8. RESPONSABLE Y CIERRE --}}
         <div class="card shadow-sm border-0 mb-5">
             <div class="card-header bg-white py-3">
-                <h5 class="mb-0 text-primary"><i class="bi bi-person-check me-2"></i>7. Responsable y Cierre</h5>
+                <h5 class="mb-0 text-primary"><i class="bi bi-person-check me-2"></i>8. Responsable y Cierre</h5>
             </div>
             <div class="card-body">
                 <div class="row g-3">
@@ -486,202 +551,6 @@
             </div>
         </div>
     </div>
-</div>
-
-{{-- MODAL INTERVENCIONES --}}
-{{-- ========================= --}}
-{{-- MODAL INTERVENCIONES --}}
-{{-- ========================= --}}
-<div class="modal fade" id="modalIntervenciones" tabindex="-1">
-<div class="modal-dialog modal-lg">
-<div class="modal-content">
-
-<div class="modal-header bg-primary text-white">
-<h5 class="modal-title">
-<i class="bi bi-journal-plus"></i> Nueva Intervención
-</h5>
-<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-</div>
-
-<div class="card-body">
-
-<form action="{{ route('masculinidades.intervenciones.store', $legajo->id) }}" method="POST" enctype="multipart/form-data">
-@csrf
-
-<div class="row g-3">
-
-<div class="col-md-3">
-<label class="form-label fw-bold small">Fecha</label>
-<input type="date"
-       name="fecha_intervencion"
-       class="form-control"
-       value="{{ date('Y-m-d') }}"
-       required>
-</div>
-
-<div class="col-md-4">
-<label class="form-label fw-bold small">Tipo de Intervención</label>
-<select name="tipo_intervencion_id" class="form-select" required>
-<option value="">Seleccione...</option>
-
-@foreach($tiposIntervencion as $tipo)
-<option value="{{ $tipo->id }}">
-{{ $tipo->nombre }}
-</option>
-@endforeach
-
-</select>
-</div>
-
-<div class="col-md-5">
-<label class="form-label fw-bold small">Profesional</label>
-<select name="encargado_id" class="form-select" required>
-
-<option value="">Seleccione...</option>
-
-@foreach($encargados as $encargado)
-<option value="{{ $encargado->id }}">
-{{ $encargado->apellido }}, {{ $encargado->nombre }}
-</option>
-@endforeach
-
-</select>
-</div>
-
-<div class="col-12">
-<label class="form-label fw-bold small">Detalle / Evolución</label>
-<textarea name="detalle"
-          class="form-control"
-          rows="3"
-          placeholder="Detalle de la intervención..."
-          required></textarea>
-</div>
-
-<div class="col-12">
-<label class="form-label fw-bold">
-<i class="bi bi-paperclip"></i> Adjuntar Certificados o Documentación
-</label>
-
-<input type="file"
-       name="certificado"
-       class="form-control"
-       accept=".pdf,.jpg,.jpeg,.png">
-
-<div class="form-text text-muted small italic">
-Sube archivos PDF o Imágenes que respalden el caso.
-</div>
-</div>
-
-</div>
-
-<div class="text-end mt-3">
-
-<button type="button"
-        class="btn btn-secondary btn-sm"
-        data-bs-dismiss="modal">
-Cancelar
-</button>
-
-<button type="submit"
-        class="btn btn-success btn-sm px-4">
-<i class="bi bi-save"></i> Guardar
-</button>
-
-</div>
-
-</form>
-
-</div>
-</div>
-</div>
-</div>
-                {{-- HISTORIAL --}}
-                <div class="card border-0 shadow-sm">
-
-                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-
-                        <strong class="text-primary">
-                            <i class="bi bi-clock-history me-2"></i>
-                            Historial de Intervenciones
-                        </strong>
-
-                        <span class="badge bg-primary">
-                            {{ $legajo->intervenciones->count() }} registros
-                        </span>
-
-                    </div>
-
-                    <div class="card-body p-0">
-
-                        <div class="table-responsive">
-
-                            <table class="table table-hover mb-0">
-
-                                <thead class="table-light">
-
-                                    <tr class="small text-uppercase">
-                                        <th>Fecha</th>
-                                        <th>Tipo</th>
-                                        <th>Profesional</th>
-                                        <th>Detalle</th>
-                                    </tr>
-
-                                </thead>
-
-                                <tbody class="small">
-
-                                @forelse($legajo->intervenciones as $intervencion)
-
-                                    <tr>
-
-                                        <td class="fw-bold">
-                                            {{ \Carbon\Carbon::parse($intervencion->fecha_intervencion)->format('d/m/Y') }}
-                                        </td>
-
-                                        <td>
-                                            {{ $intervencion->tipo->nombre ?? '—' }}
-                                        </td>
-
-                                        <td>
-                                            {{ $intervencion->encargado->apellido }},
-                                            {{ $intervencion->encargado->nombre }}
-                                        </td>
-
-                                        <td>
-                                            {{ $intervencion->detalle }}
-                                        </td>
-
-                                    </tr>
-
-                                @empty
-
-                                    <tr>
-                                        <td colspan="4"
-                                            class="text-center text-muted py-4">
-
-                                            No hay intervenciones registradas
-
-                                        </td>
-                                    </tr>
-
-                                @endforelse
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
 </div>
 
 {{-- ESTILOS UNIFICADOS --}}

@@ -62,6 +62,70 @@
             </div>
         </div>
 
+        {{-- Agrega esta sección debajo de los KPIs de Trabajo y Consumo --}}
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3">
+                    <h6 class="text-muted border-bottom pb-2">Seguridad y Riesgo</h6>
+                    <div class="d-flex justify-content-between"><span>Reincidencias:</span> <strong>{{ $reincidencias }}</strong></div>
+                    <div class="d-flex justify-content-between text-danger"><span>Con Amenazas:</span> <strong>{{ $conAmenazas }}</strong></div>
+                    <div class="d-flex justify-content-between text-danger"><span>Con Armas:</span> <strong>{{ $conArmas }}</strong></div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3">
+                    <h6 class="text-muted border-bottom pb-2">Situación Judicial</h6>
+                    <div class="d-flex justify-content-between"><span>Con Denuncia:</span> <strong>{{ $conDenuncia }}</strong></div>
+                    <hr class="my-1">
+                    @foreach($procesosJudiciales as $pj)
+                        <div class="d-flex justify-content-between small">
+                            <span>{{ $pj->tipo_proceso }}:</span> <strong>{{ $pj->total }}</strong>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm p-3 bg-light">
+                    <h6 class="text-muted border-bottom pb-2">Estado en Masculinidades</h6>
+                    <div class="d-flex justify-content-between"><span>Asisten actualmente:</span> <strong class="text-primary">{{ $asisten }}</strong></div>
+                    <div class="d-flex justify-content-between"><span>Finalizaron:</span> <strong class="text-success">{{ $finalizaron }}</strong></div>
+                    <div class="d-flex justify-content-between"><span>Abandono:</span> <strong class="text-muted">{{ $abandono }}</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            {{-- Rangos de Edad --}}
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm p-3">
+                    <h6 class="text-muted">Distribución por Edad</h6>
+                    <table class="table table-sm mt-2">
+                        @foreach($edades as $edad)
+                        <tr>
+                            <td>{{ $edad->rango }}</td>
+                            <td class="text-end"><strong>{{ $edad->total }}</strong></td>
+                        </tr>
+                        @endforeach
+                    </table>
+                </div>
+            </div>
+            {{-- Relación con Víctima --}}
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm p-3">
+                    <h6 class="text-muted">Relación con la Víctima</h6>
+                    <table class="table table-sm mt-2">
+                        @foreach($relacionesVictima as $rv)
+                        <tr>
+                            <td>{{ $rv->relacion_victima ?? 'Sin especificar' }}</td>
+                            <td class="text-end"><strong>{{ $rv->total }}</strong></td>
+                        </tr>
+                        @endforeach
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     {{-- ACCORDION ZONAS --}}

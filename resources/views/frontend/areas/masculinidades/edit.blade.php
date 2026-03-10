@@ -18,10 +18,7 @@
         </div>
 
         <div>
-            <button type="button" class="btn btn-info btn-sm text-white shadow-sm" data-bs-toggle="modal" data-bs-target="#modalIntervenciones">
-                <i class="bi bi-chat-right-text"></i> Intervenciones
-            </button>
-
+            {{-- Se eliminó el botón del Modal de Intervenciones --}}
             <a href="{{ route('masculinidades.index') }}" class="btn btn-outline-secondary shadow-sm">
                 <i class="bi bi-arrow-left"></i> Volver
             </a>
@@ -296,7 +293,7 @@
             </div>
         </div>
 
-        {{-- 3. GRUPO CONVIVIENTE (DISEÑO DE CARDS) --}}
+        {{-- 3. GRUPO CONVIVIENTE --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
                 <h5 class="mb-0 text-primary"><i class="bi bi-people me-2"></i>3. Grupo Conviviente</h5>
@@ -316,64 +313,61 @@
                     @foreach($caso->grupoFamiliar as $idx => $f)
 
                     <div class="card p-3 mt-3 border shadow-sm">
-                    <div class="row g-2">
+                        <div class="row g-2">
 
-                    <div class="col-md-2">
-                    <input type="text" name="grupo[{{$idx}}][nombre]"
-                    class="form-control"
-                    value="{{ $f->nombre }}"
-                    placeholder="Nombre">
-                    </div>
+                            <div class="col-md-2">
+                                <input type="text" name="grupo[{{$idx}}][nombre]"
+                                class="form-control"
+                                value="{{ $f->nombre }}"
+                                placeholder="Nombre">
+                            </div>
 
-                    <div class="col-md-2">
-                    <input type="text" name="grupo[{{$idx}}][apellido]"
-                    class="form-control"
-                    value="{{ $f->apellido }}"
-                    placeholder="Apellido">
-                    </div>
+                            <div class="col-md-2">
+                                <input type="text" name="grupo[{{$idx}}][apellido]"
+                                class="form-control"
+                                value="{{ $f->apellido }}"
+                                placeholder="Apellido">
+                            </div>
 
-                    <div class="col-md-2">
-                    <input type="text" name="grupo[{{$idx}}][dni]"
-                    class="form-control"
-                    value="{{ $f->dni }}"
-                    placeholder="DNI">
-                    </div>
+                            <div class="col-md-2">
+                                <input type="text" name="grupo[{{$idx}}][dni]"
+                                class="form-control"
+                                value="{{ $f->dni }}"
+                                placeholder="DNI">
+                            </div>
 
-                    <div class="col-md-3">
-                    <input type="text" name="grupo[{{$idx}}][telefono]"
-                    class="form-control"
-                    value="{{ $f->telefono }}"
-                    placeholder="Teléfono">
-                    </div>
+                            <div class="col-md-3">
+                                <input type="text" name="grupo[{{$idx}}][telefono]"
+                                class="form-control"
+                                value="{{ $f->telefono }}"
+                                placeholder="Teléfono">
+                            </div>
 
-                    <div class="col-md-2">
-                    <select name="grupo[{{$idx}}][vinculo]" class="form-select">
+                            <div class="col-md-2">
+                                <select name="grupo[{{$idx}}][vinculo]" class="form-select">
+                                    <option value="">Vínculo</option>
+                                    <option value="padre" {{ $f->vinculo_actual=='padre'?'selected':'' }}>Padre</option>
+                                    <option value="madre" {{ $f->vinculo_actual=='madre'?'selected':'' }}>Madre</option>
+                                    <option value="hijo/a" {{ $f->vinculo_actual=='hijo/a'?'selected':'' }}>Hijo/a</option>
+                                    <option value="hermano/a" {{ $f->vinculo_actual=='hermano/a'?'selected':'' }}>Hermano/a</option>
+                                    <option value="otro" {{ $f->vinculo_actual=='otro'?'selected':'' }}>Otro</option>
+                                </select>
+                            </div>
 
-                    <option value="">Vínculo</option>
+                            <div class="col-md-1 text-end">
+                                <button type="button"
+                                class="btn btn-outline-danger btn-sm"
+                                onclick="this.closest('.card').remove()">
+                                <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
 
-                    <option value="padre" {{ $f->vinculo_actual=='padre'?'selected':'' }}>Padre</option>
-                    <option value="madre" {{ $f->vinculo_actual=='madre'?'selected':'' }}>Madre</option>
-                    <option value="hijo/a" {{ $f->vinculo_actual=='hijo/a'?'selected':'' }}>Hijo/a</option>
-                    <option value="hermano/a" {{ $f->vinculo_actual=='hermano/a'?'selected':'' }}>Hermano/a</option>
-                    <option value="otro" {{ $f->vinculo_actual=='otro'?'selected':'' }}>Otro</option>
-
-                    </select>
-                    </div>
-
-                    <div class="col-md-1 text-end">
-                    <button type="button"
-                    class="btn btn-outline-danger btn-sm"
-                    onclick="this.closest('.card').remove()">
-                    <i class="bi bi-trash"></i>
-                    </button>
-                    </div>
-
-                    </div>
+                        </div>
                     </div>
 
                     @endforeach
 
-                    </div>
+                </div>
             </div>
         </div>
 
@@ -416,8 +410,67 @@
             </div>
         </div>
 
-        {{-- FINAL: JUDICIAL Y OBSERVACIONES --}}
+        {{-- 5. INTERVENCIONES --}}
+        <div class="card shadow-sm border-0 mb-4 border-start border-4" style="border-color:#198754!important;">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0 text-success fw-bold">
+                    <i class="bi bi-clock-history me-2"></i>5. Historial de Intervenciones
+                </h5>
+                <a href="{{ route('masculinidades.intervenciones.create', $caso->id) }}" class="btn btn-sm btn-success px-3 shadow-sm">
+                    <i class="bi bi-plus-circle me-1"></i> Nueva Intervención
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr class="small text-uppercase">
+                                <th style="width:15%">Fecha</th>
+                                <th style="width:20%">Tipo</th>
+                                <th style="width:20%">Profesional</th>
+                                <th style="width:30%">Detalle</th>
+                                <th style="width:15%" class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="small">
+                            @forelse($caso->intervenciones as $intervencion)
+                                <tr>
+                                    <td class="fw-bold align-middle">
+                                        {{ \Carbon\Carbon::parse($intervencion->fecha_intervencion)->format('d/m/Y') }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ $intervencion->tipo->nombre ?? 'S/D' }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ $intervencion->encargado->apellido }}, {{ $intervencion->encargado->nombre }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ \Illuminate\Support\Str::limit($intervencion->detalle, 60) }}
+                                    </td>
+                                    <td class="text-end align-middle">
+                                        <a href="{{ route('masculinidades.intervenciones.edit', $intervencion->id) }}" class="btn btn-sm btn-outline-secondary shadow-sm">
+                                            <i class="bi bi-pencil-square"></i> Editar
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4" style="font-style: italic;">
+                                        No hay intervenciones registradas en este caso.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {{-- 6. SITUACIÓN JUDICIAL Y OBSERVACIONES --}}
         <div class="card shadow-sm border-0 mb-5">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary"><i class="bi bi-file-earmark-text me-2"></i>6. Situación Judicial y Observaciones</h5>
+            </div>
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-6">
@@ -513,169 +566,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-info text-white btn-sm px-4" onclick="guardarInfoVinculo()">Guardar Datos</button>
-            </div>
-        </div>
-    </div>
-</div>
-{{-- MODAL INTERVENCIONES --}}
-<div class="modal fade" id="modalIntervenciones" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content border-0 shadow">
-
-            <div class="modal-header text-white" style="background:#5651A0;">
-                <h5 class="modal-title">
-                    <i class="bi bi-journal-text"></i>
-                    Intervenciones: {{ $caso->persona->apellido }}, {{ $caso->persona->nombre }}
-                </h5>
-
-                <button type="button"
-                        class="btn-close btn-close-white"
-                        data-bs-dismiss="modal">
-                </button>
-            </div>
-
-            <div class="modal-body p-4">
-
-                {{-- NUEVA INTERVENCIÓN --}}
-                <h6 class="fw-bold mb-3 text-success">
-                    <i class="bi bi-plus-circle"></i> Cargar Nueva Intervención
-                </h6>
-
-                <form action="{{ route('masculinidades.intervenciones.store', $caso->id) }}" method="POST">
-                    @csrf
-
-                    <div class="row g-3 bg-light p-3 rounded shadow-sm border">
-
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold small">Fecha</label>
-                            <input type="date"
-                                   name="fecha_intervencion"
-                                   class="form-control"
-                                   value="{{ date('Y-m-d') }}"
-                                   required>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold small">Tipo de Intervención</label>
-
-                            <select name="tipo_intervencion_id" class="form-select" required>
-                                <option value="">Seleccione...</option>
-
-                                @foreach($tiposIntervencion as $tipo)
-                                    <option value="{{ $tipo->id }}">
-                                        {{ $tipo->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-md-5">
-                            <label class="form-label fw-bold small">Profesional</label>
-
-                            <select name="encargado_id" class="form-select" required>
-                                <option value="">Seleccione...</option>
-
-                                @foreach($encargados as $encargado)
-                                    <option value="{{ $encargado->id }}">
-                                        {{ $encargado->apellido }}, {{ $encargado->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label fw-bold small">Detalle / Evolución</label>
-
-                            <textarea name="detalle"
-                                      class="form-control"
-                                      rows="3"
-                                      placeholder="Detalle de la intervención..."
-                                      required></textarea>
-                        </div>
-
-                        <div class="col-12 text-end mt-3">
-                            <button type="button"
-                                    class="btn btn-secondary btn-sm me-2"
-                                    data-bs-dismiss="modal">
-                                Cancelar
-                            </button>
-
-                            <button type="submit"
-                                    class="btn btn-success btn-sm px-4">
-                                <i class="bi bi-save"></i> Guardar
-                            </button>
-                        </div>
-
-                    </div>
-                </form>
-
-                <hr class="my-4" style="opacity:0.1;">
-
-                {{-- HISTORIAL --}}
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold text-muted mb-0">
-                        <i class="bi bi-clock-history"></i> Historial de Intervenciones
-                    </h6>
-
-                    <span class="badge bg-primary">
-                        {{ $caso->intervenciones->count() }} Registros
-                    </span>
-                </div>
-
-                <div class="table-responsive shadow-sm rounded">
-
-                    <table class="table table-hover mb-0">
-
-                        <thead class="table-dark">
-                            <tr class="small text-uppercase">
-                                <th style="width:15%">Fecha</th>
-                                <th style="width:20%">Tipo</th>
-                                <th style="width:20%">Profesional</th>
-                                <th style="width:45%">Detalle</th>
-                            </tr>
-                        </thead>
-
-                        <tbody class="small">
-
-                            @forelse($caso->intervenciones as $intervencion)
-
-                                <tr>
-
-                                    <td class="fw-bold">
-                                        {{ \Carbon\Carbon::parse($intervencion->fecha_intervencion)->format('d/m/Y') }}
-                                    </td>
-
-                                    <td>
-                                        {{ $intervencion->tipo->nombre ?? 'S/D' }}
-                                    </td>
-
-                                    <td>
-                                        {{ $intervencion->encargado->apellido }},
-                                        {{ $intervencion->encargado->nombre }}
-                                    </td>
-
-                                    <td>
-                                        {{ $intervencion->detalle }}
-                                    </td>
-
-                                </tr>
-
-                            @empty
-
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted py-4">
-                                        No hay intervenciones registradas
-                                    </td>
-                                </tr>
-
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
             </div>
         </div>
     </div>
@@ -844,7 +734,5 @@ function toggleTrabajo(){
 trabajaSwitch?.addEventListener('change', toggleTrabajo);
 window.addEventListener('load', toggleTrabajo);
 </script>
-
-
 
 @endsection

@@ -23,4 +23,9 @@ class MasculinidadesIntervencion extends Model
         // Apuntamos a Encargado porque es lo que usas en Masculinidades
         return $this->belongsTo(Encargado::class, 'encargado_id');
     }
+
+    public function caso()
+    {
+        return $this->belongsTo(MasculinidadesCaso::class, 'caso_id');
+    }
 }
