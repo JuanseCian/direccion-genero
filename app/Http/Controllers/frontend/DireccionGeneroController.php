@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\{DireccionGeneroCaso, Persona, Provincia, Localidad, Barrio, EstadoCivil, NivelEstudio, IveCaso, MasculinidadesCaso, Encargado, TipoViolencia, RedContencion, TipoIntervencion,SituacionHabitacional,MedidaCautelar};
+use App\Models\{DireccionGeneroCaso, Persona, Provincia, Localidad, Barrio, EstadoCivil, NivelEstudio, IveCaso, MasculinidadesCaso, Encargado, TipoViolencia, RedContencion, TipoIntervencion,SituacionHabitacional,MedidaCautelar,Adjunto};
 use Illuminate\Http\Request;
 
 class DireccionGeneroController extends Controller
@@ -177,48 +177,64 @@ class DireccionGeneroController extends Controller
         ));
     }
 
-    public function update(Request $request, $id)
-    {
-        $legajo = DireccionGeneroCaso::findOrFail($id);
+   public function update(Request $request, $id)
+{
+    $legajo = DireccionGeneroCaso::findOrFail($id);
 
-        $data = $request->all();
-        $data['servicios_luz'] = $request->has('servicios_luz') ? 1 : 0;
-        $data['servicios_gas_natural'] = $request->has('servicios_gas_natural') ? 1 : 0;
-        $data['servicios_agua_potable'] = $request->has('servicios_agua_potable') ? 1 : 0;
-        $data['trabaja'] = $request->has('trabaja') || $request->trabaja == "1" ? 1 : 0;
+    $request->validate([
+        'persona_id' => 'required|exists:personas,id',
+    ]);
 
-        $legajo->update($data);
-        
-        $request->validate([
-            'persona_id' => 'required|exists:personas,id',
-        ]);
+    $legajo->update([
+        'persona_id' => $request->persona_id,
+        'estado_civil_id' => $request->estado_civil_id,
+        'genero' => $request->genero,
+        'provincia_id' => $request->provincia_id,
+        'localidad_id' => $request->localidad_id,
+        'barrio_id' => $request->barrio_id,
+        'nivel_estudio_id' => $request->nivel_estudio_id,
 
-        $trabaja = $request->has('trabaja') ? 1 : 0;
-        $orgSocial = $request->has('organizacion_social') ? 1 : 0;
+        'trabaja' => $request->trabaja == "1" ? 1 : 0,
 
-        $legajo->update([
-            'persona_id' => $request->persona_id,
-            'estado_civil_id' => $request->estado_civil_id,
-            'genero' => $request->genero,
-            'provincia_id' => $request->provincia_id,
-            'localidad_id' => $request->localidad_id,
-            'barrio_id' => $request->barrio_id,
-            'nivel_estudio_id' => $request->nivel_estudio_id,
-            'trabaja' => $trabaja,
-            'organizacion_social' => $orgSocial,
-            'organizacion_social_detalle' => $request->organizacion_social_detalle,
-            'observaciones' => $request->observaciones,
-            'encargado_id' => $request->encargado_id
-        ]);
+        'organizacion_social' => $request->organizacion_social == "1" ? 1 : 0,
+        'organizacion_social_detalle' => $request->organizacion_social_detalle,
 
-        if ($request->has('agresores')) {
-            $legajo->agresores()->sync($request->agresores);
-        } else {
-            $legajo->agresores()->detach(); // Si se desmarcan todos
-        }
+        'situacion_habitacional_id' => $request->situacion_habitacional_id,
 
-        return redirect()->route('genero.listado')->with('success', 'Legajo actualizado correctamente');
+        'servicios_luz' => $request->has('servicios_luz') ? 1 : 0,
+        'servicios_cable' => $request->has('servicios_cable') ? 1 : 0,
+        'servicios_gas_natural' => $request->has('servicios_gas_natural') ? 1 : 0,
+        'servicios_agua_potable' => $request->has('servicios_agua_potable') ? 1 : 0,
+        'servicios_internet' => $request->has('servicios_internet') ? 1 : 0,
+
+        'tipo_violencia_id' => $request->tipo_violencia_id,
+        'medida_cautelar_id' => $request->medida_cautelar_id,
+        'fecha_ultima_denuncia' => $request->fecha_ultima_denuncia,
+
+        'denuncio_antes' => $request->has('denuncio_antes') ? 1 : 0,
+        'denuncio_antes_detalle' => $request->denuncio_antes_detalle,
+
+        'amenaza_con_arma' => $request->has('amenaza_con_arma') ? 1 : 0,
+        'amenaza_tipo_arma' => $request->amenaza_tipo_arma,
+
+        'boton_panico_numero' => $request->boton_panico_numero,
+
+        'agresor_trabajo' => $request->agresor_trabajo,
+        'debe_asistir_masculinidades' => $request->has('debe_asistir_masculinidades') ? 1 : 0,
+
+        'observaciones' => $request->observaciones,
+        'encargado_id' => $request->encargado_id
+    ]);
+
+    if ($request->has('agresores')) {
+        $legajo->agresores()->sync($request->agresores);
+    } else {
+        $legajo->agresores()->detach();
     }
+
+    return redirect()->route('genero.listado')
+        ->with('success', 'Legajo actualizado correctamente');
+}
 
     public function destroy($id)
     {

@@ -64,7 +64,17 @@
                         <label class="form-label fw-bold text-secondary">Género autopercibido</label>
                         <input type="text" name="genero" class="form-control" value="{{ old('genero', $legajo->genero) }}" placeholder="Ej: Mujer Trans, No binario">
                     </div>
-
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Provincia</label>
+                        <select name="provincia_id" class="form-select select2-init">
+                            <option value="">Seleccione...</option>
+                            @foreach($provincias as $provincia)
+                                <option value="{{ $provincia->id }}" {{ $legajo->provincia_id == $provincia->id ? 'selected' : '' }}>
+                                    {{ $provincia->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold">Localidad</label>
                         <select name="localidad_id" class="form-select select2-init">
@@ -287,6 +297,14 @@
                             <label class="form-check-label fw-bold text-danger" for="amenaza_con_arma">¿Hubo amenaza con arma?</label>
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Tipo de arma</label>
+                        <input type="text"
+                            name="amenaza_tipo_arma"
+                            class="form-control"
+                            value="{{ $legajo->amenaza_tipo_arma }}"
+                            placeholder="Fuego, blanca...">
+                    </div>
                 </div>
             </div>
         </div>
@@ -471,133 +489,112 @@
 </div>
 
 {{-- MODAL INTERVENCIONES --}}
-<div class="modal fade" id="modalIntervenciones" tabindex="-1" aria-hidden="true">
+{{-- ========================= --}}
+{{-- MODAL INTERVENCIONES --}}
+{{-- ========================= --}}
+<div class="modal fade" id="modalIntervenciones" tabindex="-1">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
 
-    <div class="modal-dialog modal-xl">
+<div class="modal-header bg-primary text-white">
+<h5 class="modal-title">
+<i class="bi bi-journal-plus"></i> Nueva Intervención
+</h5>
+<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
 
-        <div class="modal-content border-0 shadow">
+<div class="card-body">
 
-            {{-- HEADER --}}
-            <div class="modal-header text-white" style="background-color:#5651A0;">
-                <h5 class="modal-title">
-                    <i class="bi bi-chat-right-text me-2"></i>
-                    Intervenciones - {{ $legajo->persona->nombre }}, {{ $legajo->persona->apellido }}
-                </h5>
+<form action="{{ route('masculinidades.intervenciones.store', $legajo->id) }}" method="POST" enctype="multipart/form-data">
+@csrf
 
-                <button type="button"
-                        class="btn-close btn-close-white"
-                        data-bs-dismiss="modal">
-                </button>
-            </div>
+<div class="row g-3">
 
-            {{-- BODY --}}
-            <div class="modal-body bg-light">
+<div class="col-md-3">
+<label class="form-label fw-bold small">Fecha</label>
+<input type="date"
+       name="fecha_intervencion"
+       class="form-control"
+       value="{{ date('Y-m-d') }}"
+       required>
+</div>
 
-                {{-- NUEVA INTERVENCIÓN --}}
-                <div class="card border-0 shadow-sm mb-4">
+<div class="col-md-4">
+<label class="form-label fw-bold small">Tipo de Intervención</label>
+<select name="tipo_intervencion_id" class="form-select" required>
+<option value="">Seleccione...</option>
 
-                    <div class="card-header bg-white">
-                        <strong class="text-success">
-                            <i class="bi bi-plus-circle me-2"></i>
-                            Nueva Intervención
-                        </strong>
-                    </div>
+@foreach($tiposIntervencion as $tipo)
+<option value="{{ $tipo->id }}">
+{{ $tipo->nombre }}
+</option>
+@endforeach
 
-                    <div class="card-body">
+</select>
+</div>
 
-                        <form action="{{ route('masculinidades.intervenciones.store', $legajo->id) }}" method="POST">
-                        @csrf
+<div class="col-md-5">
+<label class="form-label fw-bold small">Profesional</label>
+<select name="encargado_id" class="form-select" required>
 
-                        <div class="row g-3">
+<option value="">Seleccione...</option>
 
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold small">Fecha</label>
+@foreach($encargados as $encargado)
+<option value="{{ $encargado->id }}">
+{{ $encargado->apellido }}, {{ $encargado->nombre }}
+</option>
+@endforeach
 
-                                <input type="date"
-                                       name="fecha_intervencion"
-                                       class="form-control"
-                                       value="{{ date('Y-m-d') }}"
-                                       required>
-                            </div>
+</select>
+</div>
 
-                            <div class="col-md-4">
+<div class="col-12">
+<label class="form-label fw-bold small">Detalle / Evolución</label>
+<textarea name="detalle"
+          class="form-control"
+          rows="3"
+          placeholder="Detalle de la intervención..."
+          required></textarea>
+</div>
 
-                                <label class="form-label fw-bold small">Tipo de Intervención</label>
+<div class="col-12">
+<label class="form-label fw-bold">
+<i class="bi bi-paperclip"></i> Adjuntar Certificados o Documentación
+</label>
 
-                                <select name="tipo_intervencion_id"
-                                        class="form-select"
-                                        required>
+<input type="file"
+       name="certificado"
+       class="form-control"
+       accept=".pdf,.jpg,.jpeg,.png">
 
-                                    <option value="">Seleccione...</option>
+<div class="form-text text-muted small italic">
+Sube archivos PDF o Imágenes que respalden el caso.
+</div>
+</div>
 
-                                    @foreach($tiposIntervencion as $tipo)
-                                        <option value="{{ $tipo->id }}">
-                                            {{ $tipo->nombre }}
-                                        </option>
-                                    @endforeach
+</div>
 
-                                </select>
+<div class="text-end mt-3">
 
-                            </div>
+<button type="button"
+        class="btn btn-secondary btn-sm"
+        data-bs-dismiss="modal">
+Cancelar
+</button>
 
-                            <div class="col-md-5">
+<button type="submit"
+        class="btn btn-success btn-sm px-4">
+<i class="bi bi-save"></i> Guardar
+</button>
 
-                                <label class="form-label fw-bold small">Profesional</label>
+</div>
 
-                                <select name="encargado_id"
-                                        class="form-select"
-                                        required>
+</form>
 
-                                    <option value="">Seleccione...</option>
-
-                                    @foreach($encargados as $encargado)
-                                        <option value="{{ $encargado->id }}">
-                                            {{ $encargado->apellido }}, {{ $encargado->nombre }}
-                                        </option>
-                                    @endforeach
-
-                                </select>
-
-                            </div>
-
-                            <div class="col-12">
-
-                                <label class="form-label fw-bold small">
-                                    Detalle / Evolución
-                                </label>
-
-                                <textarea name="detalle"
-                                          class="form-control"
-                                          rows="3"
-                                          placeholder="Detalle de la intervención..."
-                                          required></textarea>
-
-                            </div>
-
-                        </div>
-
-                        <div class="text-end mt-3">
-
-                            <button type="button"
-                                    class="btn btn-secondary btn-sm"
-                                    data-bs-dismiss="modal">
-                                Cancelar
-                            </button>
-
-                            <button type="submit"
-                                    class="btn btn-success btn-sm px-4">
-                                <i class="bi bi-save"></i>
-                                Guardar
-                            </button>
-
-                        </div>
-
-                        </form>
-
-                    </div>
-
-                </div>
-
+</div>
+</div>
+</div>
+</div>
                 {{-- HISTORIAL --}}
                 <div class="card border-0 shadow-sm">
 
