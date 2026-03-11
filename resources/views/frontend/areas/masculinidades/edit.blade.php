@@ -416,7 +416,7 @@
         <h5 class="mb-0 text-success fw-bold">
             <i class="bi bi-clock-history me-2"></i>5. Historial de Intervenciones
         </h5>
-        <a href="{{ route('masculinidades.intervenciones.create', $ ->id) }}" class="btn btn-sm btn-success px-3 shadow-sm">
+        <a href="{{ route('masculinidades.intervenciones.create', $caso->id) }}" class="btn btn-sm btn-success px-3 shadow-sm">
             <i class="bi bi-plus-circle me-1"></i> Nueva Intervención
         </a>
     </div>
