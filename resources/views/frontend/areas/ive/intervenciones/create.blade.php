@@ -1,142 +1,153 @@
 @extends('frontend.layouts.front')
 
-@section('title','Nueva Intervención - IVE')
+@section('title','Nueva Intervención')
 
 @section('content')
 
-<div class="container-fluid py-4">
+<div class="container py-4">
 
-    {{-- CABECERA --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-0" style="color:#5651A0;">
-                <i class="bi bi-plus-circle"></i> Nueva Intervención
-            </h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-            <p class="text-muted">
-                Caso: 
-                <strong>
-                    {{ $caso->persona->apellido }},
-                    {{ $caso->persona->nombre }}
-                </strong>
-            </p>
-        </div>
+<div>
+<h3 class="fw-bold" style="color:#5651A0;">
+<i class="bi bi-journal-plus"></i>
+Nueva Intervención
+</h3>
 
-        <a href="{{ route('frontend.areas.ive.edit',$caso->id) }}" 
-           class="btn btn-outline-secondary shadow-sm">
-            <i class="bi bi-arrow-left"></i> Volver al Caso
-        </a>
+<p class="text-muted mb-0">
+{{ $caso->persona->apellido }},
+{{ $caso->persona->nombre }}
+</p>
+</div>
+
+<a href="{{ route('frontend.areas.ive.edit',$caso->id) }}"
+class="btn btn-outline-secondary">
+
+<i class="bi bi-arrow-left"></i>
+Volver al legajo
+
+</a>
+
+</div>
+
+
+<form action="{{ route('ive.intervenciones.store',$caso->id) }}"
+method="POST"
+enctype="multipart/form-data">
+
+@csrf
+
+<div class="card shadow-sm border-0">
+
+<div class="card-body">
+
+<div class="row g-3">
+
+<div class="col-md-3">
+<label class="form-label fw-bold">Fecha</label>
+
+<input type="date"
+name="fecha_intervencion"
+class="form-control"
+value="{{ date('Y-m-d') }}"
+required>
+</div>
+
+<div class="col-md-4">
+
+<label class="form-label fw-bold">
+Tipo de Intervención
+</label>
+
+<select name="tipo_intervencion_id"
+class="form-select"
+required>
+
+<option value="">Seleccione...</option>
+
+@foreach($tiposIntervencion as $tipo)
+
+<option value="{{ $tipo->id }}">
+{{ $tipo->nombre }}
+</option>
+
+@endforeach
+
+</select>
+
+</div>
+
+<div class="col-md-5">
+
+<label class="form-label fw-bold">
+Profesional
+</label>
+
+<select name="encargado_id"
+class="form-select"
+required>
+
+<option value="">Seleccione...</option>
+
+@foreach($encargados as $encargado)
+
+<option value="{{ $encargado->id }}">
+{{ $encargado->apellido }},
+{{ $encargado->nombre }}
+</option>
+
+@endforeach
+
+</select>
+
+</div>
+
+<div class="col-12">
+
+<label class="form-label fw-bold">
+Detalle / Evolución
+</label>
+
+<textarea name="detalle"
+class="form-control"
+rows="4"
+required></textarea>
+
+</div>
+
+</div>
+
+</div>
+<div class="col-12">
+
+    <label class="form-label fw-bold">
+    Adjuntar archivo
+    </label>
+
+    <input type="file"
+    name="archivo"
+    class="form-control">
+
     </div>
 
-    <form method="POST" 
-          action="{{ route('frontend.areas.ive.intervenciones.store',$caso->id) }}">
-        @csrf
+    </div>
 
-        <div class="card shadow-sm border-0">
+    </div>
 
-            <div class="card-header bg-white">
-                <h5 class="mb-0 text-primary">
-                    <i class="bi bi-clipboard-plus"></i>
-                    Registrar Intervención
-                </h5>
-            </div>
+<div class="card-footer text-end">
 
-            <div class="card-body">
+<button class="btn btn-success px-4">
 
-                <div class="row g-3">
+<i class="bi bi-save"></i>
+Guardar Intervención
 
-                    {{-- FECHA --}}
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">
-                            Fecha de intervención
-                        </label>
+</button>
 
-                        <input type="date"
-                               name="fecha_intervencion"
-                               class="form-control shadow-sm"
-                               value="{{ date('Y-m-d') }}"
-                               required>
-                    </div>
+</div>
 
+</div>
 
-                    {{-- TIPO --}}
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">
-                            Tipo de intervención
-                        </label>
-
-                        <select name="tipo_intervencion_id"
-                                class="form-select shadow-sm"
-                                required>
-
-                            <option value="">Seleccione...</option>
-
-                            @foreach($tiposIntervencion as $tipo)
-
-                                <option value="{{ $tipo->id }}">
-                                    {{ $tipo->nombre }}
-                                </option>
-
-                            @endforeach
-
-                        </select>
-                    </div>
-
-
-                    {{-- PROFESIONAL --}}
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">
-                            Profesional
-                        </label>
-
-                        <select name="encargado_id"
-                                class="form-select shadow-sm"
-                                required>
-
-                            <option value="">Seleccione...</option>
-
-                            @foreach($encargados as $encargado)
-
-                                <option value="{{ $encargado->id }}">
-                                    {{ $encargado->apellido }} {{ $encargado->nombre }}
-                                </option>
-
-                            @endforeach
-
-                        </select>
-                    </div>
-
-
-                    {{-- DETALLE --}}
-                    <div class="col-md-12">
-                        <label class="form-label fw-bold">
-                            Detalle de la intervención
-                        </label>
-
-                        <textarea name="detalle"
-                                  rows="4"
-                                  class="form-control shadow-sm"
-                                  placeholder="Describa la intervención realizada..."></textarea>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="card-footer bg-white text-end">
-
-                <button class="btn text-white px-4 shadow-sm"
-                        style="background:#5651A0;">
-                    <i class="bi bi-save"></i>
-                    Guardar Intervención
-                </button>
-
-            </div>
-
-        </div>
-
-    </form>
+</form>
 
 </div>
 

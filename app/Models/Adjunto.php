@@ -27,7 +27,7 @@ class Adjunto extends Model
     protected $casts = [
         'confidencial' => 'boolean',
     ];
-
+    
     public function usuario()
     {
         return $this->belongsTo(User::class, 'subido_por');

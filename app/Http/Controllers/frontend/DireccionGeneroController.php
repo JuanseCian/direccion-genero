@@ -137,45 +137,51 @@ class DireccionGeneroController extends Controller
     }
 
     public function edit($id)
-    {
-        $legajo = DireccionGeneroCaso::with(['persona', 'intervenciones.tipo', 'intervenciones.encargado'])
-                                ->findOrFail($id);
-        $personas = Persona::where('sexo', 'Femenino')->orderBy('apellido')->get();
-        $barrios = Barrio::orderBy('nombre', 'asc')->get();
-        $casosMasculinidades = MasculinidadesCaso::with('persona')->get();
+{
+    $legajo = DireccionGeneroCaso::with([
+        'persona',
+        'intervenciones.tipo',
+        'intervenciones.encargado',
+        'intervenciones.adjunto'
+    ])->findOrFail($id);
 
-        $existeEnIve = IveCaso::where('persona_id', $legajo->persona_id)->exists();
+    $personas = Persona::where('sexo', 'Femenino')->orderBy('apellido')->get();
+    $barrios = Barrio::orderBy('nombre', 'asc')->get();
+    $casosMasculinidades = MasculinidadesCaso::with('persona')->get();
 
-        $provincias = Provincia::orderBy('nombre')->get();
-        $localidades = Localidad::orderBy('nombre')->get();
-        $barrios = Barrio::orderBy('nombre')->get();
-        $estados_civiles = EstadoCivil::orderBy('nombre')->get();
-        $niveles_estudio = NivelEstudio::orderBy('nombre')->get();
-        $tiposIntervencion = TipoIntervencion::orderBy('nombre')->get();
-        $tipos_violencia = TipoViolencia::all(); 
-        $situacionesHabitacionales = SituacionHabitacional::orderBy('nombre')->get();
-        $medida = MedidaCautelar::orderBy('nombre')->get();
-        $encargados = Encargado::whereHas('areas', function($q){
-            $q->where('areas.id',1);
-        })->get();
+    $existeEnIve = IveCaso::where('persona_id', $legajo->persona_id)->exists();
 
-        return view('frontend.areas.genero.edit', compact(
-            'legajo',
-            'personas',
-            'provincias',
-            'localidades',
-            'barrios',
-            'estados_civiles',
-            'niveles_estudio',
-            'casosMasculinidades',
-            'existeEnIve',
-            'encargados',
-            'tiposIntervencion',
-            'tipos_violencia', 
-            'situacionesHabitacionales',
-            'medida'
-        ));
-    }
+    $provincias = Provincia::orderBy('nombre')->get();
+    $localidades = Localidad::orderBy('nombre')->get();
+    $barrios = Barrio::orderBy('nombre')->get();
+    $estados_civiles = EstadoCivil::orderBy('nombre')->get();
+    $niveles_estudio = NivelEstudio::orderBy('nombre')->get();
+    $tiposIntervencion = TipoIntervencion::orderBy('nombre')->get();
+    $tipos_violencia = TipoViolencia::all(); 
+    $situacionesHabitacionales = SituacionHabitacional::orderBy('nombre')->get();
+    $medida = MedidaCautelar::orderBy('nombre')->get();
+
+    $encargados = Encargado::whereHas('areas', function($q){
+        $q->where('areas.id',1);
+    })->get();
+
+    return view('frontend.areas.genero.edit', compact(
+        'legajo',
+        'personas',
+        'provincias',
+        'localidades',
+        'barrios',
+        'estados_civiles',
+        'niveles_estudio',
+        'casosMasculinidades',
+        'existeEnIve',
+        'encargados',
+        'tiposIntervencion',
+        'tipos_violencia', 
+        'situacionesHabitacionales',
+        'medida'
+    ));
+}
 
    public function update(Request $request, $id)
 {

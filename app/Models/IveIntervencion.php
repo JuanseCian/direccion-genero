@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Adjunto;
 class IveIntervencion extends Model
 {
     use HasFactory;
@@ -26,7 +26,11 @@ class IveIntervencion extends Model
     public function tipo() {
         return $this->belongsTo(TipoIntervencion::class, 'tipo_intervencion_id');
     }
-
+    public function adjunto()
+{
+    return $this->hasOne(Adjunto::class, 'entidad_id')
+                ->where('entidad_tipo', 'intervencion_ive');
+}
     public function encargado() {
         return $this->belongsTo(Encargado::class, 'encargado_id');
     }

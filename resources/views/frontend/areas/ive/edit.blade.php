@@ -187,68 +187,92 @@
         </div>
 
         {{-- 5. HISTORIAL DE INTERVENCIONES (NUEVO) --}}
-        <div class="card shadow-sm border-0 mb-4 border-start border-4" style="border-color:#198754!important;">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-                <h5 class="mb-0 text-success fw-bold">
-                    <i class="bi bi-clock-history me-2"></i>5. Historial de Intervenciones
-                </h5>
-                <a href="{{ route('frontend.areas.ive.intervenciones.create', $caso->id) }}" class="btn btn-sm btn-success px-3 shadow-sm">
-                    <i class="bi bi-plus-circle me-1"></i> Nueva Intervención
-                </a>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr class="small text-uppercase">
-                                <th style="width:15%">Fecha</th>
-                                <th style="width:20%">Tipo</th>
-                                <th style="width:20%">Profesional</th>
-                                <th style="width:30%">Detalle</th>
-                                <th style="width:15%" class="text-end">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody class="small">
-                            @forelse($caso->intervenciones as $intervencion)
-                                <tr>
-                                    <td class="fw-bold align-middle">
-                                        {{ \Carbon\Carbon::parse($intervencion->fecha_intervencion)->format('d/m/Y') }}
-                                    </td>
-                                    <td class="align-middle">{{ $intervencion->tipo->nombre ?? 'S/D' }}</td>
-                                    <td class="align-middle">
-                                        {{ $intervencion->encargado->apellido }}, {{ $intervencion->encargado->nombre }}
-                                    </td>
-                                    <td class="align-middle">
-                                        {{ \Illuminate\Support\Str::limit($intervencion->detalle, 60) }}
-                                    </td>
-                                    <td class="text-end align-middle">
-                                        <a href="{{ route('frontend.areas.ive.intervenciones.edit', $intervencion->id) }}" class="btn btn-sm btn-outline-secondary shadow-sm">
-                                            <i class="bi bi-pencil-square"></i> Editar
-                                        </a>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted py-4" style="font-style: italic;">
-                                        No hay intervenciones registradas para este caso.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+       <div class="card shadow-sm border-0 mb-4 border-start border-4" style="border-color:#198754!important;">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0 text-success fw-bold">
+            <i class="bi bi-clock-history me-2"></i>5. Historial de Intervenciones
+        </h5>
+        <a href="{{ route('ive.intervenciones.create', $legajo->id) }}" class="btn btn-sm btn-success px-3 shadow-sm">
+            <i class="bi bi-plus-circle me-1"></i> Nueva Intervención
+        </a>
+    </div>
 
-        {{-- CIERRE --}}
-        <div class="card-footer bg-transparent border-0 text-end pb-5">
-            <button type="submit" class="btn btn-lg text-white px-5 shadow-sm" style="background: #5651A0;">
-                <i class="bi bi-save-fill me-2"></i> ACTUALIZAR REGISTRO IVE
-            </button>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr class="small text-uppercase">
+                        <th style="width:15%">Fecha</th>
+                        <th style="width:20%">Tipo</th>
+                        <th style="width:20%">Profesional</th>
+                        <th style="width:25%">Detalle</th>
+                        <th style="width:10%">Archivo</th>
+                        <th style="width:10%" class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody class="small">
+
+                @forelse($legajo->intervenciones as $intervencion)
+                    <tr>
+
+                        <td class="fw-bold align-middle">
+                            {{ \Carbon\Carbon::parse($intervencion->fecha_intervencion)->format('d/m/Y') }}
+                        </td>
+
+                        <td class="align-middle">
+                            {{ $intervencion->tipo->nombre ?? 'S/D' }}
+                        </td>
+
+                        <td class="align-middle">
+                            {{ $intervencion->encargado->apellido }}, {{ $intervencion->encargado->nombre }}
+                        </td>
+
+                        <td class="align-middle">
+                            {{ \Illuminate\Support\Str::limit($intervencion->detalle, 60) }}
+                        </td>
+
+                        <td class="align-middle text-center">
+
+                            @if($intervencion->adjunto)
+                                <a href="{{ route('adjuntos.descargar', $intervencion->adjunto->id) }}"
+                                   class="btn btn-sm btn-outline-success"
+                                   title="Descargar archivo">
+                                    <i class="bi bi-download"></i>
+                                </a>
+                            @else
+                                <span class="text-muted small">Sin archivo</span>
+                            @endif
+
+                        </td>
+
+                        <td class="text-end align-middle">
+
+                            <a href="{{ route('ive.intervenciones.edit', $intervencion->id) }}"
+                               class="btn btn-sm btn-outline-secondary shadow-sm">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                @empty
+                    <tr>
+                        <td colspan="6"
+                            class="text-center text-muted py-4"
+                            style="font-style: italic;">
+                            No hay intervenciones registradas en este caso.
+                        </td>
+                    </tr>
+                @endforelse
+
+                </tbody>
+
+            </table>
         </div>
-    </form>
+    </div>
 </div>
-
 <style>
     .card { border-radius: 12px; }
     .form-control:focus, .form-select:focus { border-color: #5651A0; box-shadow: 0 0 0 0.2rem rgba(86, 81, 160, 0.25); }

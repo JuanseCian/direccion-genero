@@ -15,12 +15,12 @@ Nueva Intervención
 </h3>
 
 <p class="text-muted mb-0">
-{{ $legajo->persona->apellido }},
-{{ $legajo->persona->nombre }}
+{{ $caso->persona->apellido }},
+{{ $caso->persona->nombre }}
 </p>
 </div>
 
-<a href="{{ route('genero.edit',$legajo->id) }}"
+<a href="{{ route('genero.edit',$caso->id) }}"
 class="btn btn-outline-secondary">
 
 <i class="bi bi-arrow-left"></i>
@@ -31,7 +31,7 @@ Volver al legajo
 </div>
 
 
-<form action="{{ route('genero.intervenciones.store',$legajo->id) }}"
+<form action="{{ route('genero.intervenciones.store',$caso->id) }}"
 method="POST"
 enctype="multipart/form-data">
 
@@ -118,6 +118,21 @@ required></textarea>
 </div>
 
 </div>
+<div class="col-12">
+
+    <label class="form-label fw-bold">
+    Adjuntar archivo
+    </label>
+
+    <input type="file"
+    name="archivo"
+    class="form-control">
+
+    </div>
+
+    </div>
+
+    </div>
 
 <div class="card-footer text-end">
 
