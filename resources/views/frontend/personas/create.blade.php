@@ -20,7 +20,7 @@
     </div>
     @endif
 
-    <form method="POST" action="{{ route('personas.store') }}">
+    <form method="POST" action="{{ route('personas.store') }}" enctype="multipart/form-data">
     @csrf
     <h5 class="mb-3">Datos personales</h5>
 
@@ -271,6 +271,19 @@
                         <div class="mb-3">
                             <label class="form-label">Observaciones</label>
                             <textarea name="observaciones_cud" class="form-control"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Adjuntar CUD (Imagen o PDF)</label>
+                            <input type="file" name="archivo_cud" class="form-control" accept=".pdf,image/*">
+                            
+                            @if(isset($persona->cud) && $persona->cud->archivo_adjunto)
+                                <div class="mt-2">
+                                    <a href="{{ asset('storage/' . $persona->cud->archivo_adjunto) }}" target="_blank" class="btn btn-sm btn-info text-white">
+                                        Ver archivo actual
+                                    </a>
+                                </div>
+                            @endif
                         </div>
 
                     </div>

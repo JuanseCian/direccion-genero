@@ -9,6 +9,8 @@ use App\Models\NivelEstudio;
 use App\Models\Provincia;
 use App\Models\Cud;
 use App\Models\Localidad;
+use Illuminate\Support\Facades\Storage;
+
 class PersonaController extends Controller
 {
 
@@ -48,18 +50,13 @@ class PersonaController extends Controller
 
     public function store(Request $request)
     {
-
         $request->validate([
             'nombre' => 'required',
             'apellido' => 'required',
             'dni' => 'required|unique:personas,dni',
             'fecha_nacimiento' => 'required',
-            'barrio_id' => 'nullable',
             'trabaja'=> 'required',
-            'nivel_estudio_id' => 'nullable|exists:niveles_estudio,id',
-            'provincia_id' => 'nullable|exists:provincia,id',
-            'localidad_id' => 'nullable|exists:localidad,id',
-            'grupo_sanguineo' => 'nullable',
+            'archivo_cud' => 'nullable|mimes:pdf,jpg,jpeg,png,jfif|max:2048',
         ]);
 
         $persona = Persona::create([
@@ -68,24 +65,25 @@ class PersonaController extends Controller
             'dni' => $request->dni,
             'fecha_nacimiento' => $request->fecha_nacimiento,
             'sexo' => $request->sexo,
-
             'telefono' => $request->telefono,
             'domicilio' => $request->domicilio,
-
             'provincia_id' => $request->provincia_id,
             'localidad_id' => $request->localidad_id,
             'barrio_id' => $request->barrio_id,
-
             'trabaja' => $request->trabaja,
             'nivel_estudio_id' => $request->nivel_estudio_id,
             'grupo_sanguineo' => $request->grupo_sanguineo,
-
             'agresor' => $request->has('agresor'),
             'victima' => $request->has('victima'),
             'debe_asistir_masculinidades' => $request->has('debe_asistir_masculinidades'),
         ]);
 
         if($request->numero_cud){
+            $path = null;
+            if ($request->hasFile('archivo_cud')) {
+                $path = $request->file('archivo_cud')->store('cuds'); 
+                $cudData['archivo_adjunto'] = $path;
+            }
 
             Cud::create([
                 'persona_id' => $persona->id,
@@ -93,14 +91,12 @@ class PersonaController extends Controller
                 'numero_cud' => $request->numero_cud,
                 'fecha_emision' => $request->fecha_emision_cud,
                 'fecha_vencimiento' => $request->fecha_vencimiento_cud,
-                'observaciones' => $request->observaciones_cud
+                'observaciones' => $request->observaciones_cud,
+                'archivo_adjunto' => $path 
             ]);
-
         }
 
-        return redirect()
-            ->route('personas.index')
-            ->with('success','Persona creada correctamente');
+        return redirect()->route('personas.index')->with('success','Persona creada correctamente');
     }
 
     public function edit($id)
@@ -127,39 +123,72 @@ class PersonaController extends Controller
 
         $request->validate([
             'dni' => 'required|unique:personas,dni,' . $persona->id,
-            'apellido' => 'required|string|max:255',
-            'nombre' => 'required|string|max:255',
+            'apellido' => 'required',
+            'nombre' => 'required',
+            'archivo_cud' => 'nullable|mimes:pdf,jpg,jpeg,png,jfif|max:2048',
         ]);
 
-        $persona->dni = $request->dni;
-        $persona->apellido = $request->apellido;
-        $persona->nombre = $request->nombre;
-        $persona->fecha_nacimiento = $request->fecha_nacimiento;
-        $persona->sexo = $request->sexo;
+        $persona->update($request->only([
+            'nombre', 'apellido', 'dni', 'fecha_nacimiento', 'sexo', 
+            'telefono', 'domicilio', 'provincia_id', 'localidad_id', 
+            'barrio_id', 'trabaja', 'nivel_estudio_id', 'grupo_sanguineo'
+        ]));
         
-        $persona->agresor = $request->has('agresor') ? 1 : 0;
-        $persona->victima = $request->has('victima') ? 1 : 0;
-        $persona->debe_asistir_masculinidades = $request->has('debe_asistir_masculinidades') ? 1 : 0;
-
-        $persona->telefono = $request->telefono;
-        $persona->domicilio = $request->domicilio;
-        $persona->provincia_id = $request->provincia_id;
-        $persona->localidad_id = $request->localidad_id;
-        $persona->barrio_id = $request->barrio_id;
-
-        $persona->trabaja = $request->trabaja;
-        $persona->nivel_estudio_id = $request->nivel_estudio_id;
-        $persona->grupo_sanguineo = $request->grupo_sanguineo;
-
-        $persona->numero_cud = $request->numero_cud;
-        $persona->fecha_emision_cud = $request->fecha_emision_cud;
-        $persona->fecha_vencimiento_cud = $request->fecha_vencimiento_cud;
-        $persona->observaciones_cud = $request->observaciones_cud;
-
+        $persona->agresor = $request->has('agresor');
+        $persona->victima = $request->has('victima');
+        $persona->debe_asistir_masculinidades = $request->has('debe_asistir_masculinidades');
         $persona->save();
 
-        return redirect()->route('personas.index')
-                        ->with('success', 'Persona actualizada correctamente.');
+        if ($request->numero_cud) {
+            $cudData = [
+                'tiene_cud' => 1,
+                'numero_cud' => $request->numero_cud,
+                'fecha_emision' => $request->fecha_emision_cud,
+                'fecha_vencimiento' => $request->fecha_vencimiento_cud,
+                'observaciones' => $request->observaciones_cud
+            ];
+
+            if ($request->hasFile('archivo_cud')) {
+                if ($persona->cud && $persona->cud->archivo_adjunto) {
+                    Storage::delete($persona->cud->archivo_adjunto);
+                }
+                $cudData['archivo_adjunto'] = $request->file('archivo_cud')->store('cuds', 'public');
+            }
+
+            $persona->cud()->updateOrCreate(['persona_id' => $persona->id], $cudData);
+        }
+
+        return redirect()->route('personas.index')->with('success', 'Persona actualizada correctamente.');
+    }
+
+    public function verArchivoCud($id)
+    {
+        $persona = Persona::with('cud')->findOrFail($id);
+
+        if ($persona->cud && $persona->cud->archivo_adjunto) {
+            $rutaArchivo = storage_path('app/' . $persona->cud->archivo_adjunto);
+
+            if (file_exists($rutaArchivo)) {
+                return response()->file($rutaArchivo);
+            }
+        }
+
+        return redirect()->back()->withErrors(['error' => 'El archivo no existe o fue eliminado.']);
+    }
+
+    public function descargarArchivoCud($id)
+    {
+        $persona = Persona::with('cud')->findOrFail($id);
+
+        if ($persona->cud && $persona->cud->archivo_adjunto) {
+            $rutaArchivo = storage_path('app/' . $persona->cud->archivo_adjunto);
+
+            if (file_exists($rutaArchivo)) {
+                return response()->download($rutaArchivo);
+            }
+        }
+
+        return redirect()->back()->withErrors(['error' => 'El archivo no existe o fue eliminado.']);
     }
 
 }

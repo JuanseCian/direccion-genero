@@ -20,7 +20,7 @@
     </div>
     @endif
 
-    <form method="POST" action="{{ route('personas.update', $persona->id) }}">
+    <form method="POST" action="{{ route('personas.update', $persona->id) }}" enctype="multipart/form-data">
     @csrf
     @method('PUT')
     
@@ -188,13 +188,13 @@
                                 </strong>
                                 
                                 <div class="small mt-2 text-dark">
-                                    <strong>N°:</strong> {{ $persona->cud->numero_cud }} <br>
+                                    <strong>N°:</strong> <span id="txt_num_cud">{{ $persona->cud->numero_cud }}</span> <br>
                                     
                                     <strong>Emisión:</strong> 
-                                    {{ $persona->cud->fecha_emision ? \Carbon\Carbon::parse($persona->cud->fecha_emision)->format('d/m/Y') : '—' }} <br>
+                                    <span id="txt_emision_cud">{{ $persona->cud->fecha_emision ? \Carbon\Carbon::parse($persona->cud->fecha_emision)->format('d/m/Y') : '—' }}</span> <br>
                                     
                                     <strong>Vencimiento:</strong> 
-                                    {{ $persona->cud->fecha_vencimiento ? \Carbon\Carbon::parse($persona->cud->fecha_vencimiento)->format('d/m/Y') : '—' }}
+                                    <span id="txt_vencimiento_cud">{{ $persona->cud->fecha_vencimiento ? \Carbon\Carbon::parse($persona->cud->fecha_vencimiento)->format('d/m/Y') : '—' }}</span>
                                 </div>
                             </div>
 
@@ -235,19 +235,43 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label">Número de CUD</label>
-                            <input type="text" name="numero_cud" value="{{ old('numero_cud', $persona->numero_cud) }}" class="form-control">
+                            {{-- Usamos la relación $persona->cud para traer los datos reales --}}
+                            <input type="text" name="numero_cud" value="{{ old('numero_cud', $persona->cud->numero_cud ?? '') }}" class="form-control">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Fecha emisión</label>
-                            <input type="date" name="fecha_emision_cud" value="{{ old('fecha_emision_cud', $persona->fecha_emision_cud) }}" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Fecha vencimiento</label>
-                            <input type="date" name="fecha_vencimiento_cud" value="{{ old('fecha_vencimiento_cud', $persona->fecha_vencimiento_cud) }}" class="form-control">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Fecha emisión</label>
+                                <input type="date" name="fecha_emision_cud" value="{{ old('fecha_emision_cud', $persona->cud->fecha_emision ?? '') }}" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Fecha vencimiento</label>
+                                <input type="date" name="fecha_vencimiento_cud" value="{{ old('fecha_vencimiento_cud', $persona->cud->fecha_vencimiento ?? '') }}" class="form-control">
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Observaciones</label>
-                            <textarea name="observaciones_cud" class="form-control">{{ old('observaciones_cud', $persona->observaciones_cud) }}</textarea>
+                            <textarea name="observaciones_cud" class="form-control">{{ old('observaciones_cud', $persona->cud->observaciones ?? '') }}</textarea>
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-primary">Adjuntar Archivo (PDF, JPG, PNG, JFIF)</label>
+                            <input type="file" name="archivo_cud" class="form-control" accept=".pdf, image/*, .jfif">
+                            
+                            @if($persona->cud && $persona->cud->archivo_adjunto)
+                                <div class="mt-3 p-3 border rounded bg-light">
+                                    <p class="mb-2 text-muted small">Documento actual cargado:</p>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ route('personas.ver_cud', $persona->id) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                        <a href="{{ route('personas.descargar_cud', $persona->id) }}" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-download"></i> Descargar
+                                        </a>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -269,22 +293,20 @@ document.addEventListener('DOMContentLoaded', function(){
     const campoMasculinidades = document.getElementById('campo_masculinidades');
 
     chkAgresor.addEventListener('change', function(){
-        if(this.checked){
-            campoMasculinidades.classList.remove('d-none');
-        }else{
-            campoMasculinidades.classList.add('d-none');
-        }
-    });
-
-    const chkCud = document.getElementById('tiene_cud');
-    chkCud.addEventListener('change', function(){
-        if(this.checked){
-            const modal = new bootstrap.Modal(document.getElementById('modalCud'));
-            modal.show();
-        }
+        campoMasculinidades.classList.toggle('d-none', !this.checked);
     });
 
     document.querySelector('#modalCud .btn-success').addEventListener('click', function(){
+        const num = document.querySelector('input[name="numero_cud"]').value;
+        const emision = document.querySelector('input[name="fecha_emision_cud"]').value;
+        const vencimiento = document.querySelector('input[name="fecha_vencimiento_cud"]').value;
+
+        if(document.getElementById('txt_num_cud')) {
+            document.getElementById('txt_num_cud').innerText = num || '—';
+            document.getElementById('txt_emision_cud').innerText = emision ? emision.split('-').reverse().join('/') : '—';
+            document.getElementById('txt_vencimiento_cud').innerText = vencimiento ? vencimiento.split('-').reverse().join('/') : '—';
+        }
+        
         document.getElementById('cudCargado').classList.remove('d-none');
     });
 });

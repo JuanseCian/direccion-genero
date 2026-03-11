@@ -119,51 +119,25 @@ class StatsController extends Controller
 
         $totalCasos = (clone $query)->count();
 
-        // KPIs Básicos
-        $trabajan = (clone $query)->where('trabaja', 1)->count();
+        $trabajan = (clone $query)->where('trabaja', 1)->count(); 
         $noTrabajan = (clone $query)->where('trabaja', 0)->count();
-        $conConsumo = (clone $query)->where('consumo', 1)->count();
+        $conConsumo = (clone $query)->where('consumo', 1)->count(); 
+        $conTerapia = (clone $query)->where('terapia', 1)->count(); 
         $conDesobediencia = (clone $query)->where('desobediencia', 1)->count();
-        $conTerapia = (clone $query)->where('terapia', 1)->count();
 
-        // Seguridad y Reincidencia
-        $reincidencias = (clone $query)->where('reincidencia', 1)->count();
-        $conAmenazas = (clone $query)->where('amenazas', 1)->count();
-        $conArmas = (clone $query)->where('armas', 1)->count();
+        $asisten = (clone $query)->whereNull('fecha_finalizacion')
+                        ->where('asistencia_dispositivo', '>', 0)
+                        ->count();
+        $reincidencias = (clone $query)->where('reincidencia', '>', 0)->count();
+        $debeDispositivo = (clone $query)->where('debe_dispositivo', 1)->count();
+        $abandono = (clone $query)->whereNull('fecha_finalizacion')
+                        ->where('asistencia_dispositivo', 0)
+                        ->count(); 
 
-        // Estado del Programa
-        $asisten = (clone $query)->where('estado_programa', 'Asiste')->count();
-        $finalizaron = (clone $query)->where('estado_programa', 'Finalizado')->count();
-        $abandono = (clone $query)->where('estado_programa', 'Abandono')->count();
+        $finalizaron = (clone $query)->whereNotNull('fecha_finalizacion')->count(); 
+        $enCurso = (clone $query)->whereNull('fecha_finalizacion')
+                                ->where('asistencia_dispositivo', '>', 0)->count();
 
-        // Datos Judiciales
-        $conDenuncia = (clone $query)->where('hay_denuncia', 1)->count();
-        $procesosJudiciales = (clone $query)->select('tipo_proceso', DB::raw('count(*) as total'))
-            ->whereNotNull('tipo_proceso')
-            ->groupBy('tipo_proceso')->get();
-
-        // Vivienda y Relación
-        $tiposVivienda = (clone $query)->select('tipo_vivienda', DB::raw('count(*) as total'))
-            ->groupBy('tipo_vivienda')->get();
-        
-        $relacionesVictima = (clone $query)->select('relacion_victima', DB::raw('count(*) as total'))
-            ->groupBy('relacion_victima')->get();
-
-        // Rangos de Edad (vía Join con Persona)
-        $edades = DB::table('masculinidades_casos')
-            ->join('personas', 'masculinidades_casos.persona_id', '=', 'personas.id')
-            ->select(DB::raw("
-                CASE 
-                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) < 18 THEN 'Menor de 18'
-                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 18 AND 25 THEN '18-25'
-                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 26 AND 40 THEN '26-40'
-                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 41 AND 60 THEN '41-60'
-                    ELSE '60+' 
-                END as rango
-            "), DB::raw('count(*) as total'))
-            ->groupBy('rango')->get();
-
-        // Geografía (Zonas y Barrios)
         $zonas = \App\Models\ZonaBarrio::with(['barrios' => function($q) use ($desde, $hasta) {
             $q->withCount(['personas as total_casos' => function($sub) use ($desde, $hasta) {
                 $sub->whereHas('masculinidadesCasos', function($s) use ($desde, $hasta) {
@@ -177,11 +151,23 @@ class StatsController extends Controller
 
         $casosPorZona = $zonas->map(fn($z) => ['nombre' => $z->nombre, 'total' => $z->total]);
 
+        $edades = DB::table('masculinidades_casos')
+            ->join('personas', 'masculinidades_casos.persona_id', '=', 'personas.id')
+            ->select(DB::raw("
+                CASE 
+                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) < 18 THEN 'Menor de 18'
+                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 18 AND 25 THEN '18-25'
+                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 26 AND 40 THEN '26-40'
+                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 41 AND 60 THEN '41-60'
+                    ELSE '60+' 
+                END as rango
+            "), DB::raw('count(*) as total'))
+            ->groupBy('rango')->get();
+
         return view('frontend.stats.masculinidades', compact(
-            'totalCasos', 'trabajan', 'noTrabajan', 'conConsumo', 'conDesobediencia', 'conTerapia',
-            'reincidencias', 'conAmenazas', 'conArmas', 'asisten', 'finalizaron', 'abandono',
-            'conDenuncia', 'procesosJudiciales', 'tiposVivienda', 'relacionesVictima',
-            'edades', 'zonas', 'casosPorZona', 'desde', 'hasta'
+            'totalCasos', 'trabajan', 'noTrabajan', 'conConsumo', 'conTerapia', 'conDesobediencia',
+            'reincidencias', 'debeDispositivo', 'finalizaron', 'enCurso',
+            'edades', 'zonas', 'casosPorZona', 'desde', 'hasta', 'asisten', 'abandono'
         ));
     }
 

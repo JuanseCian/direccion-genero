@@ -17,7 +17,8 @@ class Cud extends Model
         'numero_cud',
         'fecha_emision',
         'fecha_vencimiento',
-        'observaciones'
+        'observaciones',
+        'archivo_adjunto'
     ];
 
     public function persona()
