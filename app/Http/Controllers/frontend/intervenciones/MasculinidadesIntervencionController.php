@@ -8,6 +8,8 @@ use App\Models\MasculinidadesCaso;
 use App\Models\Encargado;
 use App\Models\TipoIntervencion;
 use App\Models\Adjunto;
+
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 class MasculinidadesIntervencionController extends Controller
@@ -34,7 +36,7 @@ public function store(Request $request, $casoId)
         'tipo_intervencion_id' => 'required|exists:tipos_intervencion,id',
         'encargado_id' => 'required|exists:encargados,id',
         'detalle' => 'required|string',
-        'archivo' => 'nullable|file|max:10240'
+        'certificado' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120'
     ]);
 
     $intervencion = MasculinidadesIntervencion::create([
@@ -44,37 +46,32 @@ public function store(Request $request, $casoId)
         'encargado_id' => $request->encargado_id,
         'detalle' => $request->detalle,
     ]);
-
+   
+    // Guardar archivo si existe
     if ($request->hasFile('archivo')) {
 
-        $archivo = $request->file('archivo');
+    $archivo = $request->file('archivo');
 
-        $nombreOriginal = $archivo->getClientOriginalName();
-        $nombreGuardado = uniqid().'_'.$nombreOriginal;
+    $nombreGuardado = uniqid().'_'.$archivo->getClientOriginalName();
 
-        $ruta = $archivo->storeAs(
-            'adjuntos/intervenciones',
-            $nombreGuardado
-        );
+    $ruta = $archivo->storeAs(
+    'adjuntos/intervenciones',
+    $nombreGuardado
+);
 
-        Adjunto::create([
-            'entidad_tipo' => 'intervencion_masculinidades',
-            'entidad_id' => $intervencion->id,
-            'nombre_original' => $nombreOriginal,
-            'nombre_guardado' => $nombreGuardado,
-            'ruta' => $ruta,
-            'tipo_mime' => $archivo->getMimeType(),
-            'tamaño' => $archivo->getSize(),
-            'hash_sha256' => hash_file('sha256', $archivo->getRealPath()),
-            'subido_por' => auth()->id(),
-            'confidencial' => 0,
-            'eliminado_logico' => 0
-        ]);
-    }
+    Adjunto::create([
+        'entidad_tipo' => 'intervencion_masculinidades',
+        'entidad_id' => $intervencion->id,
+        'nombre_original' => $archivo->getClientOriginalName(),
+        'nombre_guardado' => $nombreGuardado,
+        'ruta' => $ruta,
+        'tipo_mime' => $archivo->getMimeType(),
+        'tamaño' => $archivo->getSize(),
+        'subido_por' => auth()->id() ?? 1,
+    ]);
+}
 
-    return redirect()
-        ->route('masculinidades.edit',$casoId)
-        ->with('success','Intervención registrada correctamente.');
+    return redirect()->back()->with('success', 'Intervención registrada correctamente.');
 }
 
 

@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AdjuntoController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -36,7 +36,8 @@ Route::middleware(['auth','activo','admin'])->group(function () {
     Route::view('/admin/panel', 'admin.panel')->name('admin.panel');
 
 });
-
+Route::get('adjuntos/{id}/descargar', [AdjuntoController::class, 'descargar'])
+    ->name('adjuntos.descargar');
 //busqueda
 Route::get('/buscar', [App\Http\Controllers\PersonaController::class, 'index'])
     ->name('buscar')

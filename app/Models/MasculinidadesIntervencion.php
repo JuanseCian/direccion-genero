@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Adjunto;
 
 class MasculinidadesIntervencion extends Model
 {
@@ -23,6 +24,11 @@ class MasculinidadesIntervencion extends Model
         // Apuntamos a Encargado porque es lo que usas en Masculinidades
         return $this->belongsTo(Encargado::class, 'encargado_id');
     }
+    public function adjunto()
+{
+    return $this->hasOne(Adjunto::class, 'entidad_id')
+        ->where('entidad_tipo', 'intervencion_masculinidades');
+}
 
     public function caso()
     {
