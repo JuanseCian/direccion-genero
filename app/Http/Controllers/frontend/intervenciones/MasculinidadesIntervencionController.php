@@ -96,7 +96,7 @@ public function update(Request $request,$id)
         'tipo_intervencion_id' => 'required|exists:tipos_intervencion,id',
         'encargado_id' => 'required|exists:encargados,id',
         'detalle' => 'required|string',
-        'archivo' => 'nullable|file|max:10240'
+        'archivo' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240'
     ]);
 
     $intervencion = MasculinidadesIntervencion::findOrFail($id);
@@ -107,6 +107,30 @@ public function update(Request $request,$id)
         'encargado_id' => $request->encargado_id,
         'detalle' => $request->detalle,
     ]);
+
+    // Guardar nuevo archivo si se subió
+    if ($request->hasFile('archivo')) {
+
+        $archivo = $request->file('archivo');
+
+        $nombreGuardado = uniqid().'_'.$archivo->getClientOriginalName();
+
+        $ruta = $archivo->storeAs(
+            'adjuntos/intervenciones',
+            $nombreGuardado
+        );
+
+        Adjunto::create([
+            'entidad_tipo' => 'intervencion_masculinidades',
+            'entidad_id' => $intervencion->id,
+            'nombre_original' => $archivo->getClientOriginalName(),
+            'nombre_guardado' => $nombreGuardado,
+            'ruta' => $ruta,
+            'tipo_mime' => $archivo->getMimeType(),
+            'tamaño' => $archivo->getSize(),
+            'subido_por' => auth()->id() ?? 1,
+        ]);
+    }
 
     return redirect()
         ->route('masculinidades.edit',$intervencion->caso_id)
