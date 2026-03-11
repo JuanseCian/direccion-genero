@@ -13,7 +13,7 @@ class AdjuntoController extends Controller
     {
         $adjunto = Adjunto::findOrFail($id);
 
-        if (!Storage::disk('public')->exists($adjunto->ruta)) {
+        if (!Storage::disk('local')->exists($adjunto->ruta)) {
             abort(404, 'Archivo no encontrado');
         }
 
@@ -25,7 +25,7 @@ class AdjuntoController extends Controller
             'ip' => $request->ip()
         ]);
 
-        return Storage::disk('public')->download(
+        return Storage::disk('local')->download(
             $adjunto->ruta,
             $adjunto->nombre_original
         );

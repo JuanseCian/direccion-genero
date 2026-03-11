@@ -108,8 +108,21 @@ public function update(Request $request,$id)
         'detalle' => $request->detalle,
     ]);
 
-    // Guardar nuevo archivo si se subió
+    // REEMPLAZAR archivo si se sube uno nuevo
     if ($request->hasFile('archivo')) {
+
+        $adjuntoExistente = Adjunto::where('entidad_tipo','intervencion_masculinidades')
+            ->where('entidad_id',$intervencion->id)
+            ->first();
+
+        if ($adjuntoExistente) {
+
+            if (Storage::exists($adjuntoExistente->ruta)) {
+                Storage::delete($adjuntoExistente->ruta);
+            }
+
+            $adjuntoExistente->delete();
+        }
 
         $archivo = $request->file('archivo');
 
