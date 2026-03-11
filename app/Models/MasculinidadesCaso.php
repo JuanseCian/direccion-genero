@@ -31,6 +31,8 @@ class MasculinidadesCaso extends Model
         'tipo_relacion',
         'descripcion_relacion',
         'situacion_judicial',
+        'nivel_estudio_id',
+        'estado_civil_id',
         'desobediencia',
         'reincidencia',
         'asistencia_dispositivo',

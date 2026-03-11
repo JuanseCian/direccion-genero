@@ -164,10 +164,53 @@ class StatsController extends Controller
             "), DB::raw('count(*) as total'))
             ->groupBy('rango')->get();
 
+        $violencias = DB::table('masculinidades_caso_violencia')
+            ->join('tipos_violencia', 'masculinidades_caso_violencia.tipo_violencia_id', '=', 'tipos_violencia.id')
+            ->join('masculinidades_casos', 'masculinidades_caso_violencia.caso_id', '=', 'masculinidades_casos.id')
+            ->select('tipos_violencia.nombre', DB::raw('count(*) as total'))
+            ->when($desde && $hasta, function ($q) use ($desde, $hasta) {
+                $q->whereBetween('masculinidades_casos.created_at', [$desde, $hasta]);
+            })
+            ->groupBy('tipos_violencia.nombre')
+            ->orderByDesc('total')
+            ->get();
+
+
+        $medidas = DB::table('masculinidades_caso_medida')
+            ->join('medidas_cautelares','masculinidades_caso_medida.medida_id','=','medidas_cautelares.id')
+            ->join('masculinidades_casos','masculinidades_caso_medida.caso_id','=','masculinidades_casos.id')
+            ->select('medidas_cautelares.nombre', DB::raw('count(*) as total'))
+            ->when($desde && $hasta, function($q) use ($desde,$hasta){
+                $q->whereBetween('masculinidades_casos.created_at',[$desde,$hasta]);
+            })
+            ->groupBy('medidas_cautelares.nombre')
+            ->orderByDesc('total')
+            ->get();
+
+        $derivaciones = DB::table('masculinidades_casos')
+            ->join('masculinidades_derivaciones','masculinidades_casos.derivacion_id','=','masculinidades_derivaciones.id')
+            ->select('masculinidades_derivaciones.nombre', DB::raw('count(*) as total'))
+            ->when($desde && $hasta, function($q) use ($desde,$hasta){
+                $q->whereBetween('masculinidades_casos.created_at',[$desde,$hasta]);
+            })
+            ->groupBy('masculinidades_derivaciones.nombre')
+            ->orderByDesc('total')
+            ->get();
+
+        $nivelesEducativos = DB::table('masculinidades_casos')
+            ->join('niveles_estudio','masculinidades_casos.nivel_estudio_id','=','niveles_estudio.id')
+            ->select('niveles_estudio.nombre', DB::raw('count(*) as total'))
+            ->when($desde && $hasta, function($q) use ($desde,$hasta){
+                $q->whereBetween('masculinidades_casos.created_at',[$desde,$hasta]);
+            })
+            ->groupBy('niveles_estudio.nombre')
+            ->orderByDesc('total')
+            ->get();
+
         return view('frontend.stats.masculinidades', compact(
             'totalCasos', 'trabajan', 'noTrabajan', 'conConsumo', 'conTerapia', 'conDesobediencia',
             'reincidencias', 'debeDispositivo', 'finalizaron', 'enCurso',
-            'edades', 'zonas', 'casosPorZona', 'desde', 'hasta', 'asisten', 'abandono'
+            'edades', 'zonas', 'casosPorZona', 'desde', 'hasta', 'asisten', 'abandono', 'violencias', 'medidas', 'derivaciones', 'nivelesEducativos'
         ));
     }
 

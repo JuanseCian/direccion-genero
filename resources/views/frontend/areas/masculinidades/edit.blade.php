@@ -208,7 +208,78 @@
                             <input type="date" name="fecha_finalizacion" class="form-control" value="{{ $caso->fecha_finalizacion }}">
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Nivel de Estudio</label>
+                        <select name="nivel_estudio_id" class="form-select">
+                            <option value="">Seleccione...</option>
+                            @foreach($niveles as $nivel)
+                                <option value="{{ $nivel->id }}" {{ $caso->nivel_estudio_id == $nivel->id ? 'selected' : '' }}>
+                                    {{ $nivel->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Estado Civil</label>
+                        <select name="estado_civil_id" class="form-select">
+                            <option value="">Seleccione...</option>
+                            @foreach($estadosCiviles as $estado)
+                                <option value="{{ $estado->id }}" {{ $caso->estado_civil_id == $estado->id ? 'selected' : '' }}>
+                                    {{ $estado->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Medidas Cautelares Aplicadas</label>
+
+                        <div class="d-flex flex-wrap gap-2">
+
+                            @foreach($caso->medidas as $medida)
+
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                        type="checkbox"
+                                        name="medida_id[]"
+                                        value="{{ $medida->id }}"
+                                        checked>
+
+                                    <label class="form-check-label">
+                                        {{ $medida->nombre }}
+                                    </label>
+                                </div>
+
+                            @endforeach
+
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Agregar nuevas medidas</label>
+
+                        <div class="d-flex flex-wrap gap-2">
+
+                            @foreach($medidasCautelares as $medida)
+
+                                @if(!$caso->medidas->contains($medida->id))
+
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                            type="checkbox"
+                                            name="medida_id[]"
+                                            value="{{ $medida->id }}">
+
+                                        <label class="form-check-label">
+                                            {{ $medida->nombre }}
+                                        </label>
+                                    </div>
+
+                                @endif
+
+                            @endforeach
+
+                        </div>
+                    </div>
                     {{-- COMPORTAMIENTOS Y CONDICIONES --}}
                     <div class="col-md-12 mt-3">
                         <label class="form-label fw-bold text-secondary text-uppercase small">

@@ -129,8 +129,39 @@
                         <label class="form-label fw-bold text-secondary">Reincidencia (Cant. veces)</label>
                         <input type="number" name="reincidencia" class="form-control" value="0" min="0">
                     </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Nivel de Estudio</label>
+                        <select name="nivel_estudio_id" class="form-select">
+                            <option value="">Seleccione...</option>
+                            @foreach($niveles as $nivel)
+                                <option value="{{ $nivel->id }}">{{ $nivel->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                    {{-- COMPORTAMIENTOS Y CONDICIONES --}}
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Estado Civil</label>
+                        <select name="estado_civil_id" class="form-select">
+                            <option value="">Seleccione...</option>
+                            @foreach($estadosCiviles as $estado)
+                                <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Medidas Cautelares</label>
+
+                        <select name="medida_id[]" class="form-select" multiple>
+                            @foreach($medidasCautelares as $medida)
+                                <option value="{{ $medida->id }}">
+                                    {{ $medida->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <small class="text-muted">Puede seleccionar varias</small>
+                    </div>
+                                        {{-- COMPORTAMIENTOS Y CONDICIONES --}}
                     <div class="col-md-12 mt-3">
                         <label class="form-label fw-bold text-secondary text-uppercase small">Comportamientos y Condiciones</label>
                         <div class="row g-2 p-3 rounded border bg-white shadow-sm">
@@ -287,5 +318,9 @@ function agregarFamiliar() {
     container.insertAdjacentHTML('beforeend', html);
     index++;
 }
+$('select[name="medida_id[]"]').select2({
+    theme: 'bootstrap-5',
+    placeholder: "Seleccione medidas",
+});
 </script>
 @endsection

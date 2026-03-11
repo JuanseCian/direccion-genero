@@ -44,7 +44,8 @@ class MasculinidadesCasoController extends Controller
             ->distinct()
             ->orderBy('personas.apellido')
             ->get();
-
+        $niveles = DB::table('niveles_estudio')->orderBy('nombre')->get();
+        $estadosCiviles = DB::table('estados_civiles')->orderBy('nombre')->get();
         $derivaciones = MasculinidadesDerivacion::orderBy('nombre')->get();
         $situacionesHabitacionales = SituacionHabitacional::orderBy('nombre')->get();
         $nivelesEstudio = NivelEstudio::orderBy('nombre')->get();
@@ -66,12 +67,14 @@ class MasculinidadesCasoController extends Controller
             'encargados', 
             'medidasCautelares',
             'tipoViolencia',
-            'espacioGrupal'
+            'espacioGrupal',
+            'niveles',
+            'estadosCiviles'
         ));
     }
 
-   public function store(Request $request)
-{
+    public function store(Request $request)
+    {
     $validated = $request->validate([
         'persona_id' => 'required|exists:personas,id',
         'derivacion_id' => 'required|exists:masculinidades_derivaciones,id',
@@ -94,6 +97,8 @@ class MasculinidadesCasoController extends Controller
         'tipo_violencia_id.*' => 'exists:tipos_violencia,id',
         'certificado' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
         'grupo' => 'nullable|array',
+        'nivel_estudio_id' => 'nullable|exists:niveles_estudio,id',
+        'estado_civil_id' => 'nullable|exists:estados_civiles,id',
     ]);
 
     // Procesar checkboxes
@@ -198,7 +203,7 @@ class MasculinidadesCasoController extends Controller
         'confidencial' => 0
     ]);
 
-    return redirect()->route('masculinidades.index')->with('success', 'Caso registrado correctamente y Word generado.');
+    return redirect()->route('masculinidades.listado')->with('success', 'Caso registrado correctamente y Word generado.');
 }
     public function edit($id)
     {
@@ -218,7 +223,8 @@ class MasculinidadesCasoController extends Controller
 
         $victimas = Persona::all();
 
-    
+        $niveles = DB::table('niveles_estudio')->orderBy('nombre')->get();
+        $estadosCiviles = DB::table('estados_civiles')->orderBy('nombre')->get();
         $derivaciones = DB::table('masculinidades_derivaciones')->get();
         $situacionesHabitacionales = DB::table('situaciones_habitacionales')->get();
         $espaciosGrupales = DB::table('espacios_grupales')->get();
@@ -245,7 +251,9 @@ class MasculinidadesCasoController extends Controller
             'tipoViolencia',
             'medidasCautelares',
             'encargados',
-            'tiposIntervencion'
+            'tiposIntervencion',
+            'niveles',
+            'estadosCiviles'
         ));
     }
 
@@ -279,6 +287,7 @@ class MasculinidadesCasoController extends Controller
         $caso->update($datos);
 
         $caso->tiposViolencia()->sync($request->input('tipo_violencia_id', []));
+        $caso->medidas()->sync($request->input('medida_id', []));
 
         if ($request->has('victimas')) {
 
