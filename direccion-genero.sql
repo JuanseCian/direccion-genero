@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 11, 2026 at 10:12 PM
+-- Generation Time: Mar 12, 2026 at 12:36 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -452,10 +452,16 @@ CREATE TABLE `encargados` (
 --
 
 INSERT INTO `encargados` (`id`, `nombre`, `apellido`, `telefono`, `email`, `cargo`, `created_at`, `updated_at`) VALUES
-(1, 'rober', 'a', NULL, NULL, NULL, '2026-03-01 05:39:09', '2026-03-01 05:39:09'),
-(2, 'flor', 'a', NULL, NULL, NULL, '2026-03-01 05:39:24', '2026-03-01 05:39:24'),
-(3, 'marga', 'a', NULL, NULL, NULL, '2026-03-01 05:39:35', '2026-03-01 05:39:35'),
-(4, 'jenny', 'a', NULL, NULL, NULL, '2026-03-01 05:39:41', '2026-03-01 05:39:41');
+(1, 'Roberto', 'Coronel', NULL, NULL, NULL, '2026-03-01 05:39:09', '2026-03-12 02:06:31'),
+(2, 'Florencia', 'Beterette', NULL, NULL, NULL, '2026-03-01 05:39:24', '2026-03-12 02:06:57'),
+(3, 'Margarita', 'Romero', NULL, NULL, NULL, '2026-03-01 05:39:35', '2026-03-12 02:07:27'),
+(4, 'Jennifer', 'Baez', NULL, NULL, NULL, '2026-03-01 05:39:41', '2026-03-12 02:07:42'),
+(5, 'Yael', 'Buchert', NULL, NULL, NULL, '2026-03-12 02:08:43', '2026-03-12 02:08:43'),
+(6, 'Brenda', 'Buchert', NULL, NULL, NULL, '2026-03-12 02:08:59', '2026-03-12 02:08:59'),
+(7, 'Bruno', 'Massocco', NULL, NULL, NULL, '2026-03-12 02:09:22', '2026-03-12 02:09:22'),
+(8, 'Juliana', 'Brest', NULL, NULL, NULL, '2026-03-12 02:09:43', '2026-03-12 02:09:43'),
+(9, 'Florencia', 'Ramos', NULL, NULL, NULL, '2026-03-12 02:09:56', '2026-03-12 02:09:56'),
+(10, 'Julieta', 'Macarrone', NULL, NULL, NULL, '2026-03-12 02:10:15', '2026-03-12 02:10:15');
 
 -- --------------------------------------------------------
 
@@ -475,15 +481,18 @@ CREATE TABLE `encargado_area` (
 
 INSERT INTO `encargado_area` (`id`, `encargado_id`, `area_id`) VALUES
 (13, 1, 1),
-(14, 1, 2),
 (15, 2, 1),
-(16, 2, 2),
 (17, 2, 3),
-(18, 2, 4),
-(19, 3, 1),
 (20, 3, 2),
-(21, 3, 3),
-(22, 4, 3);
+(22, 4, 3),
+(34, 4, 1),
+(35, 5, 1),
+(36, 6, 1),
+(37, 7, 1),
+(38, 8, 1),
+(39, 8, 3),
+(40, 9, 2),
+(41, 10, 2);
 
 -- --------------------------------------------------------
 
@@ -566,6 +575,9 @@ CREATE TABLE `ive_casos` (
   `persona_id` bigint UNSIGNED NOT NULL,
   `fum` date DEFAULT NULL,
   `eco_semanas` int DEFAULT NULL,
+  `semanas_gestacion` int DEFAULT NULL,
+  `estado_civil_id` bigint UNSIGNED DEFAULT NULL,
+  `metodo_interrupcion` varchar(100) DEFAULT NULL,
   `obra_social` tinyint(1) NOT NULL DEFAULT '0',
   `cantidad_hijos` int DEFAULT '0',
   `interrupcion_previa` tinyint(1) NOT NULL DEFAULT '0',
@@ -573,15 +585,17 @@ CREATE TABLE `ive_casos` (
   `alta` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `encargado_id` bigint UNSIGNED DEFAULT NULL
+  `encargado_id` bigint UNSIGNED DEFAULT NULL,
+  `metodo_interrupcion_id` bigint UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `ive_casos`
 --
 
-INSERT INTO `ive_casos` (`id`, `persona_id`, `fum`, `eco_semanas`, `obra_social`, `cantidad_hijos`, `interrupcion_previa`, `violencia_previa`, `alta`, `created_at`, `updated_at`, `encargado_id`) VALUES
-(4, 110, '2026-03-11', 2, 0, 0, 1, 0, NULL, '2026-03-10 05:22:11', '2026-03-10 05:22:11', 2);
+INSERT INTO `ive_casos` (`id`, `persona_id`, `fum`, `eco_semanas`, `semanas_gestacion`, `estado_civil_id`, `metodo_interrupcion`, `obra_social`, `cantidad_hijos`, `interrupcion_previa`, `violencia_previa`, `alta`, `created_at`, `updated_at`, `encargado_id`, `metodo_interrupcion_id`) VALUES
+(4, 110, '2026-03-11', 2, NULL, NULL, NULL, 0, 0, 1, 0, NULL, '2026-03-10 05:22:11', '2026-03-10 05:22:11', 2, NULL),
+(5, 123, '2026-03-19', 3, 5, 4, NULL, 1, 1, 1, 0, NULL, '2026-03-12 03:19:11', '2026-03-12 03:23:53', 2, 2);
 
 -- --------------------------------------------------------
 
@@ -1088,6 +1102,27 @@ INSERT INTO `medidas_cautelares` (`id`, `nombre`) VALUES
 (2, 'Boton de panico'),
 (1, 'Perimetros'),
 (3, 'Recorridas dinamicas');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `metodos_interrupcion`
+--
+
+CREATE TABLE `metodos_interrupcion` (
+  `id` bigint UNSIGNED NOT NULL,
+  `nombre` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `metodos_interrupcion`
+--
+
+INSERT INTO `metodos_interrupcion` (`id`, `nombre`) VALUES
+(1, 'Medicamentoso'),
+(2, 'AMEU'),
+(3, 'Legrado'),
+(4, 'Otro');
 
 -- --------------------------------------------------------
 
@@ -1643,7 +1678,9 @@ ALTER TABLE `failed_jobs`
 ALTER TABLE `ive_casos`
   ADD PRIMARY KEY (`id`),
   ADD KEY `persona_id` (`persona_id`),
-  ADD KEY `fk_ive_encargado` (`encargado_id`);
+  ADD KEY `fk_ive_encargado` (`encargado_id`),
+  ADD KEY `fk_ive_estado_civil` (`estado_civil_id`),
+  ADD KEY `fk_metodo_interrupcion` (`metodo_interrupcion_id`);
 
 --
 -- Indexes for table `ive_caso_red`
@@ -1751,6 +1788,12 @@ ALTER TABLE `masculinidades_tipos_violencia`
 ALTER TABLE `medidas_cautelares`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `nombre` (`nombre`);
+
+--
+-- Indexes for table `metodos_interrupcion`
+--
+ALTER TABLE `metodos_interrupcion`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `migrations`
@@ -1955,13 +1998,13 @@ ALTER TABLE `direccion_genero_red_contencion`
 -- AUTO_INCREMENT for table `encargados`
 --
 ALTER TABLE `encargados`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `encargado_area`
 --
 ALTER TABLE `encargado_area`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `espacios_grupales`
@@ -1985,7 +2028,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `ive_casos`
 --
 ALTER TABLE `ive_casos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `ive_caso_red`
@@ -2064,6 +2107,12 @@ ALTER TABLE `masculinidades_tipos_violencia`
 --
 ALTER TABLE `medidas_cautelares`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `metodos_interrupcion`
+--
+ALTER TABLE `metodos_interrupcion`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -2236,6 +2285,8 @@ ALTER TABLE `encargado_area`
 --
 ALTER TABLE `ive_casos`
   ADD CONSTRAINT `fk_ive_encargado` FOREIGN KEY (`encargado_id`) REFERENCES `encargados` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_ive_estado_civil` FOREIGN KEY (`estado_civil_id`) REFERENCES `estados_civiles` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_metodo_interrupcion` FOREIGN KEY (`metodo_interrupcion_id`) REFERENCES `metodos_interrupcion` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `ive_casos_ibfk_1` FOREIGN KEY (`persona_id`) REFERENCES `personas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
