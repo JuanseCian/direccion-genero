@@ -234,11 +234,7 @@
                         <label class="form-label fw-bold text-secondary">Observaciones Adicionales</label>
                         <textarea name="observaciones" class="form-control" rows="3"></textarea>
                     </div>
-                    <div class="col-12">
-                        <label class="form-label fw-bold"><i class="bi bi-paperclip"></i> Adjuntar Certificados o Documentación</label>
-                        <input type="file" name="certificado" class="form-control" accept=".pdf,.jpg,.jpeg,.png">
-                        <div class="form-text text-muted small italic">Sube archivos PDF o Imágenes que respalden el caso.</div>
-                    </div>
+                    
                 </div>
             </div>
             <div class="card-footer bg-light text-end py-3">
