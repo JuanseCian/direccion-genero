@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\RedContencion;
+use App\Models\Encargado;
 
 class IveCaso extends Model
 {
@@ -75,4 +76,8 @@ class IveCaso extends Model
     {
         return $this->belongsTo(MetodoInterrupcion::class,'metodo_interrupcion_id');
     }
+    public function encargado()
+{
+    return $this->belongsTo(Encargado::class);
+}
 }

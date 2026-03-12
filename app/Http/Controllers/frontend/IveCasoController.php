@@ -112,10 +112,14 @@ class IveCasoController extends Controller
         }
 
         $caso->load([
-            'persona',
-            'estadoCivil',
-            'medicaciones'
-        ]);
+    'persona',
+    'estadoCivil',
+    'metodoInterrupcion',
+    'encargado',
+    'tiposViolencia',
+    'redesContencion',
+    'medicaciones'
+]);
 
         $rutaWord = $this->generarWordIve($caso);
 
@@ -240,11 +244,15 @@ class IveCasoController extends Controller
             }
         }
 
-        $caso->load([
-            'persona',
-            'estadoCivil',
-            'medicaciones'
-        ]);
+       $caso->load([
+    'persona',
+    'estadoCivil',
+    'metodoInterrupcion',
+    'encargado',
+    'tiposViolencia',
+    'redesContencion',
+    'medicaciones'
+]);
 
         $rutaWord = $this->generarWordIve($caso);
 
@@ -272,10 +280,15 @@ private function generarWordIve($caso)
 
     $phpWord = new PhpWord();
 
-    $section = $phpWord->addSection();
+    $section = $phpWord->addSection([
+        'marginTop' => 1000,
+        'marginBottom' => 1000,
+        'marginLeft' => 1200,
+        'marginRight' => 1200
+    ]);
 
     $section->addText(
-        'Registro IVE',
+        'REGISTRO IVE',
         ['bold'=>true,'size'=>16],
         ['alignment'=>'center']
     );
@@ -287,6 +300,8 @@ private function generarWordIve($caso)
         'borderColor'=>'999999'
     ]);
 
+    // DATOS PERSONALES
+
     $table->addRow();
     $table->addCell(4000)->addText('Nombre');
     $table->addCell(6000)->addText($persona->nombre.' '.$persona->apellido);
@@ -296,20 +311,73 @@ private function generarWordIve($caso)
     $table->addCell()->addText($persona->dni);
 
     $table->addRow();
-    $table->addCell()->addText('FUM');
-    $table->addCell()->addText($caso->fum);
+    $table->addCell()->addText('Estado civil');
+    $table->addCell()->addText($caso->estadoCivil->nombre ?? '');
 
     $table->addRow();
-    $table->addCell()->addText('Semanas gestación');
-    $table->addCell()->addText($caso->semanas_gestacion);
+    $table->addCell()->addText('Cantidad de hijos');
+    $table->addCell()->addText($caso->cantidad_hijos ?? '');
+
+    // DATOS MÉDICOS
+
+    $table->addRow();
+    $table->addCell()->addText('FUM');
+    $table->addCell()->addText($caso->fum ?? '');
+
+    $table->addRow();
+    $table->addCell()->addText('Semanas de gestación');
+    $table->addCell()->addText($caso->semanas_gestacion ?? '');
+
+    $table->addRow();
+    $table->addCell()->addText('Eco semanas');
+    $table->addCell()->addText($caso->eco_semanas ?? '');
+
+    $table->addRow();
+    $table->addCell()->addText('Método de interrupción');
+    $table->addCell()->addText($caso->metodoInterrupcion->nombre ?? '');
+
+    // SITUACIÓN SOCIAL
 
     $section->addTextBreak();
+    $section->addText('SITUACIÓN SOCIAL', ['bold'=>true]);
 
+    $section->addText('Obra social: '.($caso->obra_social ? 'Sí' : 'No'));
+    $section->addText('Interrupción previa: '.($caso->interrupcion_previa ? 'Sí' : 'No'));
+    $section->addText('Violencia previa: '.($caso->violencia_previa ? 'Sí' : 'No'));
+
+    // TIPOS DE VIOLENCIA
+
+    $section->addTextBreak();
+    $section->addText('TIPOS DE VIOLENCIA', ['bold'=>true]);
+
+    foreach ($caso->tiposViolencia as $v) {
+        $section->addText('- '.$v->nombre);
+    }
+
+    // REDES DE CONTENCIÓN
+
+    $section->addTextBreak();
+    $section->addText('REDES DE CONTENCIÓN', ['bold'=>true]);
+
+    foreach ($caso->redesContencion as $r) {
+        $section->addText('- '.$r->nombre);
+    }
+
+    // MEDICACIONES
+
+    $section->addTextBreak();
     $section->addText('MEDICACIONES', ['bold'=>true]);
 
     foreach ($caso->medicaciones as $m) {
-        $section->addText($m->nombre.'  -  Lote: '.$m->numero_lote);
+        $section->addText($m->nombre.'   |   Lote: '.$m->numero_lote);
     }
+
+    // ENCARGADO
+
+    $section->addTextBreak();
+    $section->addText('Encargado: '.$caso->encargado->nombre ?? '');
+
+    // NOMBRE DEL ARCHIVO
 
     $numeroCaso = str_pad($caso->id,6,"0",STR_PAD_LEFT);
     $dni = preg_replace('/[^0-9]/','',$persona->dni);
@@ -329,13 +397,4 @@ private function generarWordIve($caso)
 
     return $ruta;
 }
-    public function destroy(string $id)
-    {
-        $caso = IveCaso::findOrFail($id);
-        $caso->delete();
-
-        return redirect()
-            ->route('frontend.areas.ive.listado')
-            ->with('success', 'Caso eliminado correctamente');
-    }
 }
