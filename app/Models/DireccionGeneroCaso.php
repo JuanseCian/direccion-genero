@@ -16,40 +16,40 @@ class DireccionGeneroCaso extends Model
 {
     protected $table = 'direccion_genero_casos';
 
-   protected $fillable = [
-    'persona_id',
-    'estado_civil_id',
-    'genero',
-    'provincia_id',
-    'localidad_id',
-    'barrio_id',
-    'nivel_estudio_id',
-    'trabaja',
-    'organizacion_social',
-    'organizacion_social_detalle',
-    'debe_asistir_masculinidades',
-    'medida_cautelar_id',
-    'observaciones',
-    'encargado_id',
-    'agresor_id',
-    'agresor_trabajo',
-    'servicios_luz',
-    'servicios_cable',
-    'servicios_gas_natural',
-    'denuncio_antes',
-    'denuncio_antes_detalle',
-    'amenaza_con_arma',
-    'fecha_ultima_denuncia',
-    'amenaza_tipo_arma',
-    'tipo_violencia_id',
-    'boton_panico_numero',
-    'servicios_agua_potable',
-    'servicios_internet',
-    'situacion_habitacional_id'
-];
-protected $casts = [
-    'debe_asistir_masculinidades' => 'boolean',
-];
+    protected $fillable = [
+        'persona_id',
+        'estado_civil_id',
+        'genero',
+        'provincia_id',
+        'localidad_id',
+        'barrio_id',
+        'nivel_estudio_id',
+        'trabaja',
+        'organizacion_social',
+        'organizacion_social_detalle',
+        'debe_asistir_masculinidades',
+        'medida_cautelar_id',
+        'observaciones',
+        'encargado_id',
+        'agresor_id',
+        'agresor_trabajo',
+        'servicios_luz',
+        'servicios_cable',
+        'servicios_gas_natural',
+        'denuncio_antes',
+        'denuncio_antes_detalle',
+        'amenaza_con_arma',
+        'fecha_ultima_denuncia',
+        'amenaza_tipo_arma',
+        'tipo_violencia_id',
+        'boton_panico_numero',
+        'servicios_agua_potable',
+        'servicios_internet',
+        'situacion_habitacional_id'
+    ];
+    protected $casts = [
+        'debe_asistir_masculinidades' => 'boolean',
+    ];
 
     public function tipoViolencia()
     {
@@ -122,13 +122,6 @@ protected $casts = [
     {
         return $this->hasMany(DireccionGeneroIntervencion::class, 'caso_id')->orderBy('fecha_intervencion', 'desc');
     }
-public function situacionHabitacional()
-{
-    return $this->belongsTo(SituacionHabitacional::class, 'nivel_estudio_id');
-}
-public function situacionSanitaria()
-{
-    return $this->belongsTo(SituacionSanitaria::class, 'nivel_estudio_id');
-}
+
 
 }

@@ -689,6 +689,76 @@ function toggleOrganizacion() {
         detalle.classList.add('bg-light');
     }
 }
+
+// Contamos cuántos familiares ya existen para que el nuevo empiece después de esos
+let index = {{ $legajo->grupoConviviente->count() }}; 
+
+function agregarFamiliar(datos = null) {
+    const container = document.getElementById('grupoFamiliarContainer');
+    const msgVacio = document.getElementById('msgVacio');
+    if(msgVacio) msgVacio.remove();
+
+    // Si es un familiar nuevo, los campos vienen vacíos
+    const nombre = datos ? datos.nombre : '';
+    const apellido = datos ? datos.apellido : '';
+    const dni = datos ? (datos.dni || '') : '';
+    const telefono = datos ? (datos.telefono || '') : '';
+    const vinculo = datos ? (datos.vinculo || '').toLowerCase() : '';
+
+    const html = `
+        <div class="card p-3 mt-3 border shadow-sm">
+            <div class="row g-2 align-items-center">
+                <div class="col-md-2">
+                    <input type="text" name="grupo[${index}][nombre]" value="${nombre}" class="form-control" placeholder="Nombre" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="grupo[${index}][apellido]" value="${apellido}" class="form-control" placeholder="Apellido" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="grupo[${index}][dni]" value="${dni}" class="form-control" placeholder="DNI">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="grupo[${index}][telefono]" value="${telefono}" class="form-control" placeholder="Teléfono">
+                </div>
+                <div class="col-md-3">
+                    <select name="grupo[${index}][vinculo]" class="form-select" required>
+                        <option value="">Vínculo</option>
+                        <option value="padre" ${vinculo === 'padre' ? 'selected' : ''}>Padre</option>
+                        <option value="madre" ${vinculo === 'madre' ? 'selected' : ''}>Madre</option>
+                        <option value="hijo/a" ${vinculo === 'hijo/a' ? 'selected' : ''}>Hijo/a</option>
+                        <option value="hermano/a" ${vinculo === 'hermano/a' ? 'selected' : ''}>Hermano/a</option>
+                        <option value="pareja" ${vinculo === 'pareja' ? 'selected' : ''}>Pareja</option>
+                        <option value="otro" ${vinculo === 'otro' ? 'selected' : ''}>Otro</option>
+                    </select>
+                </div>
+                <div class="col-md-1 text-end">
+                    <button type="button" class="btn btn-outline-danger btn-sm border-0" onclick="this.closest('.card').remove()">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    container.insertAdjacentHTML('beforeend', html);
+    index++; // Incrementamos para el siguient
+}
+
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializamos el index con la cantidad de familiares actuales
+        // Esto evita que al agregar uno nuevo se pisen los nombres de los inputs
+        let index = {{ $legajo->grupoConviviente->count() }}; 
+
+        @foreach($legajo->grupoConviviente as $familiar)
+            agregarFamiliar({
+                nombre: "{{ $familiar->nombre }}",
+                apellido: "{{ $familiar->apellido }}",
+                dni: "{{ $familiar->dni }}",
+                telefono: "{{ $familiar->telefono }}",
+                vinculo: "{{ $familiar->vinculo }}"
+            });
+        @endforeach
+    });
+</script>
 @endsection
