@@ -9,9 +9,7 @@ use App\Models\NivelEstudio;
 use App\Models\Provincia;
 use App\Models\Localidad;
 use App\Models\Barrio;
-use App\Models\MedidaCautelar;
-use App\Models\SituacionHabitacional;
-use App\Models\SituacionSanitaria;
+use App\Models\medidaCautelar;
 class DireccionGeneroCaso extends Model
 {
     protected $table = 'direccion_genero_casos';
@@ -123,5 +121,9 @@ class DireccionGeneroCaso extends Model
         return $this->hasMany(DireccionGeneroIntervencion::class, 'caso_id')->orderBy('fecha_intervencion', 'desc');
     }
 
+    public function grupoConviviente()
+    {
+        return $this->hasMany(DireccionGeneroGrupoConviviente::class, 'caso_id');
+    }
 
 }
