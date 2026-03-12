@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\{DireccionGeneroCaso, Persona, Provincia, Localidad, Barrio, EstadoCivil, NivelEstudio, IveCaso, MasculinidadesCaso, Encargado, TipoViolencia, RedContencion, TipoIntervencion,SituacionHabitacional,MedidaCautelar,Adjunto};
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
 class DireccionGeneroController extends Controller
 {
     public function index()
@@ -78,30 +81,32 @@ class DireccionGeneroController extends Controller
         ));
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'persona_id' => 'required|exists:personas,id|unique:direccion_genero_casos,persona_id',
-            'agresor_id' => 'nullable|exists:personas,id',
-            'situacion_habitacional_id' => 'nullable|exists:situaciones_habitacionales,id',
-            
-        ]);
-        
-        $denuncioAntes = $request->has('denuncio_antes') ? 1 : 0;
-        $medida_cautelar_id = $request->medida_cautelar_id;
-    
-        $amenazaArma = $request->has('amenaza_con_arma') ? 1 : 0;
-        $servicios_luz = $request->has('servicios_luz') ? 1 : 0;
-        $servicios_cable = $request->has('servicios_cable') ? 1 : 0;
-        $servicios_gas = $request->has('servicios_gas_natural') ? 1 : 0;
-        $servicios_agua = $request->has('servicios_agua_potable') ? 1 : 0;
-        $servicios_internet = $request->has('servicios_internet') ? 1 : 0;
+   public function store(Request $request)
+{
+    $request->validate([
+        'persona_id' => 'required|exists:personas,id|unique:direccion_genero_casos,persona_id',
+        'agresor_id' => 'nullable|exists:personas,id',
+        'situacion_habitacional_id' => 'nullable|exists:situaciones_habitacionales,id',
+    ]);
 
-        $trabaja = $request->has('trabaja') ? 1 : 0;
-        $orgSocial = $request->has('organizacion_social') ? 1 : 0;
-        $cursoMasculinidades = $request->has('debe_asistir_masculinidades') ? 1 : 0;
+    $denuncioAntes = $request->has('denuncio_antes') ? 1 : 0;
+    $amenazaArma = $request->has('amenaza_con_arma') ? 1 : 0;
 
-        DireccionGeneroCaso::create([
+    $trabaja = $request->has('trabaja') ? 1 : 0;
+    $orgSocial = $request->has('organizacion_social') ? 1 : 0;
+    $cursoMasculinidades = $request->has('debe_asistir_masculinidades') ? 1 : 0;
+
+    $servicios_luz = $request->has('servicios_luz') ? 1 : 0;
+    $servicios_cable = $request->has('servicios_cable') ? 1 : 0;
+    $servicios_gas = $request->has('servicios_gas_natural') ? 1 : 0;
+    $servicios_agua = $request->has('servicios_agua_potable') ? 1 : 0;
+    $servicios_internet = $request->has('servicios_internet') ? 1 : 0;
+
+    DB::beginTransaction();
+
+    try {
+
+        $legajo = DireccionGeneroCaso::create([
             'persona_id' => $request->persona_id,
             'estado_civil_id' => $request->estado_civil_id,
             'genero' => $request->genero,
@@ -133,9 +138,145 @@ class DireccionGeneroController extends Controller
             'agresor_trabajo' => $request->agresor_trabajo
         ]);
 
-        return redirect()->route('genero.listado')->with('success','Legajo creado correctamente');
+        $legajo->load([
+            'persona',
+            'estadoCivil',
+            'nivelEstudio',
+            'situacionHabitacional'
+        ]);
+
+        $rutaWord = $this->generarWordGenero($legajo);
+
+        $nombreWord = basename($rutaWord);
+        $path = storage_path('app/'.$rutaWord);
+
+        Adjunto::create([
+            'entidad_tipo' => 'genero',
+            'entidad_id' => $legajo->id,
+            'nombre_original' => $nombreWord,
+            'nombre_guardado' => $nombreWord,
+            'ruta' => $rutaWord,
+            'tipo_mime' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'tamaño' => filesize($path),
+            'hash_sha256' => hash_file('sha256',$path),
+            'subido_por' => auth()->id(),
+            'confidencial' => 0
+        ]);
+
+        DB::commit();
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+        throw $e;
+
     }
 
+    return redirect()->route('genero.listado')
+        ->with('success','Legajo creado correctamente y documento generado');
+}
+private function generarWordGenero($legajo)
+{
+    $persona = $legajo->persona;
+
+    $phpWord = new PhpWord();
+
+    $section = $phpWord->addSection([
+        'marginTop' => 1000,
+        'marginBottom' => 1000,
+        'marginLeft' => 1200,
+        'marginRight' => 1200
+    ]);
+
+    // ENCABEZADO
+    $header = $section->addHeader();
+    $header->addText('Municipalidad - Dirección de Género', ['bold'=>true], ['alignment'=>'center']);
+    $header->addText('Registro de Caso', [], ['alignment'=>'center']);
+
+    $section->addTextBreak(2);
+
+    $section->addText(
+        'INFORME DE CASO',
+        ['bold'=>true,'size'=>16],
+        ['alignment'=>'center']
+    );
+
+    $section->addTextBreak(2);
+
+    $table = $section->addTable([
+        'borderSize' => 6,
+        'borderColor' => '999999'
+    ]);
+
+    $table->addRow();
+    $table->addCell(4000)->addText('Nombre');
+    $table->addCell(6000)->addText($persona->nombre.' '.$persona->apellido);
+
+    $table->addRow();
+    $table->addCell()->addText('DNI');
+    $table->addCell()->addText($persona->dni);
+
+    $table->addRow();
+    $table->addCell()->addText('Estado civil');
+    $table->addCell()->addText($legajo->estadoCivil->nombre ?? '');
+
+    $table->addRow();
+    $table->addCell()->addText('Nivel de estudio');
+    $table->addCell()->addText($legajo->nivelEstudio->nombre ?? '');
+
+    $table->addRow();
+    $table->addCell()->addText('Situación habitacional');
+    $table->addCell()->addText($legajo->situacionHabitacional->nombre ?? '');
+
+    $section->addTextBreak();
+
+    $section->addText('SERVICIOS', ['bold'=>true]);
+
+    $section->addText('Luz: '.($legajo->servicios_luz ? 'Sí':'No'));
+    $section->addText('Cable: '.($legajo->servicios_cable ? 'Sí':'No'));
+    $section->addText('Gas natural: '.($legajo->servicios_gas_natural ? 'Sí':'No'));
+    $section->addText('Agua potable: '.($legajo->servicios_agua_potable ? 'Sí':'No'));
+    $section->addText('Internet: '.($legajo->servicios_internet ? 'Sí':'No'));
+
+    $section->addTextBreak();
+
+    $section->addText('VIOLENCIA', ['bold'=>true]);
+
+    $section->addText('Tipo de violencia: '.$legajo->tipo_violencia_id);
+    $section->addText('Medida cautelar: '.$legajo->medida_cautelar_id);
+
+    $section->addTextBreak();
+
+    $section->addText('DENUNCIAS', ['bold'=>true]);
+
+    $section->addText('Denunció antes: '.($legajo->denuncio_antes ? 'Sí':'No'));
+    $section->addText('Detalle: '.$legajo->denuncio_antes_detalle);
+    $section->addText('Fecha última denuncia: '.$legajo->fecha_ultima_denuncia);
+
+    $section->addTextBreak();
+
+    $section->addText('OBSERVACIONES', ['bold'=>true]);
+    $section->addText($legajo->observaciones ?? '');
+
+    $numeroCaso = str_pad($legajo->id,6,"0",STR_PAD_LEFT);
+    $dni = preg_replace('/[^0-9]/','',$persona->dni);
+
+    $nombreWord = "caso_genero_{$numeroCaso}_{$dni}.docx";
+
+    // 🔹 CARPETA CORRECTA
+    $ruta = "genero_certificados/".$nombreWord;
+
+    $path = storage_path('app/'.$ruta);
+
+    if(!file_exists(dirname($path))){
+        mkdir(dirname($path),0755,true);
+    }
+
+    $writer = IOFactory::createWriter($phpWord,'Word2007');
+    $writer->save($path);
+
+    return $ruta;
+}
     public function edit($id)
 {
     $legajo = DireccionGeneroCaso::with([
@@ -191,55 +332,89 @@ class DireccionGeneroController extends Controller
         'persona_id' => 'required|exists:personas,id',
     ]);
 
-    $legajo->update([
-        'persona_id' => $request->persona_id,
-        'estado_civil_id' => $request->estado_civil_id,
-        'genero' => $request->genero,
-        'provincia_id' => $request->provincia_id,
-        'localidad_id' => $request->localidad_id,
-        'barrio_id' => $request->barrio_id,
-        'nivel_estudio_id' => $request->nivel_estudio_id,
+    DB::beginTransaction();
 
-        'trabaja' => $request->trabaja == "1" ? 1 : 0,
+    try {
 
-        'organizacion_social' => $request->organizacion_social == "1" ? 1 : 0,
-        'organizacion_social_detalle' => $request->organizacion_social_detalle,
+        $legajo->update([
+            'persona_id' => $request->persona_id,
+            'estado_civil_id' => $request->estado_civil_id,
+            'genero' => $request->genero,
+            'provincia_id' => $request->provincia_id,
+            'localidad_id' => $request->localidad_id,
+            'barrio_id' => $request->barrio_id,
+            'nivel_estudio_id' => $request->nivel_estudio_id,
 
-        'situacion_habitacional_id' => $request->situacion_habitacional_id,
+            'trabaja' => $request->trabaja == "1" ? 1 : 0,
+            'organizacion_social' => $request->organizacion_social == "1" ? 1 : 0,
+            'organizacion_social_detalle' => $request->organizacion_social_detalle,
 
-        'servicios_luz' => $request->has('servicios_luz') ? 1 : 0,
-        'servicios_cable' => $request->has('servicios_cable') ? 1 : 0,
-        'servicios_gas_natural' => $request->has('servicios_gas_natural') ? 1 : 0,
-        'servicios_agua_potable' => $request->has('servicios_agua_potable') ? 1 : 0,
-        'servicios_internet' => $request->has('servicios_internet') ? 1 : 0,
+            'situacion_habitacional_id' => $request->situacion_habitacional_id,
 
-        'tipo_violencia_id' => $request->tipo_violencia_id,
-        'medida_cautelar_id' => $request->medida_cautelar_id,
-        'fecha_ultima_denuncia' => $request->fecha_ultima_denuncia,
+            'servicios_luz' => $request->has('servicios_luz') ? 1 : 0,
+            'servicios_cable' => $request->has('servicios_cable') ? 1 : 0,
+            'servicios_gas_natural' => $request->has('servicios_gas_natural') ? 1 : 0,
+            'servicios_agua_potable' => $request->has('servicios_agua_potable') ? 1 : 0,
+            'servicios_internet' => $request->has('servicios_internet') ? 1 : 0,
 
-        'denuncio_antes' => $request->has('denuncio_antes') ? 1 : 0,
-        'denuncio_antes_detalle' => $request->denuncio_antes_detalle,
+            'tipo_violencia_id' => $request->tipo_violencia_id,
+            'medida_cautelar_id' => $request->medida_cautelar_id,
+            'fecha_ultima_denuncia' => $request->fecha_ultima_denuncia,
 
-        'amenaza_con_arma' => $request->has('amenaza_con_arma') ? 1 : 0,
-        'amenaza_tipo_arma' => $request->amenaza_tipo_arma,
+            'denuncio_antes' => $request->has('denuncio_antes') ? 1 : 0,
+            'denuncio_antes_detalle' => $request->denuncio_antes_detalle,
 
-        'boton_panico_numero' => $request->boton_panico_numero,
+            'amenaza_con_arma' => $request->has('amenaza_con_arma') ? 1 : 0,
+            'amenaza_tipo_arma' => $request->amenaza_tipo_arma,
 
-        'agresor_trabajo' => $request->agresor_trabajo,
-        'debe_asistir_masculinidades' => $request->has('debe_asistir_masculinidades') ? 1 : 0,
+            'boton_panico_numero' => $request->boton_panico_numero,
 
-        'observaciones' => $request->observaciones,
-        'encargado_id' => $request->encargado_id
-    ]);
+            'agresor_trabajo' => $request->agresor_trabajo,
+            'debe_asistir_masculinidades' => $request->has('debe_asistir_masculinidades') ? 1 : 0,
 
-    if ($request->has('agresores')) {
-        $legajo->agresores()->sync($request->agresores);
-    } else {
-        $legajo->agresores()->detach();
+            'observaciones' => $request->observaciones,
+            'encargado_id' => $request->encargado_id
+        ]);
+
+        if ($request->has('agresores')) {
+            $legajo->agresores()->sync($request->agresores);
+        } else {
+            $legajo->agresores()->detach();
+        }
+
+        $legajo->load([
+            'persona',
+            'estadoCivil',
+            'nivelEstudio',
+            'situacionHabitacional'
+        ]);
+
+        $rutaWord = $this->generarWordGenero($legajo);
+
+        $path = storage_path('app/'.$rutaWord);
+
+        $adjunto = Adjunto::where('entidad_tipo','genero')
+            ->where('entidad_id',$legajo->id)
+            ->first();
+
+        if ($adjunto) {
+            $adjunto->update([
+                'tamaño' => filesize($path),
+                'hash_sha256' => hash_file('sha256',$path)
+            ]);
+        }
+
+        DB::commit();
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+        throw $e;
+
     }
 
     return redirect()->route('genero.listado')
-        ->with('success', 'Legajo actualizado correctamente');
+        ->with('success','Legajo actualizado y documento regenerado.');
 }
 
     public function destroy($id)

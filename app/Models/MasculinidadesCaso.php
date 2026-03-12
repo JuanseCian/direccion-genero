@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\MedidaCautelar;
+use App\Models\EstadoCivil;
+use App\Models\NivelEstudio;
+use App\Models\SituacionHabitacional;
+use App\Models\SituacionSanitaria;
 
 class MasculinidadesCaso extends Model
 {
@@ -109,4 +113,20 @@ class MasculinidadesCaso extends Model
         return $this->hasMany(Adjunto::class, 'entidad_id')
             ->where('entidad_tipo', 'masculinidades');
     }
+    public function estadoCivil()
+{
+    return $this->belongsTo(EstadoCivil::class, 'estado_civil_id');
+}
+public function nivelEstudio()
+{
+    return $this->belongsTo(NivelEstudio::class, 'nivel_estudio_id');
+}
+public function situacionHabitacional()
+{
+    return $this->belongsTo(SituacionHabitacional::class, 'nivel_estudio_id');
+}
+public function situacionSanitaria()
+{
+    return $this->belongsTo(SituacionSanitaria::class, 'nivel_estudio_id');
+}
 }
