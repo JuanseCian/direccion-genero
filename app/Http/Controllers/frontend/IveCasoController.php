@@ -4,7 +4,6 @@ namespace App\Http\Controllers\frontend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\Persona; 
 use App\Models\IveCaso;
 use App\Models\Encargado;
@@ -13,8 +12,12 @@ use App\Models\TipoViolencia;
 use App\Models\TipoIntervencion;
 use App\Models\RedContencion;
 use App\Models\EstadoCivil;
+use App\Models\Adjunto;
 use App\Models\MetodoInterrupcion;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
 class IveCasoController extends Controller
 {
     public function index()
@@ -57,63 +60,85 @@ class IveCasoController extends Controller
     }
 
     public function store(Request $request) 
-    {
-        $request->validate([
-            'persona_id' => 'required|exists:personas,id',
-            'fum' => 'nullable|date',
-            'eco_semanas' => 'nullable|integer',
-            'cantidad_hijos' => 'integer|min:0',
-            'encargado_id' => 'required|exists:encargados,id',
+{
+    $request->validate([
+        'persona_id' => 'required|exists:personas,id',
+        'fum' => 'nullable|date',
+        'eco_semanas' => 'nullable|integer',
+        'cantidad_hijos' => 'integer|min:0',
+        'encargado_id' => 'required|exists:encargados,id',
 
-            'tipos_violencia' => 'nullable|array',
-            'tipos_violencia.*' => 'exists:tipos_violencia,id',
+        'tipos_violencia' => 'nullable|array',
+        'tipos_violencia.*' => 'exists:tipos_violencia,id',
 
-            'redes_contencion' => 'nullable|array',
-            'redes_contencion.*' => 'exists:red_contencion,id',
+        'redes_contencion' => 'nullable|array',
+        'redes_contencion.*' => 'exists:red_contencion,id',
 
-            'medicaciones.*.nombre' => 'nullable|string|max:255',
-            'medicaciones.*.numero_lote' => 'nullable|string|max:255',
+        'medicaciones.*.nombre' => 'nullable|string|max:255',
+        'medicaciones.*.numero_lote' => 'nullable|string|max:255',
 
-            'semanas_gestacion' => 'nullable|integer|min:0',
-            'estado_civil_id' => 'nullable|exists:estados_civiles,id',
-            'metodo_interrupcion_id' => 'nullable|exists:metodos_interrupcion,id',
-        ]);
+        'semanas_gestacion' => 'nullable|integer|min:0',
+        'estado_civil_id' => 'nullable|exists:estados_civiles,id',
+        'metodo_interrupcion_id' => 'nullable|exists:metodos_interrupcion,id',
+    ]);
 
-        DB::transaction(function() use ($request) {
+    DB::transaction(function() use ($request) {
 
-            $data = $request->all();
+        $data = $request->all();
 
-            $data['obra_social'] = $request->has('obra_social') ? 1 : 0;
-            $data['interrupcion_previa'] = $request->has('interrupcion_previa') ? 1 : 0;
-            $data['violencia_previa'] = $request->has('violencia_previa') ? 1 : 0;
+        $data['obra_social'] = $request->has('obra_social') ? 1 : 0;
+        $data['interrupcion_previa'] = $request->has('interrupcion_previa') ? 1 : 0;
+        $data['violencia_previa'] = $request->has('violencia_previa') ? 1 : 0;
 
-            $caso = IveCaso::create($data);
+        $caso = IveCaso::create($data);
 
-            if ($request->has('tipos_violencia')) {
-                $caso->tiposViolencia()->sync($request->tipos_violencia);
-            }
+        if ($request->has('tipos_violencia')) {
+            $caso->tiposViolencia()->sync($request->tipos_violencia);
+        }
 
-            if ($request->has('redes_contencion')) {
-                $caso->redesContencion()->sync($request->redes_contencion);
-            }
+        if ($request->has('redes_contencion')) {
+            $caso->redesContencion()->sync($request->redes_contencion);
+        }
 
-            // Medicaciones
-            if ($request->has('medicaciones')) {
-                foreach ($request->medicaciones as $med) {
-                    if (!empty($med['nombre'])) {
-                        $caso->medicaciones()->create([
-                            'nombre' => $med['nombre'],
-                            'numero_lote' => $med['numero_lote'] ?? null
-                        ]);
-                    }
+        if ($request->has('medicaciones')) {
+            foreach ($request->medicaciones as $med) {
+                if (!empty($med['nombre'])) {
+                    $caso->medicaciones()->create([
+                        'nombre' => $med['nombre'],
+                        'numero_lote' => $med['numero_lote'] ?? null
+                    ]);
                 }
             }
-        });
+        }
 
-        return redirect()
-            ->route('frontend.areas.ive.listado')
-            ->with('success', 'Legajo IVE creado correctamente');
-    }
+        $caso->load([
+            'persona',
+            'estadoCivil',
+            'medicaciones'
+        ]);
+
+        $rutaWord = $this->generarWordIve($caso);
+
+        $path = storage_path('app/'.$rutaWord);
+
+        Adjunto::create([
+            'entidad_tipo' => 'ive',
+            'entidad_id' => $caso->id,
+            'nombre_original' => basename($rutaWord),
+            'nombre_guardado' => basename($rutaWord),
+            'ruta' => $rutaWord,
+            'tipo_mime' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'tamaño' => filesize($path),
+            'hash_sha256' => hash_file('sha256',$path),
+            'subido_por' => auth()->id(),
+            'confidencial' => 0
+        ]);
+    });
+
+    return redirect()
+        ->route('frontend.areas.ive.listado')
+        ->with('success', 'Legajo IVE creado correctamente');
+}
 
     public function listado()
     {
@@ -163,76 +188,147 @@ class IveCasoController extends Controller
         ));
     }
 
-    public function update(Request $request, $id)
-    {
-        $caso = IveCaso::findOrFail($id);
+  public function update(Request $request, $id)
+{
+    $caso = IveCaso::findOrFail($id);
 
-        $request->validate([
-            'persona_id' => 'required|exists:personas,id',
-            'fum' => 'nullable|date',
-            'eco_semanas' => 'nullable|integer',
-            'cantidad_hijos' => 'integer|min:0',
-            'alta' => 'nullable|date',
-            'encargado_id' => 'required|exists:encargados,id',
+    $request->validate([
+        'persona_id' => 'required|exists:personas,id',
+        'fum' => 'nullable|date',
+        'eco_semanas' => 'nullable|integer',
+        'cantidad_hijos' => 'integer|min:0',
+        'alta' => 'nullable|date',
+        'encargado_id' => 'required|exists:encargados,id',
 
-            'tipos_violencia' => 'nullable|array',
-            'tipos_violencia.*' => 'exists:tipos_violencia,id',
+        'tipos_violencia' => 'nullable|array',
+        'tipos_violencia.*' => 'exists:tipos_violencia,id',
 
-            'redes_contencion' => 'nullable|array',
-            'redes_contencion.*' => 'exists:red_contencion,id',
+        'redes_contencion' => 'nullable|array',
+        'redes_contencion.*' => 'exists:red_contencion,id',
 
-            'medicaciones.*.nombre' => 'nullable|string|max:255',
-            'medicaciones.*.numero_lote' => 'nullable|string|max:255',
+        'medicaciones.*.nombre' => 'nullable|string|max:255',
+        'medicaciones.*.numero_lote' => 'nullable|string|max:255',
 
-            'semanas_gestacion' => 'nullable|integer|min:0',
-            'estado_civil_id' => 'nullable|exists:estados_civiles,id',
-            'metodo_interrupcion_id' => 'nullable|exists:metodos_interrupcion,id',
-        ]);
+        'semanas_gestacion' => 'nullable|integer|min:0',
+        'estado_civil_id' => 'nullable|exists:estados_civiles,id',
+        'metodo_interrupcion_id' => 'nullable|exists:metodos_interrupcion,id',
+    ]);
 
-        DB::transaction(function() use ($request, $caso) {
+    DB::transaction(function() use ($request, $caso) {
 
-            $data = $request->all();
+        $data = $request->all();
 
-            $data['obra_social'] = $request->has('obra_social') ? 1 : 0;
-            $data['interrupcion_previa'] = $request->has('interrupcion_previa') ? 1 : 0;
-            $data['violencia_previa'] = $request->has('violencia_previa') ? 1 : 0;
+        $data['obra_social'] = $request->has('obra_social') ? 1 : 0;
+        $data['interrupcion_previa'] = $request->has('interrupcion_previa') ? 1 : 0;
+        $data['violencia_previa'] = $request->has('violencia_previa') ? 1 : 0;
 
-            $caso->update($data);
+        $caso->update($data);
 
-            // Tipos de violencia
-            if ($request->has('tipos_violencia')) {
-                $caso->tiposViolencia()->sync($request->tipos_violencia);
-            } else {
-                $caso->tiposViolencia()->sync([]);
-            }
+        $caso->tiposViolencia()->sync($request->tipos_violencia ?? []);
+        $caso->redesContencion()->sync($request->redes_contencion ?? []);
 
-            // Redes de contención
-            if ($request->has('redes_contencion')) {
-                $caso->redesContencion()->sync($request->redes_contencion);
-            } else {
-                $caso->redesContencion()->sync([]);
-            }
+        $caso->medicaciones()->delete();
 
-            // Medicaciones (recrea todo)
-            $caso->medicaciones()->delete();
-
-            if ($request->has('medicaciones')) {
-                foreach ($request->medicaciones as $med) {
-                    if (!empty($med['nombre'])) {
-                        $caso->medicaciones()->create([
-                            'nombre' => $med['nombre'],
-                            'numero_lote' => $med['numero_lote'] ?? null
-                        ]);
-                    }
+        if ($request->has('medicaciones')) {
+            foreach ($request->medicaciones as $med) {
+                if (!empty($med['nombre'])) {
+                    $caso->medicaciones()->create([
+                        'nombre' => $med['nombre'],
+                        'numero_lote' => $med['numero_lote'] ?? null
+                    ]);
                 }
             }
-        });
+        }
 
-        return redirect()
-            ->route('frontend.areas.ive.listado')
-            ->with('success', 'Caso actualizado correctamente');
+        $caso->load([
+            'persona',
+            'estadoCivil',
+            'medicaciones'
+        ]);
+
+        $rutaWord = $this->generarWordIve($caso);
+
+        $path = storage_path('app/'.$rutaWord);
+
+        $adjunto = Adjunto::where('entidad_tipo','ive')
+            ->where('entidad_id',$caso->id)
+            ->first();
+
+        if ($adjunto) {
+            $adjunto->update([
+                'tamaño' => filesize($path),
+                'hash_sha256' => hash_file('sha256',$path)
+            ]);
+        }
+    });
+
+    return redirect()
+        ->route('frontend.areas.ive.listado')
+        ->with('success', 'Caso actualizado correctamente');
+}
+private function generarWordIve($caso)
+{
+    $persona = $caso->persona;
+
+    $phpWord = new PhpWord();
+
+    $section = $phpWord->addSection();
+
+    $section->addText(
+        'Registro IVE',
+        ['bold'=>true,'size'=>16],
+        ['alignment'=>'center']
+    );
+
+    $section->addTextBreak(2);
+
+    $table = $section->addTable([
+        'borderSize'=>6,
+        'borderColor'=>'999999'
+    ]);
+
+    $table->addRow();
+    $table->addCell(4000)->addText('Nombre');
+    $table->addCell(6000)->addText($persona->nombre.' '.$persona->apellido);
+
+    $table->addRow();
+    $table->addCell()->addText('DNI');
+    $table->addCell()->addText($persona->dni);
+
+    $table->addRow();
+    $table->addCell()->addText('FUM');
+    $table->addCell()->addText($caso->fum);
+
+    $table->addRow();
+    $table->addCell()->addText('Semanas gestación');
+    $table->addCell()->addText($caso->semanas_gestacion);
+
+    $section->addTextBreak();
+
+    $section->addText('MEDICACIONES', ['bold'=>true]);
+
+    foreach ($caso->medicaciones as $m) {
+        $section->addText($m->nombre.'  -  Lote: '.$m->numero_lote);
     }
 
+    $numeroCaso = str_pad($caso->id,6,"0",STR_PAD_LEFT);
+    $dni = preg_replace('/[^0-9]/','',$persona->dni);
+
+    $nombreWord = "caso_ive_{$numeroCaso}_{$dni}.docx";
+
+    $ruta = "ive_certificados/".$nombreWord;
+
+    $path = storage_path('app/'.$ruta);
+
+    if(!file_exists(dirname($path))){
+        mkdir(dirname($path),0755,true);
+    }
+
+    $writer = IOFactory::createWriter($phpWord,'Word2007');
+    $writer->save($path);
+
+    return $ruta;
+}
     public function destroy(string $id)
     {
         $caso = IveCaso::findOrFail($id);
