@@ -12,6 +12,8 @@ use App\Models\DireccionGeneroCaso;
 use App\Models\TipoViolencia;
 use App\Models\TipoIntervencion;
 use App\Models\RedContencion;
+use App\Models\EstadoCivil;
+use App\Models\MetodoInterrupcion;
 
 class IveCasoController extends Controller
 {
@@ -39,6 +41,8 @@ class IveCasoController extends Controller
 
         $idsEnGenero = DireccionGeneroCaso::pluck('persona_id')->toArray();
         $tiposViolencia = TipoViolencia::orderBy('nombre')->get();
+        $estadosCiviles = EstadoCivil::orderBy('nombre')->get();
+        $metodos = MetodoInterrupcion::orderBy('nombre')->get();
         $redes = RedContencion::orderBy('nombre')->get();
 
         return view('frontend.areas.ive.create', compact(
@@ -46,7 +50,9 @@ class IveCasoController extends Controller
             'idsEnGenero',
             'encargados',
             'tiposViolencia',
-            'redes'
+            'redes',
+            'estadosCiviles',
+            'metodos'
         ));
     }
 
@@ -67,6 +73,10 @@ class IveCasoController extends Controller
 
             'medicaciones.*.nombre' => 'nullable|string|max:255',
             'medicaciones.*.numero_lote' => 'nullable|string|max:255',
+
+            'semanas_gestacion' => 'nullable|integer|min:0',
+            'estado_civil_id' => 'nullable|exists:estados_civiles,id',
+            'metodo_interrupcion_id' => 'nullable|exists:metodos_interrupcion,id',
         ]);
 
         DB::transaction(function() use ($request) {
@@ -101,7 +111,7 @@ class IveCasoController extends Controller
         });
 
         return redirect()
-            ->route('frontend.areas.ive.index')
+            ->route('frontend.areas.ive.listado')
             ->with('success', 'Legajo IVE creado correctamente');
     }
 
@@ -130,6 +140,8 @@ class IveCasoController extends Controller
         $tiposViolencia = TipoViolencia::orderBy('nombre')->get();
         $redes = RedContencion::orderBy('nombre')->get();
         $tiposIntervencion = TipoIntervencion::all();
+        $estadosCiviles = EstadoCivil::orderBy('nombre')->get();
+        $metodos = MetodoInterrupcion::orderBy('nombre')->get();
 
         $encargados = Encargado::whereHas('areas', function($q){
             $q->where('areas.id', 3);
@@ -145,7 +157,9 @@ class IveCasoController extends Controller
             'encargados',
             'tiposViolencia',
             'redes',
-            'tiposIntervencion'
+            'tiposIntervencion',
+            'estadosCiviles',
+            'metodos'
         ));
     }
 
@@ -169,6 +183,10 @@ class IveCasoController extends Controller
 
             'medicaciones.*.nombre' => 'nullable|string|max:255',
             'medicaciones.*.numero_lote' => 'nullable|string|max:255',
+
+            'semanas_gestacion' => 'nullable|integer|min:0',
+            'estado_civil_id' => 'nullable|exists:estados_civiles,id',
+            'metodo_interrupcion_id' => 'nullable|exists:metodos_interrupcion,id',
         ]);
 
         DB::transaction(function() use ($request, $caso) {
@@ -211,7 +229,7 @@ class IveCasoController extends Controller
         });
 
         return redirect()
-            ->route('frontend.areas.ive.index')
+            ->route('frontend.areas.ive.listado')
             ->with('success', 'Caso actualizado correctamente');
     }
 

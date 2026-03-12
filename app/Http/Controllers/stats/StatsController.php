@@ -256,6 +256,69 @@ class StatsController extends Controller
             return $zona;
         });
 
+        $edades = DB::table('ive_casos')
+            ->join('personas','ive_casos.persona_id','=','personas.id')
+            ->select(DB::raw("
+                CASE
+                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) < 18 THEN 'Menor de 18'
+                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 18 AND 25 THEN '18-25'
+                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 26 AND 35 THEN '26-35'
+                    WHEN TIMESTAMPDIFF(YEAR, personas.fecha_nacimiento, CURDATE()) BETWEEN 36 AND 45 THEN '36-45'
+                    ELSE '45+'
+                END as rango
+            "), DB::raw('count(*) as total'))
+            ->when($desde && $hasta, function($q) use ($desde,$hasta){
+                $q->whereBetween('ive_casos.created_at',[$desde,$hasta]);
+            })
+            ->groupBy('rango')
+            ->get();
+        
+        $semanas = DB::table('ive_casos')
+            ->select(DB::raw("
+                CASE
+                    WHEN semanas_gestacion <= 8 THEN '0-8'
+                    WHEN semanas_gestacion BETWEEN 9 AND 12 THEN '9-12'
+                    WHEN semanas_gestacion BETWEEN 13 AND 16 THEN '13-16'
+                    ELSE '16+'
+                END as rango
+            "), DB::raw('count(*) as total'))
+            ->whereNotNull('semanas_gestacion')
+            ->when($desde && $hasta, function($q) use ($desde,$hasta){
+                $q->whereBetween('created_at',[$desde,$hasta]);
+            })
+            ->groupBy('rango')
+            ->get();
+
+        $estadosCiviles = DB::table('ive_casos')
+            ->join('estados_civiles','ive_casos.estado_civil_id','=','estados_civiles.id')
+            ->select('estados_civiles.nombre', DB::raw('count(*) as total'))
+            ->when($desde && $hasta, function($q) use ($desde,$hasta){
+                $q->whereBetween('ive_casos.created_at',[$desde,$hasta]);
+            })
+            ->groupBy('estados_civiles.nombre')
+            ->orderByDesc('total')
+            ->get();
+        
+        $metodos = DB::table('ive_casos')
+            ->join('metodos_interrupcion','ive_casos.metodo_interrupcion_id','=','metodos_interrupcion.id')
+            ->select('metodos_interrupcion.nombre', DB::raw('count(*) as total'))
+            ->when($desde && $hasta, function($q) use ($desde,$hasta){
+                $q->whereBetween('ive_casos.created_at',[$desde,$hasta]);
+            })
+            ->groupBy('metodos_interrupcion.nombre')
+            ->orderByDesc('total')
+            ->get();
+
+        $interrupcionesPrevias = DB::table('ive_casos')
+            ->select(DB::raw("
+                CASE
+                    WHEN interrupcion_previa = 0 THEN 'Nunca'
+                    WHEN interrupcion_previa = 1 THEN 'Una vez o más'
+                END as tipo
+            "), DB::raw('count(*) as total'))
+            ->groupBy('tipo')
+            ->get();
+
         $casosPorZona = $zonas->map(function($z){
             return [
                 'nombre' => $z->nombre,
@@ -272,7 +335,12 @@ class StatsController extends Controller
             'zonas',
             'casosPorZona',
             'desde',
-            'hasta'
+            'hasta',
+            'edades',
+            'semanas',
+            'estadosCiviles',
+            'interrupcionesPrevias',
+            'metodos'
         ));
     }
 

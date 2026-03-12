@@ -10,7 +10,17 @@ class IveCaso extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'persona_id', 'fum', 'eco_semanas', 'obra_social', 'cantidad_hijos', 'interrupcion_previa', 'alta', 'encargado_id'
+        'persona_id',
+        'fum',
+        'eco_semanas',
+        'semanas_gestacion',
+        'estado_civil_id',
+        'metodo_interrupcion_id',
+        'obra_social',
+        'cantidad_hijos',
+        'interrupcion_previa',
+        'alta',
+        'encargado_id'
     ];
 
     public function persona() {
@@ -54,5 +64,15 @@ class IveCaso extends Model
     public function intervenciones()
     {
         return $this->hasMany(IveIntervencion::class, 'ive_caso_id');
+    }
+
+    public function estadoCivil()
+    {
+        return $this->belongsTo(EstadoCivil::class,'estado_civil_id');
+    }
+
+    public function metodoInterrupcion()
+    {
+        return $this->belongsTo(MetodoInterrupcion::class,'metodo_interrupcion_id');
     }
 }

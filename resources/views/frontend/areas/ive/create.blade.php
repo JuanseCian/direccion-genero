@@ -86,8 +86,37 @@
                         <input type="number" name="eco_semanas" class="form-control border-0 shadow-sm" placeholder="Cantidad de semanas">
                     </div>
                     <div class="col-md-3">
+                        <label class="form-label fw-bold">Semanas de Gestación</label>
+                        <input type="number"
+                            name="semanas_gestacion"
+                            class="form-control border-0 shadow-sm"
+                            placeholder="Semanas">
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label fw-bold">Cantidad de Hijos</label>
                         <input type="number" name="cantidad_hijos" value="0" class="form-control border-0 shadow-sm">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Estado Civil</label>
+                        <select name="estado_civil_id" class="form-select border-0 shadow-sm">
+                            <option value="">Seleccione...</option>
+                            @foreach($estadosCiviles as $estado)
+                                <option value="{{ $estado->id }}">
+                                    {{ $estado->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Método de Interrupción</label>
+                        <select name="metodo_interrupcion_id" class="form-select border-0 shadow-sm">
+                            <option value="">Seleccione...</option>
+                            @foreach($metodos as $metodo)
+                                <option value="{{ $metodo->id }}">
+                                    {{ $metodo->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-md-3 mt-auto">
                         <div class="form-check form-switch p-2 bg-white rounded shadow-sm border text-center">

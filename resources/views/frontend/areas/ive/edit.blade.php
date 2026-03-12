@@ -88,8 +88,45 @@
                         <input type="number" name="eco_semanas" value="{{ $caso->eco_semanas }}" class="form-control border-0 shadow-sm">
                     </div>
                     <div class="col-md-3">
+                        <label class="form-label fw-bold">Semanas de Gestación</label>
+                        <input type="number"
+                            name="semanas_gestacion"
+                            value="{{ $caso->semanas_gestacion }}"
+                            class="form-control border-0 shadow-sm"
+                            placeholder="Semanas">
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label fw-bold">Cantidad de Hijos</label>
                         <input type="number" name="cantidad_hijos" value="{{ $caso->cantidad_hijos ?? 0 }}" class="form-control border-0 shadow-sm">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Estado Civil</label>
+                        <select name="estado_civil_id" class="form-select border-0 shadow-sm">
+                            <option value="">Seleccione...</option>
+
+                            @foreach($estadosCiviles as $estado)
+                                <option value="{{ $estado->id }}"
+                                    {{ $caso->estado_civil_id == $estado->id ? 'selected' : '' }}>
+                                    {{ $estado->nombre }}
+                                </option>
+                            @endforeach
+
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Método de Interrupción</label>
+
+                        <select name="metodo_interrupcion_id" class="form-select border-0 shadow-sm">
+                            <option value="">Seleccione...</option>
+
+                            @foreach($metodos as $metodo)
+                                <option value="{{ $metodo->id }}"
+                                    {{ $caso->metodo_interrupcion_id == $metodo->id ? 'selected' : '' }}>
+                                    {{ $metodo->nombre }}
+                                </option>
+                            @endforeach
+
+                        </select>
                     </div>
                     <div class="col-md-3 mt-auto">
                         <div class="form-check form-switch p-2 bg-white rounded shadow-sm border text-center">
@@ -272,6 +309,11 @@
             </table>
         </div>
     </div>
+</div>
+<div class="card-footer bg-light text-end py-3">
+    <button type="submit" class="btn btn-lg text-white px-5 shadow-sm" style="background: #5651A0;">
+        <i class="bi bi-save-fill me-2"></i> ACTUALIZAR REGISTRO IVE
+    </button>
 </div>
 <style>
     .card { border-radius: 12px; }
