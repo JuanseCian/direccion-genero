@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\{DireccionGeneroCaso, Persona, Provincia, Localidad, Barrio, EstadoCivil, NivelEstudio, IveCaso, MasculinidadesCaso, Encargado, TipoViolencia, RedContencion, TipoIntervencion,SituacionHabitacional,MedidaCautelar,Adjunto};
+use App\Models\{DireccionGeneroCaso, Persona, Provincia, Localidad, Barrio, EstadoCivil, NivelEstudio, IveCaso, MasculinidadesCaso, Encargado, TipoViolencia, RedContencion, TipoIntervencion,SituacionHabitacional,MedidaCautelar,Adjunto, DireccionGeneroGrupoConviviente};
 use Illuminate\Http\Request;
 
 class DireccionGeneroController extends Controller
@@ -32,6 +32,8 @@ class DireccionGeneroController extends Controller
     {
         $idsConLegajo = DireccionGeneroCaso::pluck('persona_id')->toArray();
         
+        $casosMasculinidades = MasculinidadesCaso::with('persona')->get();
+
         $personas = Persona::select(
                 'id',
                 'apellido',
@@ -48,6 +50,7 @@ class DireccionGeneroController extends Controller
             ->whereNotIn('id', $idsConLegajo)
             ->orderBy('apellido')
             ->get();
+
         $medida = MedidaCautelar::orderBy('nombre')->get();
         $agresores = Persona::where('agresor',1)->withCount(['casosAgresor'])->get();
         $idsIve = IveCaso::pluck('persona_id')->toArray();
@@ -74,7 +77,8 @@ class DireccionGeneroController extends Controller
             'agresores',
             'medida',
             'tipos_violencia',
-            'situacionesHabitacionales'
+            'situacionesHabitacionales',
+            'casosMasculinidades'
         ));
     }
 
@@ -84,7 +88,6 @@ class DireccionGeneroController extends Controller
             'persona_id' => 'required|exists:personas,id|unique:direccion_genero_casos,persona_id',
             'agresor_id' => 'nullable|exists:personas,id',
             'situacion_habitacional_id' => 'nullable|exists:situaciones_habitacionales,id',
-            
         ]);
         
         $denuncioAntes = $request->has('denuncio_antes') ? 1 : 0;
@@ -101,7 +104,8 @@ class DireccionGeneroController extends Controller
         $orgSocial = $request->has('organizacion_social') ? 1 : 0;
         $cursoMasculinidades = $request->has('debe_asistir_masculinidades') ? 1 : 0;
 
-        DireccionGeneroCaso::create([
+        // --- AQUÍ ESTÁ EL CAMBIO: Asignamos a $caso ---
+        $caso = DireccionGeneroCaso::create([
             'persona_id' => $request->persona_id,
             'estado_civil_id' => $request->estado_civil_id,
             'genero' => $request->genero,
@@ -115,10 +119,8 @@ class DireccionGeneroController extends Controller
             'trabaja' => $trabaja,
             'organizacion_social' => $orgSocial,
             'organizacion_social_detalle' => $request->organizacion_social_detalle,
-            'debe_asistir_masculinidades' => $cursoMasculinidades,
             'observaciones' => $request->observaciones,
             'encargado_id' => $request->encargado_id,
-            'agresor_id' => $request->agresor_id,
             'servicios_luz' => $servicios_luz,
             'servicios_cable' => $servicios_cable,
             'servicios_gas_natural' => $servicios_gas,
@@ -130,117 +132,157 @@ class DireccionGeneroController extends Controller
             'fecha_ultima_denuncia' => $request->fecha_ultima_denuncia,
             'boton_panico_numero' => $request->boton_panico_numero,
             'situacion_habitacional_id' => $request->situacion_habitacional_id,
-            'agresor_trabajo' => $request->agresor_trabajo
         ]);
+
+        if ($request->has('agresores')) {
+            foreach ($request->agresores as $masculinidad_id => $datos) {
+                $caso->agresores()->attach($masculinidad_id, [
+                    'hijos_en_comun'       => $datos['hijos_en_comun'] ?? 0,
+                    'relacion_actual'      => $datos['relacion_actual'] ?? 0,
+                    'descripcion_relacion' => $datos['descripcion_relacion'] ?? null,
+                ]);
+            }
+        }
+
+        if ($request->has('grupo')) {
+            foreach ($request->grupo as $item) {
+                if (!empty($item['nombre'])) {
+                    DireccionGeneroGrupoConviviente::create([
+                        'caso_id'  => $caso->id, // Ahora $caso->id funcionará correctamente
+                        'nombre'   => $item['nombre'],
+                        'apellido' => $item['apellido'],
+                        'dni'      => $item['dni'],
+                        'telefono' => $item['telefono'],
+                        'vinculo'  => $item['vinculo'],
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('genero.listado')->with('success','Legajo creado correctamente');
     }
 
     public function edit($id)
-{
-    $legajo = DireccionGeneroCaso::with([
-        'persona',
-        'intervenciones.tipo',
-        'intervenciones.encargado',
-        'intervenciones.adjunto'
-    ])->findOrFail($id);
+    {
+        $legajo = DireccionGeneroCaso::with([
+            'persona',
+            'intervenciones.tipo',
+            'intervenciones.encargado',
+            'intervenciones.adjunto',
+            'grupoConviviente'
+        ])->findOrFail($id);
 
-    $personas = Persona::where('sexo', 'Femenino')->orderBy('apellido')->get();
-    $barrios = Barrio::orderBy('nombre', 'asc')->get();
-    $casosMasculinidades = MasculinidadesCaso::with('persona')->get();
+        $personas = Persona::where('sexo', 'Femenino')->orderBy('apellido')->get();
+        $barrios = Barrio::orderBy('nombre', 'asc')->get();
+        $casosMasculinidades = MasculinidadesCaso::with('persona')->get();
 
-    $existeEnIve = IveCaso::where('persona_id', $legajo->persona_id)->exists();
+        $existeEnIve = IveCaso::where('persona_id', $legajo->persona_id)->exists();
 
-    $provincias = Provincia::orderBy('nombre')->get();
-    $localidades = Localidad::orderBy('nombre')->get();
-    $barrios = Barrio::orderBy('nombre')->get();
-    $estados_civiles = EstadoCivil::orderBy('nombre')->get();
-    $niveles_estudio = NivelEstudio::orderBy('nombre')->get();
-    $tiposIntervencion = TipoIntervencion::orderBy('nombre')->get();
-    $tipos_violencia = TipoViolencia::all(); 
-    $situacionesHabitacionales = SituacionHabitacional::orderBy('nombre')->get();
-    $medida = MedidaCautelar::orderBy('nombre')->get();
+        $provincias = Provincia::orderBy('nombre')->get();
+        $localidades = Localidad::orderBy('nombre')->get();
+        $barrios = Barrio::orderBy('nombre')->get();
+        $estados_civiles = EstadoCivil::orderBy('nombre')->get();
+        $niveles_estudio = NivelEstudio::orderBy('nombre')->get();
+        $tiposIntervencion = TipoIntervencion::orderBy('nombre')->get();
+        $tipos_violencia = TipoViolencia::all(); 
+        $situacionesHabitacionales = SituacionHabitacional::orderBy('nombre')->get();
+        $medida = MedidaCautelar::orderBy('nombre')->get();
 
-    $encargados = Encargado::whereHas('areas', function($q){
-        $q->where('areas.id',1);
-    })->get();
+        $encargados = Encargado::whereHas('areas', function($q){
+            $q->where('areas.id',1);
+        })->get();
 
-    return view('frontend.areas.genero.edit', compact(
-        'legajo',
-        'personas',
-        'provincias',
-        'localidades',
-        'barrios',
-        'estados_civiles',
-        'niveles_estudio',
-        'casosMasculinidades',
-        'existeEnIve',
-        'encargados',
-        'tiposIntervencion',
-        'tipos_violencia', 
-        'situacionesHabitacionales',
-        'medida'
-    ));
-}
-
-   public function update(Request $request, $id)
-{
-    $legajo = DireccionGeneroCaso::findOrFail($id);
-
-    $request->validate([
-        'persona_id' => 'required|exists:personas,id',
-    ]);
-
-    $legajo->update([
-        'persona_id' => $request->persona_id,
-        'estado_civil_id' => $request->estado_civil_id,
-        'genero' => $request->genero,
-        'provincia_id' => $request->provincia_id,
-        'localidad_id' => $request->localidad_id,
-        'barrio_id' => $request->barrio_id,
-        'nivel_estudio_id' => $request->nivel_estudio_id,
-
-        'trabaja' => $request->trabaja == "1" ? 1 : 0,
-
-        'organizacion_social' => $request->organizacion_social == "1" ? 1 : 0,
-        'organizacion_social_detalle' => $request->organizacion_social_detalle,
-
-        'situacion_habitacional_id' => $request->situacion_habitacional_id,
-
-        'servicios_luz' => $request->has('servicios_luz') ? 1 : 0,
-        'servicios_cable' => $request->has('servicios_cable') ? 1 : 0,
-        'servicios_gas_natural' => $request->has('servicios_gas_natural') ? 1 : 0,
-        'servicios_agua_potable' => $request->has('servicios_agua_potable') ? 1 : 0,
-        'servicios_internet' => $request->has('servicios_internet') ? 1 : 0,
-
-        'tipo_violencia_id' => $request->tipo_violencia_id,
-        'medida_cautelar_id' => $request->medida_cautelar_id,
-        'fecha_ultima_denuncia' => $request->fecha_ultima_denuncia,
-
-        'denuncio_antes' => $request->has('denuncio_antes') ? 1 : 0,
-        'denuncio_antes_detalle' => $request->denuncio_antes_detalle,
-
-        'amenaza_con_arma' => $request->has('amenaza_con_arma') ? 1 : 0,
-        'amenaza_tipo_arma' => $request->amenaza_tipo_arma,
-
-        'boton_panico_numero' => $request->boton_panico_numero,
-
-        'agresor_trabajo' => $request->agresor_trabajo,
-        'debe_asistir_masculinidades' => $request->has('debe_asistir_masculinidades') ? 1 : 0,
-
-        'observaciones' => $request->observaciones,
-        'encargado_id' => $request->encargado_id
-    ]);
-
-    if ($request->has('agresores')) {
-        $legajo->agresores()->sync($request->agresores);
-    } else {
-        $legajo->agresores()->detach();
+        return view('frontend.areas.genero.edit', compact(
+            'legajo',
+            'personas',
+            'provincias',
+            'localidades',
+            'barrios',
+            'estados_civiles',
+            'niveles_estudio',
+            'casosMasculinidades',
+            'existeEnIve',
+            'encargados',
+            'tiposIntervencion',
+            'tipos_violencia', 
+            'situacionesHabitacionales',
+            'medida'
+        ));
     }
 
-    return redirect()->route('genero.listado')
-        ->with('success', 'Legajo actualizado correctamente');
-}
+    public function update(Request $request, $id)
+    {
+        $legajo = DireccionGeneroCaso::findOrFail($id);
+
+        $request->validate([
+            'persona_id' => 'required|exists:personas,id',
+        ]);
+
+        $legajo->update([
+            'persona_id' => $request->persona_id,
+            'estado_civil_id' => $request->estado_civil_id,
+            'genero' => $request->genero,
+            'provincia_id' => $request->provincia_id,
+            'localidad_id' => $request->localidad_id,
+            'barrio_id' => $request->barrio_id,
+            'nivel_estudio_id' => $request->nivel_estudio_id,
+
+            'trabaja' => $request->trabaja == "1" ? 1 : 0,
+
+            'organizacion_social' => $request->organizacion_social == "1" ? 1 : 0,
+            'organizacion_social_detalle' => $request->organizacion_social_detalle,
+
+            'situacion_habitacional_id' => $request->situacion_habitacional_id,
+
+            'servicios_luz' => $request->has('servicios_luz') ? 1 : 0,
+            'servicios_cable' => $request->has('servicios_cable') ? 1 : 0,
+            'servicios_gas_natural' => $request->has('servicios_gas_natural') ? 1 : 0,
+            'servicios_agua_potable' => $request->has('servicios_agua_potable') ? 1 : 0,
+            'servicios_internet' => $request->has('servicios_internet') ? 1 : 0,
+
+            'tipo_violencia_id' => $request->tipo_violencia_id,
+            'medida_cautelar_id' => $request->medida_cautelar_id,
+            'fecha_ultima_denuncia' => $request->fecha_ultima_denuncia,
+
+            'denuncio_antes' => $request->has('denuncio_antes') ? 1 : 0,
+            'denuncio_antes_detalle' => $request->denuncio_antes_detalle,
+
+            'amenaza_con_arma' => $request->has('amenaza_con_arma') ? 1 : 0,
+            'amenaza_tipo_arma' => $request->amenaza_tipo_arma,
+
+            'boton_panico_numero' => $request->boton_panico_numero,
+
+            'agresor_trabajo' => $request->agresor_trabajo,
+            'debe_asistir_masculinidades' => $request->has('debe_asistir_masculinidades') ? 1 : 0,
+
+            'observaciones' => $request->observaciones,
+            'encargado_id' => $request->encargado_id
+        ]);
+
+        $legajo->grupoConviviente()->delete();
+        if ($request->has('grupo')) {
+            foreach ($request->grupo as $item) {
+                if (!empty($item['nombre'])) {
+                    $legajo->grupoConviviente()->create([
+                        'nombre'   => $item['nombre'],
+                        'apellido' => $item['apellido'],
+                        'dni'      => $item['dni'],
+                        'telefono' => $item['telefono'],
+                        'vinculo'  => $item['vinculo'],
+                    ]);
+                }
+            }
+        }   
+
+        if ($request->has('agresores')) {
+            $legajo->agresores()->sync($request->agresores);
+        } else {
+            $legajo->agresores()->detach();
+        }
+
+        return redirect()->route('genero.listado')
+            ->with('success', 'Legajo actualizado correctamente');
+    }
 
     public function destroy($id)
     {

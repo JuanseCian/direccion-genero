@@ -218,68 +218,20 @@
             </div>
         </div>
 
-        {{-- 5. DATOS DEL AGRESOR --}}
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-white py-3">
-                <h5 class="mb-0 text-danger"><i class="bi bi-person-x me-2"></i>5. Datos del Agresor</h5>
+        {{-- 5. AGRESORES VINCULADOS --}}
+        <div class="card shadow-sm border-0 mb-4 border-start border-4" style="border-color:#dc3545!important;">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-danger">
+                    <i class="bi bi-person-exclamation me-2"></i>5. Agresores Vinculados
+                </h5>
+                <button type="button" class="btn btn-sm btn-outline-danger shadow-sm" data-bs-toggle="modal" data-bs-target="#modalAgresores">
+                    <i class="bi bi-plus-circle"></i> Vincular Agresor
+                </button>
             </div>
+
             <div class="card-body">
-                <div class="row g-3 align-items-end mb-3">
-                    <div class="col-md-9">
-                        <label class="form-label fw-bold">Buscar Agresor</label>
-                        <select name="agresor_id" id="agresor_select" class="form-select">
-                            <option value="">Seleccione agresor...</option>
-                            @foreach($agresores as $agresor)
-                                <option value="{{ $agresor->id }}"
-                                    data-dni="{{ $agresor->dni }}"
-                                    data-telefono="{{ $agresor->telefono }}"
-                                    data-domicilio="{{ $agresor->domicilio }}"
-                                    data-casos="0" {{-- Aquí deberás traer el conteo real si lo tienes --}}
-                                    {{ old('agresor_id') == $agresor->id ? 'selected' : '' }}>
-                                    {{ $agresor->apellido }} {{ $agresor->nombre }} - DNI {{ $agresor->dni }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <a href="{{ route('personas.create') }}" class="btn btn-outline-danger w-100" target="_blank">
-                            <i class="bi bi-plus-lg"></i> Nuevo agresor
-                        </a>
-                    </div>
-                </div>
-
-                <div class="row g-3 mb-3">
-                    <div class="col-md-3">
-                        <label class="text-muted small fw-bold">DNI</label>
-                        <input type="text" id="agresor_dni" class="form-control bg-light" readonly>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="text-muted small fw-bold">Teléfono</label>
-                        <input type="text" id="agresor_tel" class="form-control bg-light" readonly>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="text-muted small fw-bold">Domicilio</label>
-                        <input type="text" id="agresor_dom" class="form-control bg-light" readonly>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="text-muted small fw-bold">Casos previos</label>
-                        <input type="text" id="agresor_casos" class="form-control bg-light" readonly>
-                    </div>
-                </div>
-
-                <div class="row g-3">
-                    <div class="col-md-8">
-                        <label class="form-label fw-bold">Trabajo del agresor</label>
-                        <input type="text" name="agresor_trabajo" class="form-control" placeholder="Lugar de trabajo u oficio">
-                    </div>
-                    <div class="col-md-4 d-flex align-items-end">
-                        <div class="form-check mb-2">
-                            <input type="checkbox" name="debe_asistir_masculinidades" value="1" class="form-check-input border-danger" id="masculinidades">
-                            <label class="form-check-label fw-bold text-danger" for="masculinidades">
-                                Debe asistir a curso de masculinidades
-                            </label>
-                        </div>
-                    </div>
+                <div id="lista-agresores" class="row g-3">
+                    {{-- A diferencia del edit, aquí inicia vacío y se llena con JS --}}
                 </div>
             </div>
         </div>
@@ -377,6 +329,93 @@
                 </div>
             </div>
         </div>
+        
+        {{-- MODAL BUSCAR AGRESORES --}}
+        <div class="modal fade" id="modalAgresores" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header text-white" style="background:#dc3545;">
+                        <h5 class="modal-title">
+                            <i class="bi bi-search me-2"></i> Vincular Legajo Masculinidades
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body bg-light">
+                        <div class="input-group mb-3 shadow-sm">
+                            <span class="input-group-text bg-white border-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" id="busquedaAgresor" class="form-control border-0" placeholder="Buscar por nombre o DNI">
+                        </div>
+
+                        <div class="table-responsive bg-white rounded shadow-sm border" style="max-height:400px;">
+                            <table class="table table-hover mb-0 text-sm">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th>Legajo</th>
+                                        <th>Nombre</th>
+                                        <th>DNI</th>
+                                        <th class="text-end">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaResultadosAgresores">
+                                    @foreach($casosMasculinidades as $casoM)
+                                        <tr class="fila-agresor">
+                                            <td class="fw-bold text-danger">#{{ $casoM->id }}</td>
+                                            <td>{{ $casoM->persona->apellido }}, {{ $casoM->persona->nombre }}</td>
+                                            <td>{{ $casoM->persona->dni }}</td>
+                                            <td class="text-end">
+                                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="agregarAgresor({{ $casoM->id }}, '{{ $casoM->persona->apellido }}, {{ $casoM->persona->nombre }}')">
+                                                    <i class="bi bi-link-45deg"></i> Vincular
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- MODAL INFO VÍNCULO --}}
+        <div class="modal fade" id="modalInfoVinculo">
+            <div class="modal-dialog">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header text-white" style="background:#17a2b8;">
+                        <h5 class="modal-title">
+                            <i class="bi bi-diagram-3 me-2"></i> Detalles del vínculo
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p class="fw-bold mb-3 text-secondary" id="infoVinculoNombre"></p>
+                        <input type="hidden" id="infoVinculoId">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Hijos en común</label>
+                            <input type="number" id="infoHijos" class="form-control" value="0">
+                        </div>
+
+                        <div class="mb-3 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="infoRelacion">
+                            <label class="form-check-label fw-bold small">¿Tienen relación actualmente?</label>
+                        </div>
+
+                        <div class="mb-3" id="infoDescContainer" style="display:none;">
+                            <label class="form-label fw-bold small">Descripción relación</label>
+                            <input type="text" id="infoDesc" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-info text-white btn-sm px-4" onclick="guardarInfoVinculo()">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
 </div>
 
@@ -434,25 +473,41 @@ $(document).ready(function() {
 
 // Lógica Grupo Familiar
 let index = 0;
-function agregarFamiliar() {
+function agregarFamiliar(datos = null) {
     const container = document.getElementById('grupoFamiliarContainer');
     const msgVacio = document.getElementById('msgVacio');
     if(msgVacio) msgVacio.remove();
 
+    const nombre = datos ? datos.nombre : '';
+    const apellido = datos ? datos.apellido : '';
+    const dni = datos ? (datos.dni || '') : ''; // Nuevo campo DNI
+    const telefono = datos ? (datos.telefono || '') : '';
+    const vinculo = datos ? (datos.vinculo || '').toLowerCase() : '';
+
     const html = `
         <div class="card p-3 mt-3 border shadow-sm animate__animated animate__fadeInUp">
             <div class="row g-2 align-items-center">
-                <div class="col-md-3"><input type="text" name="grupo[${index}][nombre]" class="form-control" placeholder="Nombre" required></div>
-                <div class="col-md-3"><input type="text" name="grupo[${index}][apellido]" class="form-control" placeholder="Apellido" required></div>
-                <div class="col-md-3"><input type="text" name="grupo[${index}][telefono]" class="form-control" placeholder="Teléfono"></div>
                 <div class="col-md-2">
+                    <input type="text" name="grupo[${index}][nombre]" value="${nombre}" class="form-control" placeholder="Nombre" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="grupo[${index}][apellido]" value="${apellido}" class="form-control" placeholder="Apellido" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="grupo[${index}][dni]" value="${dni}" class="form-control" placeholder="DNI">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="grupo[${index}][telefono]" value="${telefono}" class="form-control" placeholder="Teléfono">
+                </div>
+                <div class="col-md-3">
                     <select name="grupo[${index}][vinculo]" class="form-select" required>
                         <option value="">Vínculo</option>
-                        <option value="padre">Padre</option>
-                        <option value="madre">Madre</option>
-                        <option value="hijo/a">Hijo/a</option>
-                        <option value="hermano/a">Hermano/a</option>
-                        <option value="otro">Otro</option>
+                        <option value="padre" ${vinculo === 'padre' ? 'selected' : ''}>Padre</option>
+                        <option value="madre" ${vinculo === 'madre' ? 'selected' : ''}>Madre</option>
+                        <option value="hijo/a" ${vinculo === 'hijo/a' ? 'selected' : ''}>Hijo/a</option>
+                        <option value="hermano/a" ${vinculo === 'hermano/a' ? 'selected' : ''}>Hermano/a</option>
+                        <option value="pareja" ${vinculo === 'pareja' ? 'selected' : ''}>Pareja</option>
+                        <option value="otro" ${vinculo === 'otro' ? 'selected' : ''}>Otro</option>
                     </select>
                 </div>
                 <div class="col-md-1 text-end">
@@ -464,6 +519,83 @@ function agregarFamiliar() {
         </div>`;
     container.insertAdjacentHTML('beforeend', html);
     index++;
+}
+
+// --- LÓGICA DE AGRESORES ---
+const urlBaseMasculinidades = "{{ route('masculinidades.edit', ':id') }}";
+
+function agregarAgresor(id, nombre) {
+    if(document.getElementById('agresor-item-' + id)) {
+        alert('Este agresor ya está vinculado');
+        return;
+    }
+
+    const url = urlBaseMasculinidades.replace(':id', id);
+    const lista = document.getElementById('lista-agresores');
+
+    const html = `
+        <div class="col-md-6" id="agresor-item-${id}">
+            <div class="card border-danger border-opacity-25 shadow-sm p-2 d-flex flex-row align-items-center justify-content-between bg-light">
+                <div class="small d-flex align-items-center">
+                    <a href="${url}" class="text-decoration-none fw-bold text-danger me-2" target="_blank">
+                        <span>#${id}</span> - ${nombre}
+                    </a>
+                    <button type="button" class="btn btn-sm btn-light border p-1 text-info shadow-sm" onclick="abrirInfoVinculo(${id}, '${nombre}')">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </button>
+                    <input type="hidden" name="agresores[${id}][hijos_en_comun]" id="hijos_${id}" value="0">
+                    <input type="hidden" name="agresores[${id}][relacion_actual]" id="relacion_${id}" value="0">
+                    <input type="hidden" name="agresores[${id}][descripcion_relacion]" id="desc_${id}" value="">
+                </div>
+                <button type="button" class="btn btn-link text-secondary p-0 ms-2" onclick="quitarAgresor(${id})">
+                    <i class="bi bi-x-circle-fill"></i>
+                </button>
+            </div>
+        </div>
+    `;
+
+    lista.insertAdjacentHTML('beforeend', html);
+    bootstrap.Modal.getInstance(document.getElementById('modalAgresores')).hide();
+    
+    // Abrimos automáticamente el modal para configurar los hijos/relación
+    setTimeout(() => abrirInfoVinculo(id, nombre), 400);
+}
+
+function quitarAgresor(id) {
+    document.getElementById('agresor-item-' + id)?.remove();
+}
+
+document.getElementById('busquedaAgresor')?.addEventListener('keyup', function() {
+    let filtro = this.value.toLowerCase();
+    document.querySelectorAll('.fila-agresor').forEach(fila => {
+        fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' : 'none';
+    });
+});
+
+document.getElementById('infoRelacion')?.addEventListener('change', function() {
+    document.getElementById('infoDescContainer').style.display = this.checked ? 'block' : 'none';
+});
+
+function abrirInfoVinculo(id, nombre) {
+    document.getElementById('infoVinculoId').value = id;
+    document.getElementById('infoVinculoNombre').innerText = "Expediente Masculinidades: " + nombre;
+    document.getElementById('infoHijos').value = document.getElementById('hijos_' + id).value || 0;
+
+    let relacion = document.getElementById('relacion_' + id).value === "1";
+    document.getElementById('infoRelacion').checked = relacion;
+    document.getElementById('infoDesc').value = document.getElementById('desc_' + id).value || '';
+    document.getElementById('infoDescContainer').style.display = relacion ? 'block' : 'none';
+
+    new bootstrap.Modal(document.getElementById('modalInfoVinculo')).show();
+}
+
+function guardarInfoVinculo() {
+    let id = document.getElementById('infoVinculoId').value;
+    document.getElementById('hijos_' + id).value = document.getElementById('infoHijos').value;
+    document.getElementById('relacion_' + id).value = document.getElementById('infoRelacion').checked ? "1" : "0";
+    document.getElementById('desc_' + id).value = document.getElementById('infoDesc').value;
+
+    bootstrap.Modal.getInstance(document.getElementById('modalInfoVinculo')).hide();
 }
 </script>
 @endsection
