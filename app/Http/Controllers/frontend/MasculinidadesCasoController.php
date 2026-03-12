@@ -55,7 +55,7 @@ class MasculinidadesCasoController extends Controller
         $espacioGrupal = EspacioGrupal::orderBy('nombre')->get();
 
         $encargados = Encargado::whereHas('areas', function($q){
-            $q->where('areas.id', 4);
+            $q->where('areas.id', 2);
         })->orderBy('apellido')->get();
 
         return view('frontend.areas.masculinidades.create', compact(
@@ -236,7 +236,7 @@ class MasculinidadesCasoController extends Controller
 
     
         $encargados = Encargado::whereHas('areas', function($q){
-            $q->where('areas.id', 4);
+            $q->where('areas.id', 2);
         })->get();
 
         return view('frontend.areas.masculinidades.edit', compact(

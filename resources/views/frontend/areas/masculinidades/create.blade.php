@@ -44,10 +44,13 @@
 
                     <div class="col-md-6">
                         <label class="form-label fw-bold text-secondary">Profesional a Cargo</label>
-                        <select name="encargado_id" class="form-select border-primary-subtle">
+                        <select name="encargado_id" class="form-select border-primary-subtle select2-init">
                             <option value="">Seleccione encargado...</option>
                             @foreach($encargados as $encargado)
-                                <option value="{{ $encargado->id }}">{{ $encargado->nombre }}</option>
+                                <option value="{{ $encargado->id }}" 
+                                    {{ (isset($caso) && $caso->encargado_id == $encargado->id) ? 'selected' : '' }}>
+                                    {{ $encargado->apellido }}, {{ $encargado->nombre }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -321,6 +324,12 @@ function agregarFamiliar() {
 $('select[name="medida_id[]"]').select2({
     theme: 'bootstrap-5',
     placeholder: "Seleccione medidas",
+});
+
+$('.select2-init').select2({
+    theme: 'bootstrap-5',
+    width: '100%',
+    placeholder: 'Seleccione encargado...'
 });
 </script>
 @endsection
