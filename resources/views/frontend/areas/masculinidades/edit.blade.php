@@ -220,8 +220,8 @@
                                     <select name="asistencia_dispositivo" id="asistenciaSelect" class="form-select">
                                         <option value="1" {{ $caso->asistencia_dispositivo == 1 ? 'selected' : '' }}>Asistencia regular</option>
                                         <option value="2" {{ $caso->asistencia_dispositivo == 2 ? 'selected' : '' }}>Asistencia irregular</option>
-                                        <option value="3" {{ $caso->asistencia_dispositivo == 3 ? 'selected' : '' }}>⚠️ Abandonó</option>
-                                        <option value="4" {{ $caso->asistencia_dispositivo == 4 ? 'selected' : '' }}>✅ Finalizado</option>
+                                        <option value="3" {{ $caso->asistencia_dispositivo == 3 ? 'selected' : '' }}>Abandonó</option>
+                                        <option value="4" {{ $caso->asistencia_dispositivo == 4 ? 'selected' : '' }}>Finalizado</option>
                                     </select>
                                 </div>
 
@@ -237,10 +237,10 @@
 
                     
                         
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Nivel de Estudio</label>
-                        <select name="nivel_estudio_id" class="form-select">
+                    {{-- NIVEL DE ESTUDIO Y ESTADO CIVIL --}}
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary">Nivel de Estudio</label>
+                        <select name="nivel_estudio_id" class="form-select shadow-sm">
                             <option value="">Seleccione...</option>
                             @foreach($niveles as $nivel)
                                 <option value="{{ $nivel->id }}" {{ $caso->nivel_estudio_id == $nivel->id ? 'selected' : '' }}>
@@ -250,9 +250,9 @@
                         </select>
                     </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Estado Civil</label>
-                        <select name="estado_civil_id" class="form-select">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary">Estado Civil</label>
+                        <select name="estado_civil_id" class="form-select shadow-sm">
                             <option value="">Seleccione...</option>
                             @foreach($estadosCiviles as $estado)
                                 <option value="{{ $estado->id }}" {{ $caso->estado_civil_id == $estado->id ? 'selected' : '' }}>
@@ -261,55 +261,55 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Medidas Cautelares Aplicadas</label>
 
-                        <div class="d-flex flex-wrap gap-2">
-
-                            @foreach($caso->medidas as $medida)
-
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                        type="checkbox"
-                                        name="medida_id[]"
-                                        value="{{ $medida->id }}"
-                                        checked>
-
-                                    <label class="form-check-label">
-                                        {{ $medida->nombre }}
+                    {{-- MEDIDAS CAUTELARES --}}
+                    <div class="col-12 mt-4">
+                        <div class="p-4 border rounded bg-white shadow-sm border-start border-warning border-3">
+                            <div class="row g-4">
+                                
+                                {{-- Medidas Aplicadas --}}
+                                <div class="col-md-6 border-end">
+                                    <label class="form-label fw-bold text-warning mb-3 fs-6">
+                                        <i class="bi bi-shield-lock-fill me-2"></i> Medidas Cautelares Aplicadas
                                     </label>
+                                    <div class="d-flex flex-column gap-2">
+                                        @forelse($caso->medidas as $medida)
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="medida_id[]" id="medida_ap_{{ $medida->id }}" value="{{ $medida->id }}" checked>
+                                                <label class="form-check-label" for="medida_ap_{{ $medida->id }}">
+                                                    {{ $medida->nombre }}
+                                                </label>
+                                            </div>
+                                        @empty
+                                            <span class="text-muted small fst-italic">Ninguna medida aplicada.</span>
+                                        @endforelse
+                                    </div>
                                 </div>
 
-                            @endforeach
-
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Agregar nuevas medidas</label>
-
-                        <div class="d-flex flex-wrap gap-2">
-
-                            @foreach($medidasCautelares as $medida)
-
-                                @if(!$caso->medidas->contains($medida->id))
-
-                                    <div class="form-check">
-                                        <input class="form-check-input"
-                                            type="checkbox"
-                                            name="medida_id[]"
-                                            value="{{ $medida->id }}">
-
-                                        <label class="form-check-label">
-                                            {{ $medida->nombre }}
-                                        </label>
+                                {{-- Agregar Nuevas Medidas --}}
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-secondary mb-3 fs-6">
+                                        <i class="bi bi-plus-circle me-2"></i> Agregar nuevas medidas
+                                    </label>
+                                    {{-- Le agregamos un scroll interno por si la lista de medidas es muy larga --}}
+                                    <div class="d-flex flex-column gap-2" style="max-height: 180px; overflow-y: auto;">
+                                        @foreach($medidasCautelares as $medida)
+                                            @if(!$caso->medidas->contains($medida->id))
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="medida_id[]" id="medida_nu_{{ $medida->id }}" value="{{ $medida->id }}">
+                                                    <label class="form-check-label" for="medida_nu_{{ $medida->id }}">
+                                                        {{ $medida->nombre }}
+                                                    </label>
+                                                </div>
+                                            @endif
+                                        @endforeach
                                     </div>
+                                </div>
 
-                                @endif
-
-                            @endforeach
-
+                            </div>
                         </div>
                     </div>
+
                     {{-- COMPORTAMIENTOS Y CONDICIONES --}}
                     <div class="col-md-12 mt-3">
                         <label class="form-label fw-bold text-secondary text-uppercase small">
