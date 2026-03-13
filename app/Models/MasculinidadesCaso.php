@@ -40,7 +40,7 @@ class MasculinidadesCaso extends Model
         'encargado_id',
         'debe_dispositivo',
         'asistencia_dispositivo',
-        'fecha_fin_dispositivo'
+        'fecha_finalizacion'
     ];
 
     public function persona()

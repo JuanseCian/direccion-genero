@@ -109,24 +109,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold text-secondary">¿Debe realizar el dispositivo?</label>
-                        <select name="debe_dispositivo" id="debeDispositivo" class="form-select border-info">
-                            <option value="0">No</option>
-                            <option value="1">Sí</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-4" id="camposDispositivo" style="display:none;">
-                        <label class="form-label fw-bold">Asistencia al dispositivo</label>
-                        <select name="asistencia_dispositivo" class="form-select bg-info-subtle">
-                            <option value="">Seleccione...</option>
-                            <option value="1">Asistencia regular</option>
-                            <option value="2">Asistencia irregular</option>
-                            <option value="3">Abandonó</option>
-                            <option value="4">Finalizado</option>
-                        </select>
-                    </div>
+                    
 
                     <div class="col-md-4">
                         <label class="form-label fw-bold text-secondary">Reincidencia (Cant. veces)</label>

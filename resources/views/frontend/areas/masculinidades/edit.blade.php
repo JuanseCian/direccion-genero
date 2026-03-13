@@ -183,30 +183,60 @@
                         <input type="number" name="reincidencia" class="form-control" value="{{ $caso->reincidencia }}">
                     </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">¿Debe realizar el dispositivo?</label>
-                        <select name="debe_dispositivo" id="debeDispositivo" class="form-select">
-                            <option value="">Seleccione...</option>
-                            <option value="1" {{ $caso->debe_dispositivo == 1 ? 'selected' : '' }}>Sí</option>
-                            <option value="0" {{ $caso->debe_dispositivo == 0 ? 'selected' : '' }}>No</option>
-                        </select>
+                    <div class="card shadow-sm border-0 mb-4 border-start border-info">
+                        <div class="card-header bg-white py-3">
+                            <h5 class="mb-0 text-info"><i class="bi bi-gear-fill me-2"></i>Estado del Dispositivo</h5>
+                        </div>
+                        @if($historial->count() > 0)
+                        <div class="alert alert-warning border-0 shadow-sm mb-4">
+                            <h6 class="fw-bold"><i class="bi bi-clock-history"></i> Historial de este Agresor:</h6>
+                            <ul class="mb-0 small">
+                                @foreach($historial as $h)
+                                    <li>
+                                        <strong>Caso #{{ $h->id }}:</strong> 
+                                        Ingresó el {{ $h->created_at->format('d/m/Y') }} - 
+                                        Estado: {{ $h->asistencia_dispositivo == 4 ? 'Finalizado' : ($h->asistencia_dispositivo == 3 ? 'Abandonó' : 'Otro') }}
+                                        @if($h->fecha_finalizacion) (Cerrado el {{ \Carbon\Carbon::parse($h->fecha_finalizacion)->format('d/m/Y') }}) @endif
+                                        <a href="{{ route('masculinidades.edit', $h->id) }}" class="ms-2 text-decoration-none">Ver antecedente</a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+                        <div class="card-body">
+                            <div class="row g-3">
+                                {{-- Pregunta principal --}}
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold text-secondary">¿Debe realizar el dispositivo?</label>
+                                    <select name="debe_dispositivo" id="debeDispositivoEdit" class="form-select border-info">
+                                        <option value="0" {{ $caso->debe_dispositivo == 0 ? 'selected' : '' }}>No</option>
+                                        <option value="1" {{ $caso->debe_dispositivo == 1 ? 'selected' : '' }}>Sí</option>
+                                    </select>
+                                </div>
+
+                                {{-- Campos condicionales (Solo si debe realizarlo) --}}
+                                <div class="col-md-4" id="camposAsistencia" style="{{ $caso->debe_dispositivo == 1 ? '' : 'display:none;' }}">
+                                    <label class="form-label fw-bold">Estado de Asistencia</label>
+                                    <select name="asistencia_dispositivo" id="asistenciaSelect" class="form-select">
+                                        <option value="1" {{ $caso->asistencia_dispositivo == 1 ? 'selected' : '' }}>Asistencia regular</option>
+                                        <option value="2" {{ $caso->asistencia_dispositivo == 2 ? 'selected' : '' }}>Asistencia irregular</option>
+                                        <option value="3" {{ $caso->asistencia_dispositivo == 3 ? 'selected' : '' }}>⚠️ Abandonó</option>
+                                        <option value="4" {{ $caso->asistencia_dispositivo == 4 ? 'selected' : '' }}>✅ Finalizado</option>
+                                    </select>
+                                </div>
+
+                                {{-- Fecha de Finalización (Solo si Abandonó o Finalizó) --}}
+                                <div class="col-md-4" id="divFechaFin" style="{{ in_array($caso->asistencia_dispositivo, [3,4]) ? '' : 'display:none;' }}">
+                                    <label class="form-label fw-bold text-danger">Fecha de Cierre/Finalización</label>
+                                    <input type="date" name="fecha_finalizacion" class="form-control border-danger" 
+                                        value="{{ $caso->fecha_finalizacion ? \Carbon\Carbon::parse($caso->fecha_finalizacion)->format('Y-m-d') : '' }}">
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div id="camposDispositivo" class="row col-md-12">
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold">Asistencia al dispositivo</label>
-                            <select name="asistencia_dispositivo" class="form-select">
-                                <option value="">Seleccione...</option>
-                                <option value="1" {{ $caso->asistencia_dispositivo == 1 ? 'selected' : '' }}>Asistencia regular</option>
-                                <option value="2" {{ $caso->asistencia_dispositivo == 2 ? 'selected' : '' }}>Asistencia irregular</option>
-                                <option value="3" {{ $caso->asistencia_dispositivo == 3 ? 'selected' : '' }}>Abandonó</option>
-                                <option value="4" {{ $caso->asistencia_dispositivo == 4 ? 'selected' : '' }}>Finalizado</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold">Fecha de Finalización</label>
-                            <input type="date" name="fecha_finalizacion" class="form-control" value="{{ $caso->fecha_finalizacion }}">
-                        </div>
+                    
+                        
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-bold">Nivel de Estudio</label>
@@ -836,6 +866,33 @@ function toggleTrabajo(){
 
 trabajaSwitch?.addEventListener('change', toggleTrabajo);
 window.addEventListener('load', toggleTrabajo);
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const debe = document.getElementById('debeDispositivoEdit');
+    const camposAsistencia = document.getElementById('camposAsistencia');
+    const asistencia = document.getElementById('asistenciaSelect');
+    const divFechaFin = document.getElementById('divFechaFin');
+
+    // Lógica para mostrar asistencia
+    debe.addEventListener('change', function() {
+        if(this.value == "1") {
+            camposAsistencia.style.display = 'block';
+        } else {
+            camposAsistencia.style.display = 'none';
+            divFechaFin.style.display = 'none';
+        }
+    });
+
+    // Lógica para mostrar fecha de fin
+    asistencia.addEventListener('change', function() {
+        if(this.value == "3" || this.value == "4") {
+            divFechaFin.style.display = 'block';
+        } else {
+            divFechaFin.style.display = 'none';
+        }
+    });
+});
 </script>
 
 @endsection

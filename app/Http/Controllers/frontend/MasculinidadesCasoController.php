@@ -31,7 +31,7 @@ class MasculinidadesCasoController extends Controller
     public function create()
     {
     
-        $personasConCaso = MasculinidadesCaso::pluck('persona_id');
+        //$personasConCaso = MasculinidadesCaso::pluck('persona_id');
 
         $agresores = Persona::leftJoin('direccion_genero_casos', 'personas.id', '=', 'direccion_genero_casos.agresor_id')
             ->where('personas.agresor', 1)
@@ -39,11 +39,13 @@ class MasculinidadesCasoController extends Controller
                 $q->where('personas.debe_asistir_masculinidades', 1)
                 ->orWhere('direccion_genero_casos.debe_asistir_masculinidades', 1);
             })
-            ->whereNotIn('personas.id', $personasConCaso)
+            // 2. ELIMINAR O COMENTAR ESTA LÍNEA PARA PERMITIR MÚLTIPLES CASOS AL MISMO AGRESOR:
+            // ->whereNotIn('personas.id', $personasConCaso)
             ->select('personas.*')
             ->distinct()
             ->orderBy('personas.apellido')
             ->get();
+
         $niveles = DB::table('niveles_estudio')->orderBy('nombre')->get();
         $estadosCiviles = DB::table('estados_civiles')->orderBy('nombre')->get();
         $derivaciones = MasculinidadesDerivacion::orderBy('nombre')->get();
@@ -73,284 +75,283 @@ class MasculinidadesCasoController extends Controller
         ));
     }
 
-public function store(Request $request)
-{
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+        'persona_id' => 'required|exists:personas,id',
+            'derivacion_id' => 'required|exists:masculinidades_derivaciones,id',
+            'situacion_habitacional_id' => 'nullable|exists:situaciones_habitacionales,id',
+            'situacion_sanitaria_id'=> 'nullable|exists:situaciones_sanitarias,id',
+            'encargado_id' => 'nullable|exists:encargados,id',
+            'reincidencia' => 'nullable|integer|min:0',
+            'debe_dispositivo' => 'nullable|boolean', // Nuevo campo validado
+            'asistencia_dispositivo' => 'nullable|integer|in:1,2,3,4',
+            'espacio_grupal_id'=> 'nullable|exists:espacios_grupales,id',
+            'situacion_judicial' => 'nullable|string',
+            'observaciones' => 'nullable|string',
+            'detalle_trabajo' => 'nullable|string|max:255',
+            'trabaja' => 'nullable|boolean',
+            'consumo' => 'nullable|boolean',
+            'desobediencia' => 'nullable|boolean',
+            'terapia' => 'nullable|boolean',
+            'medida_id' => 'nullable|array',
+            'medida_id.*' => 'exists:medidas_cautelares,id',
+            'tipo_violencia_id' => 'nullable|array',
+            'tipo_violencia_id.*' => 'exists:tipos_violencia,id',
+            'grupo' => 'nullable|array',
+            'nivel_estudio_id' => 'nullable|exists:niveles_estudio,id',
+            'estado_civil_id' => 'nullable|exists:estados_civiles,id',
+        ]);
 
-$validated = $request->validate([
-    'persona_id' => 'required|exists:personas,id',
-    'derivacion_id' => 'required|exists:masculinidades_derivaciones,id',
-    'situacion_habitacional_id' => 'nullable|exists:situaciones_habitacionales,id',
-    'situacion_sanitaria_id'=> 'nullable|exists:situaciones_sanitarias,id',
-    'encargado_id' => 'nullable|exists:encargados,id',
-    'reincidencia' => 'nullable|integer|min:0',
-    'asistencia_dispositivo' => 'nullable|integer|in:1,2,3,4',
-    'espacio_grupal_id'=> 'nullable|exists:espacios_grupales,id',
-    'situacion_judicial' => 'nullable|string',
-    'observaciones' => 'nullable|string',
-    'detalle_trabajo' => 'nullable|string|max:255',
-    'trabaja' => 'nullable|boolean',
-    'consumo' => 'nullable|boolean',
-    'desobediencia' => 'nullable|boolean',
-    'terapia' => 'nullable|boolean',
-    'medida_id' => 'nullable|array',
-    'medida_id.*' => 'exists:medidas_cautelares,id',
-    'tipo_violencia_id' => 'nullable|array',
-    'tipo_violencia_id.*' => 'exists:tipos_violencia,id',
-    'grupo' => 'nullable|array',
-    'nivel_estudio_id' => 'nullable|exists:niveles_estudio,id',
-    'estado_civil_id' => 'nullable|exists:estados_civiles,id',
-]);
+        // 1. PROCESAR CHECKBOXES Y ESTADOS INICIALES
+        $validated['trabaja'] = $request->has('trabaja');
+        $validated['consumo'] = $request->has('consumo');
+        $validated['desobediencia'] = $request->has('desobediencia');
+        $validated['terapia'] = $request->has('terapia');
 
-// Procesar checkboxes
-$validated['trabaja'] = $request->has('trabaja');
-$validated['consumo'] = $request->has('consumo');
-$validated['desobediencia'] = $request->has('desobediencia');
-$validated['terapia'] = $request->has('terapia');
-
-DB::beginTransaction();
-
-try {
-
-    // Crear caso
-    $caso = MasculinidadesCaso::create($validated);
-
-    // Medidas cautelares
-    if ($request->has('medida_id')) {
-        $caso->medidas()->attach($request->medida_id);
-    }
-
-    // Tipos de violencia
-    if ($request->has('tipo_violencia_id')) {
-        $caso->tiposViolencia()->attach($request->tipo_violencia_id);
-    }
-
-    // Grupo familiar
-    if ($request->has('grupo')) {
-
-        foreach ($request->grupo as $familiar) {
-
-            if (!empty($familiar['nombre'])) {
-
-                $caso->grupoFamiliar()->create([
-                    'nombre' => $familiar['nombre'],
-                    'apellido' => $familiar['apellido'] ?? null,
-                    'dni' => $familiar['dni'] ?? null,
-                    'telefono' => $familiar['telefono'] ?? null,
-                    'vinculo_actual' => $familiar['vinculo'] ?? null,
-                ]);
-            }
+        // Lógica para el ingreso simplificado:
+        if ($request->debe_dispositivo == "1") {
+            // Al crear, forzamos que sea "Asistencia Regular" (1) y sin fecha de fin
+            $validated['asistencia_dispositivo'] = 1;
+            $validated['fecha_finalizacion'] = null;
+        } else {
+            $validated['asistencia_dispositivo'] = null;
+            $validated['fecha_finalizacion'] = null;
         }
+
+        DB::beginTransaction();
+
+        try {
+            // 2. CREAR CASO
+            $caso = MasculinidadesCaso::create($validated);
+
+            // 3. RELACIONES PIVOT (Medidas y Violencias)
+            if ($request->has('medida_id')) {
+                $caso->medidas()->attach($request->medida_id);
+            }
+
+            if ($request->has('tipo_violencia_id')) {
+                $caso->tiposViolencia()->attach($request->tipo_violencia_id);
+            }
+
+            // 4. GRUPO FAMILIAR
+            if ($request->has('grupo')) {
+                foreach ($request->grupo as $familiar) {
+                    if (!empty($familiar['nombre'])) {
+                        $caso->grupoFamiliar()->create([
+                            'nombre' => $familiar['nombre'],
+                            'apellido' => $familiar['apellido'] ?? null,
+                            'dni' => $familiar['dni'] ?? null,
+                            'telefono' => $familiar['telefono'] ?? null,
+                            'vinculo_actual' => $familiar['vinculo'] ?? null,
+                        ]);
+                    }
+                }
+            }
+
+            // 5. GENERACIÓN DE DOCUMENTO WORD
+            $caso->load([
+                'persona', 'estadoCivil', 'nivelEstudio', 
+                'situacionHabitacional', 'situacionSanitaria', 
+                'medidas', 'tiposViolencia', 'grupoFamiliar'
+            ]);
+
+            $rutaWord = $this->generarWordCaso($caso);
+            $nombreWord = basename($rutaWord);
+            $path = storage_path('app/'.$rutaWord);
+
+            // 6. REGISTRO EN TABLA ADJUNTOS
+            Adjunto::create([
+                'entidad_tipo' => 'masculinidades',
+                'entidad_id' => $caso->id,
+                'nombre_original' => $nombreWord,
+                'nombre_guardado' => $nombreWord,
+                'ruta' => $rutaWord,
+                'tipo_mime' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'tamaño' => filesize($path),
+                'hash_sha256' => hash_file('sha256', $path),
+                'subido_por' => auth()->id(),
+                'confidencial' => 0
+            ]);
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Es buena práctica registrar el error para debuggear
+            \Log::error("Error creando caso masculinidades: " . $e->getMessage());
+            throw $e;
+        }
+
+        return redirect()
+            ->route('masculinidades.listado')
+            ->with('success', 'Caso registrado correctamente con estado inicial: Asistencia Regular.');
     }
 
-    // Recargar relaciones necesarias para el Word
-    $caso->load([
-        'persona',
-        'estadoCivil',
-        'nivelEstudio',
-        'situacionHabitacional',
-        'situacionSanitaria',
-        'medidas',
-        'tiposViolencia',
-        'grupoFamiliar'
+    private function generarWordCaso($caso)
+    {
+        $persona = $caso->persona;
+
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection([
+            'marginTop' => 1000,
+            'marginBottom' => 1000,
+            'marginLeft' => 1200,
+            'marginRight' => 1200
     ]);
 
-    // Generar Word
-    $rutaWord = $this->generarWordCaso($caso);
+        // ENCABEZADO
+        $header = $section->addHeader();
+        $header->addText(
+            'Municipalidad - Dirección de Género',
+            ['bold'=>true,'size'=>12],
+            ['alignment'=>'center']
+        );
+        $header->addText(
+            'Programa de Masculinidades',
+            ['size'=>11],
+            ['alignment'=>'center']
+        );
 
-    $nombreWord = basename($rutaWord);
-    $path = storage_path('app/'.$rutaWord);
+        $section->addTextBreak(2);
 
-    // Guardar en adjuntos
-    Adjunto::create([
-        'entidad_tipo' => 'masculinidades',
-        'entidad_id' => $caso->id,
-        'nombre_original' => $nombreWord,
-        'nombre_guardado' => $nombreWord,
-        'ruta' => $rutaWord,
-        'tipo_mime' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'tamaño' => filesize($path),
-        'hash_sha256' => hash_file('sha256',$path),
-        'subido_por' => auth()->id(),
-        'confidencial' => 0
-    ]);
+        // TITULO
+        $section->addText(
+            'INFORME DE CASO',
+            ['bold'=>true,'size'=>16],
+            ['alignment'=>'center']
+        );
 
-    DB::commit();
+        $section->addTextBreak(2);
 
-} catch (\Exception $e) {
+        // DATOS GENERALES
+        $table = $section->addTable();
 
-    DB::rollBack();
-    throw $e;
+        $table->addRow();
+        $table->addCell(4000)->addText('Fecha');
+        $table->addCell(6000)->addText(now()->format('d/m/Y'));
 
-}
+        $table->addRow();
+        $table->addCell()->addText('Número de caso');
+        $table->addCell()->addText($caso->id);
 
-return redirect()
-->route('masculinidades.listado')
-->with('success','Caso registrado correctamente y Word generado.');
+        $section->addTextBreak();
 
-}
-private function generarWordCaso($caso)
-{
-    $persona = $caso->persona;
+        // DATOS DEL AGRESOR
+        $section->addText('DATOS DEL AGRESOR',['bold'=>true]);
 
-    $phpWord = new PhpWord();
-    $section = $phpWord->addSection([
-        'marginTop' => 1000,
-        'marginBottom' => 1000,
-        'marginLeft' => 1200,
-        'marginRight' => 1200
-    ]);
+        $table = $section->addTable();
 
-    // ENCABEZADO
-    $header = $section->addHeader();
-    $header->addText(
-        'Municipalidad - Dirección de Género',
-        ['bold'=>true,'size'=>12],
-        ['alignment'=>'center']
-    );
-    $header->addText(
-        'Programa de Masculinidades',
-        ['size'=>11],
-        ['alignment'=>'center']
-    );
+        $table->addRow();
+        $table->addCell(4000)->addText('Nombre');
+        $table->addCell(6000)->addText($persona->nombre.' '.$persona->apellido);
 
-    $section->addTextBreak(2);
+        $table->addRow();
+        $table->addCell()->addText('DNI');
+        $table->addCell()->addText($persona->dni);
 
-    // TITULO
-    $section->addText(
-        'INFORME DE CASO',
-        ['bold'=>true,'size'=>16],
-        ['alignment'=>'center']
-    );
+        $table->addRow();
+        $table->addCell()->addText('Estado civil');
+        $table->addCell()->addText($caso->estadoCivil->nombre ?? '');
 
-    $section->addTextBreak(2);
+        $table->addRow();
+        $table->addCell()->addText('Nivel de estudio');
+        $table->addCell()->addText($caso->nivelEstudio->nombre ?? '');
 
-    // DATOS GENERALES
+        $section->addTextBreak();
+
+        // SITUACION
+        $section->addText('SITUACIÓN',['bold'=>true]);
+
+        $table = $section->addTable();
+
+        $table->addRow();
+        $table->addCell()->addText('Habitacional');
+        $table->addCell()->addText($caso->situacionHabitacional->nombre ?? '');
+
+        $table->addRow();
+        $table->addCell()->addText('Sanitaria');
+        $table->addCell()->addText($caso->situacionSanitaria->nombre ?? '');
+
+        $table->addRow();
+        $table->addCell()->addText('Judicial');
+        $table->addCell()->addText($caso->situacion_judicial ?? '');
+
+        $section->addTextBreak();
+
+        // MEDIDAS
+        $section->addText('MEDIDAS CAUTELARES',['bold'=>true]);
+
+        foreach($caso->medidas as $m){
+            $section->addText('- '.$m->nombre);
+        }
+
+        $section->addTextBreak();
+
+        // VIOLENCIAS
+        $section->addText('TIPOS DE VIOLENCIA',['bold'=>true]);
+
+        foreach($caso->tiposViolencia as $v){
+            $section->addText('- '.$v->nombre);
+        }
+
+        $section->addTextBreak();
+
+        // GRUPO FAMILIAR
+        $section->addText('GRUPO FAMILIAR',['bold'=>true]);
+
     $table = $section->addTable();
 
     $table->addRow();
-    $table->addCell(4000)->addText('Fecha');
-    $table->addCell(6000)->addText(now()->format('d/m/Y'));
 
-    $table->addRow();
-    $table->addCell()->addText('Número de caso');
-    $table->addCell()->addText($caso->id);
+    $table->addCell(3500)->addText('Nombre', ['bold'=>true]);
+    $table->addCell(2000)->addText('DNI', ['bold'=>true]);
+    $table->addCell(3000)->addText('Teléfono', ['bold'=>true]);
+    $table->addCell(2500)->addText('Vínculo', ['bold'=>true]);
 
-    $section->addTextBreak();
-
-    // DATOS DEL AGRESOR
-    $section->addText('DATOS DEL AGRESOR',['bold'=>true]);
-
-    $table = $section->addTable();
-
-    $table->addRow();
-    $table->addCell(4000)->addText('Nombre');
-    $table->addCell(6000)->addText($persona->nombre.' '.$persona->apellido);
-
-    $table->addRow();
-    $table->addCell()->addText('DNI');
-    $table->addCell()->addText($persona->dni);
-
-    $table->addRow();
-    $table->addCell()->addText('Estado civil');
-    $table->addCell()->addText($caso->estadoCivil->nombre ?? '');
-
-    $table->addRow();
-    $table->addCell()->addText('Nivel de estudio');
-    $table->addCell()->addText($caso->nivelEstudio->nombre ?? '');
-
-    $section->addTextBreak();
-
-    // SITUACION
-    $section->addText('SITUACIÓN',['bold'=>true]);
-
-    $table = $section->addTable();
-
-    $table->addRow();
-    $table->addCell()->addText('Habitacional');
-    $table->addCell()->addText($caso->situacionHabitacional->nombre ?? '');
-
-    $table->addRow();
-    $table->addCell()->addText('Sanitaria');
-    $table->addCell()->addText($caso->situacionSanitaria->nombre ?? '');
-
-    $table->addRow();
-    $table->addCell()->addText('Judicial');
-    $table->addCell()->addText($caso->situacion_judicial ?? '');
-
-    $section->addTextBreak();
-
-    // MEDIDAS
-    $section->addText('MEDIDAS CAUTELARES',['bold'=>true]);
-
-    foreach($caso->medidas as $m){
-        $section->addText('- '.$m->nombre);
-    }
-
-    $section->addTextBreak();
-
-    // VIOLENCIAS
-    $section->addText('TIPOS DE VIOLENCIA',['bold'=>true]);
-
-    foreach($caso->tiposViolencia as $v){
-        $section->addText('- '.$v->nombre);
-    }
-
-    $section->addTextBreak();
-
-    // GRUPO FAMILIAR
-    $section->addText('GRUPO FAMILIAR',['bold'=>true]);
-
-   $table = $section->addTable();
-
-$table->addRow();
-
-$table->addCell(3500)->addText('Nombre', ['bold'=>true]);
-$table->addCell(2000)->addText('DNI', ['bold'=>true]);
-$table->addCell(3000)->addText('Teléfono', ['bold'=>true]);
-$table->addCell(2500)->addText('Vínculo', ['bold'=>true]);
-
-foreach ($caso->grupoFamiliar as $f){
-
-    $table->addRow();
-
-    $table->addCell(3500)->addText($f->nombre.' '.$f->apellido);
-    $table->addCell(2000)->addText($f->dni);
-    $table->addCell(3000)->addText($f->telefono);
-    $table->addCell(2500)->addText($f->vinculo_actual);
-}
-
-    foreach($caso->grupoFamiliar as $f){
+    foreach ($caso->grupoFamiliar as $f){
 
         $table->addRow();
 
-        $table->addCell()->addText($f->nombre.' '.$f->apellido);
-        $table->addCell()->addText($f->dni);
-        $table->addCell()->addText($f->telefono);
-        $table->addCell()->addText($f->vinculo_actual);
+        $table->addCell(3500)->addText($f->nombre.' '.$f->apellido);
+        $table->addCell(2000)->addText($f->dni);
+        $table->addCell(3000)->addText($f->telefono);
+        $table->addCell(2500)->addText($f->vinculo_actual);
     }
 
-    $section->addTextBreak();
+        foreach($caso->grupoFamiliar as $f){
 
-    // OBSERVACIONES
-    $section->addText('OBSERVACIONES',['bold'=>true]);
-    $section->addText($caso->observaciones ?? '');
+            $table->addRow();
 
-    $numeroCaso = str_pad($caso->id,6,"0",STR_PAD_LEFT);
-    $dni = preg_replace('/[^0-9]/','',$persona->dni);
+            $table->addCell()->addText($f->nombre.' '.$f->apellido);
+            $table->addCell()->addText($f->dni);
+            $table->addCell()->addText($f->telefono);
+            $table->addCell()->addText($f->vinculo_actual);
+        }
 
-    $nombreWord = "caso_masc_{$numeroCaso}_{$dni}.docx";
-    $ruta = "masculinidades_certificados/".$nombreWord;
-    $path = storage_path('app/'.$ruta);
+        $section->addTextBreak();
 
-    if(!file_exists(dirname($path))){
-        mkdir(dirname($path),0755,true);
+        // OBSERVACIONES
+        $section->addText('OBSERVACIONES',['bold'=>true]);
+        $section->addText($caso->observaciones ?? '');
+
+        $numeroCaso = str_pad($caso->id,6,"0",STR_PAD_LEFT);
+        $dni = preg_replace('/[^0-9]/','',$persona->dni);
+
+        $nombreWord = "caso_masc_{$numeroCaso}_{$dni}.docx";
+        $ruta = "masculinidades_certificados/".$nombreWord;
+        $path = storage_path('app/'.$ruta);
+
+        if(!file_exists(dirname($path))){
+            mkdir(dirname($path),0755,true);
+        }
+
+        $writer = IOFactory::createWriter($phpWord,'Word2007');
+        $writer->save($path);
+
+        return $ruta;
     }
 
-    $writer = IOFactory::createWriter($phpWord,'Word2007');
-    $writer->save($path);
-
-    return $ruta;
-}
     public function edit($id)
     {
         $caso = MasculinidadesCaso::with([
@@ -382,8 +383,13 @@ foreach ($caso->grupoFamiliar as $f){
 
     
         $encargados = Encargado::whereHas('areas', function($q){
-            $q->where('areas.id', 2);
-        })->get();
+                $q->where('areas.id', 2);
+            })->get();
+
+        $historial = MasculinidadesCaso::where('persona_id', $caso->persona_id)
+            ->where('id', '!=', $caso->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('frontend.areas.masculinidades.edit', compact(
             'caso',
@@ -399,14 +405,14 @@ foreach ($caso->grupoFamiliar as $f){
             'encargados',
             'tiposIntervencion',
             'niveles',
-            'estadosCiviles'
+            'estadosCiviles',
+            'historial'
         ));
     }
 
     public function update(Request $request, $id)
     {
         $caso = MasculinidadesCaso::findOrFail($id);
-
         $datos = $request->except(['victimas']);
 
         $camposCheckbox = ['trabaja','consumo','desobediencia','terapia'];
@@ -414,8 +420,19 @@ foreach ($caso->grupoFamiliar as $f){
             $datos[$campo] = $request->has($campo) ? 1 : 0;
         }
 
-        $caso->grupoFamiliar()->delete();
+        if ($request->debe_dispositivo == "1") {
+            if (in_array($request->asistencia_dispositivo, [3, 4])) {
+                $datos['fecha_finalizacion'] = $request->fecha_finalizacion 
+                                            ?? ($caso->fecha_finalizacion ?? now());
+            } else {
+                $datos['fecha_finalizacion'] = null;
+            }
+        } else {
+            $datos['asistencia_dispositivo'] = null;
+            $datos['fecha_finalizacion'] = null;
+    }
 
+        $caso->grupoFamiliar()->delete();
         if ($request->has('grupo')) {
             foreach ($request->grupo as $familiar) {
                 if (!empty($familiar['nombre'])) {
@@ -435,10 +452,9 @@ foreach ($caso->grupoFamiliar as $f){
         $caso->tiposViolencia()->sync($request->input('tipo_violencia_id', []));
         $caso->medidas()->sync($request->input('medida_id', []));
 
+        // Víctimas
         if ($request->has('victimas')) {
-
             $syncData = [];
-
             foreach ($request->victimas as $victimaId => $v) {
                 $syncData[$victimaId] = [
                     'hijos_en_comun' => $v['hijos_en_comun'] ?? 0,
@@ -446,9 +462,7 @@ foreach ($caso->grupoFamiliar as $f){
                     'descripcion_relacion' => $v['descripcion_relacion'] ?? null,
                 ];
             }
-
             $caso->victimas()->sync($syncData);
-
         } else {
             $caso->victimas()->sync([]);
         }
