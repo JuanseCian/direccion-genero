@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Area;
 use App\Models\Role;
+use App\Models\iveCaso;
 use Illuminate\Http\Request;
 
 class AdminUserController extends Controller
@@ -27,27 +28,44 @@ class AdminUserController extends Controller
         $areas = Area::all();
 
         $roles = Role::orderBy('id', 'asc')->get();
-
-        return view('admin.users.edit', compact('user', 'areas', 'roles'));
+        $iveCasos = IveCaso::with('persona')
+    ->orderBy('id','desc')
+    ->get();
+        return view('admin.users.edit', compact(
+    'user',
+    'roles',
+    'areas',
+    'iveCasos'
+));
     }
 
 
     // ACTUALIZAR USUARIO
-    public function update(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-        
-        
-        if ($request->rol_id == 3) {
-            $user->areas()->detach(); 
-        } else {
-            $user->areas()->sync($request->areas); 
-        }
+  public function update(Request $request, $id)
+{
+    $user = User::findOrFail($id);
 
-        $user->rol_id = $request->rol_id;
-        $user->save();
+    if ($request->rol_id == 3) {
 
-        return redirect()->route('admin.users.index')->with('success', 'Usuario actualizado correctamente');
+        // si queda inactivo quitamos accesos
+        $user->areas()->detach();
+        $user->iveCasos()->detach();
+
+    } else {
+
+        // sincronizar areas
+        $user->areas()->sync($request->areas ?? []);
+
+        // sincronizar casos individuales
+        $user->iveCasos()->sync($request->ive_casos ?? []);
     }
+
+    $user->rol_id = $request->rol_id;
+    $user->save();
+
+    return redirect()
+        ->route('admin.users.index')
+        ->with('success', 'Usuario actualizado correctamente');
+}
 
 }

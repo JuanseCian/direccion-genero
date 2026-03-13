@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
+use App\Models\IveCaso;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -49,7 +49,15 @@ class User extends Authenticatable
     {
         return 'username';
     }
-
+    public function iveCasos()
+{
+    return $this->belongsToMany(
+        IveCaso::class,
+        'ive_caso_user',
+        'user_id',
+        'ive_caso_id'
+    );
+}
     public function rol()
     {
         return $this->belongsTo(Role::class,'rol_id');

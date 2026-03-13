@@ -101,7 +101,54 @@
                         </div>
                     </div>
                 </div>
+                {{-- Card 4: Acceso a Casos IVE --}}
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-light border-0 py-3">
+                        <h5 class="mb-0 text-secondary">
+                            <i class="fas fa-folder-open me-2"></i>Permisos Casos IVE
+                        </h5>
+                    </div>
 
+                    <div class="card-body bg-white">
+
+                        {{-- Acceso total --}}
+                        
+                        {{-- Casos individuales --}}
+                        <label class="form-label fw-bold text-muted small mb-2">
+                            Casos específicos permitidos
+                        </label>
+
+                        <div class="row" style="max-height:250px; overflow-y:auto;">
+
+                            @foreach($iveCasos as $caso)
+
+                                <div class="col-md-6 mb-2">
+
+                                    <div class="form-check">
+
+                                        <input type="checkbox"
+                                            name="ive_casos[]"
+                                            value="{{ $caso->id }}"
+                                            class="form-check-input"
+                                            id="ive_caso_{{ $caso->id }}"
+                                            {{ $user->iveCasos->contains($caso->id) ? 'checked' : '' }}>
+
+                                        <label class="form-check-label" for="ive_caso_{{ $caso->id }}">
+                                            Caso #{{ $caso->id }}
+                                            - {{ $caso->persona->apellido ?? '' }}
+                                            {{ $caso->persona->nombre ?? '' }}
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+                            @endforeach
+
+                        </div>
+
+                    </div>
+                </div>
                 {{-- Botones de Acción --}}
                 <div class="d-flex gap-2 mb-5">
                     <button type="submit" class="btn btn-success btn-lg px-5 shadow-sm">

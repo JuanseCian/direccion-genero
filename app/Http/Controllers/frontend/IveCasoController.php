@@ -21,13 +21,33 @@ use PhpOffice\PhpWord\IOFactory;
 class IveCasoController extends Controller
 {
     public function index()
-    {
-        $casos = IveCaso::with(['persona'])
-            ->orderBy('created_at', 'desc')
+{
+    $user = auth()->user();
+
+    $tieneAreaIVE = $user->rol_id == 2 || $user->areas->contains('id', 3);
+
+    if ($tieneAreaIVE) {
+
+        // ve todos los casos
+        $casos = IveCaso::with('persona')
+            ->orderBy('created_at','desc')
             ->get();
 
-        return view('frontend.areas.ive.index', compact('casos'));
+    } else {
+
+        // solo casos asignados
+        $casos = $user->iveCasos()
+            ->with('persona')
+            ->orderBy('created_at','desc')
+            ->get();
+
+        if ($casos->isEmpty()) {
+            abort(403, 'No tiene acceso');
+        }
     }
+
+    return view('frontend.areas.ive.index', compact('casos'));
+}
 
     public function create()
     {
@@ -144,53 +164,82 @@ class IveCasoController extends Controller
         ->with('success', 'Legajo IVE creado correctamente');
 }
 
-    public function listado()
-    {
-        $casos = IveCaso::with(['persona'])
-            ->orderBy('created_at', 'desc')
+   public function listado()
+{
+    $user = auth()->user();
+
+    // si tiene acceso al área IVE
+    if ($user->rol_id == 2 || $user->areas->contains('nombre','ive')) {
+
+        $casos = IveCaso::with('persona')
+            ->orderBy('created_at','desc')
             ->get();
 
-        return view('frontend.areas.ive.listado', compact('casos'));
+    } else {
+
+        // solo casos asignados
+        $casos = $user->iveCasos()
+            ->with('persona')
+            ->orderBy('created_at','desc')
+            ->get();
     }
 
-    public function edit($id)
-    {
-        $caso = IveCaso::with([
-            'tiposViolencia',
-            'intervenciones.tipo', 
-            'intervenciones.encargado',
-            'redesContencion',
-            'medicaciones'
-        ])->findOrFail($id);
+    return view('frontend.areas.ive.listado', compact('casos'));
+}
 
-        $legajo = $caso;
+   public function edit($id)
+{
+    $user = auth()->user();
 
-        $personas = Persona::where('sexo', 'Femenino')->get();
-        $tiposViolencia = TipoViolencia::orderBy('nombre')->get();
-        $redes = RedContencion::orderBy('nombre')->get();
-        $tiposIntervencion = TipoIntervencion::all();
-        $estadosCiviles = EstadoCivil::orderBy('nombre')->get();
-        $metodos = MetodoInterrupcion::orderBy('nombre')->get();
+    $caso = IveCaso::with([
+        'tiposViolencia',
+        'intervenciones.tipo', 
+        'intervenciones.encargado',
+        'redesContencion',
+        'medicaciones'
+    ])->findOrFail($id);
 
-        $encargados = Encargado::whereHas('areas', function($q){
-            $q->where('areas.id', 3);
-        })->get();
-                    
-        $existeEnGenero = DireccionGeneroCaso::where('persona_id', $caso->persona_id)->exists();
+    // 🔒 CONTROL DE ACCESO
 
-        return view('frontend.areas.ive.edit', compact(
-            'caso', 
-            'legajo', 
-            'personas', 
-            'existeEnGenero', 
-            'encargados',
-            'tiposViolencia',
-            'redes',
-            'tiposIntervencion',
-            'estadosCiviles',
-            'metodos'
-        ));
+    if (!$user->ive_ver_todos) {
+
+        $permitido = $caso->usuariosPermitidos()
+            ->where('users.id', $user->id)
+            ->exists();
+
+        if (!$permitido) {
+            abort(403);
+        }
     }
+
+    $legajo = $caso;
+
+    $personas = Persona::where('sexo', 'Femenino')->get();
+    $tiposViolencia = TipoViolencia::orderBy('nombre')->get();
+    $redes = RedContencion::orderBy('nombre')->get();
+    $tiposIntervencion = TipoIntervencion::all();
+    $estadosCiviles = EstadoCivil::orderBy('nombre')->get();
+    $metodos = MetodoInterrupcion::orderBy('nombre')->get();
+
+    $encargados = Encargado::whereHas('areas', function($q){
+        $q->where('areas.id', 3);
+    })->get();
+                
+    $existeEnGenero = DireccionGeneroCaso::where('persona_id', $caso->persona_id)->exists();
+
+    return view('frontend.areas.ive.edit', compact(
+        'caso', 
+        'legajo', 
+        'personas', 
+        'existeEnGenero', 
+        'encargados',
+        'tiposViolencia',
+        'redes',
+        'tiposIntervencion',
+        'estadosCiviles',
+        'metodos'
+    ));
+}
 
   public function update(Request $request, $id)
 {

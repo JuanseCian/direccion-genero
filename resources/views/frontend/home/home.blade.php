@@ -11,7 +11,9 @@ $esAdmin = $user->rol_id == 2;
 
 $tieneGenero = $esAdmin || $user->areas->contains('nombre','direccion_genero');
 $tieneMasc = $esAdmin || $user->areas->contains('nombre','masculinidades');
-$tieneIVE = $esAdmin || $user->areas->contains('nombre','ive');
+$tieneIVE = $esAdmin 
+    || $user->areas->contains('id',3) 
+    || $user->iveCasos()->exists();
 @endphp
 
 <div class="card card-soft p-4 mb-4">

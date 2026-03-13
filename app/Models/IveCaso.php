@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\RedContencion;
 use App\Models\Encargado;
+use App\Models\User;
 
 class IveCaso extends Model
 {
@@ -56,7 +57,15 @@ class IveCaso extends Model
             'area_id'
         );
     }
-
+    public function usuariosPermitidos()
+{
+    return $this->belongsToMany(
+        User::class,
+        'ive_caso_user',
+        'ive_caso_id',
+        'user_id'
+    );
+}
     public function medicaciones()
     {
         return $this->hasMany(IveMedicacion::class, 'ive_caso_id');
