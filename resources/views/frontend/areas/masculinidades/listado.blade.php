@@ -133,6 +133,9 @@
                     </tbody>
 
                 </table>
+                <div class="d-flex justify-content-center mt-4">
+                    {{ $casos->links() }}
+                </div>
             </div>
         </div>
     </div>

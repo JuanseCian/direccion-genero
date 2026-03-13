@@ -10,6 +10,7 @@ use App\Models\Provincia;
 use App\Models\Localidad;
 use App\Models\Barrio;
 use App\Models\medidaCautelar;
+use App\Models\SituacionHabitacional;
 class DireccionGeneroCaso extends Model
 {
     protected $table = 'direccion_genero_casos';
@@ -97,6 +98,11 @@ class DireccionGeneroCaso extends Model
     public function encargado()
     {
         return $this->belongsTo(Encargado::class,'encargado_id');
+    }
+    
+    public function situacionHabitacional()
+    {
+        return $this->belongsTo(SituacionHabitacional::class, 'situacion_habitacional_id');
     }
 
     public function agresores()

@@ -744,21 +744,16 @@ function agregarFamiliar(datos = null) {
 
 </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Inicializamos el index con la cantidad de familiares actuales
-        // Esto evita que al agregar uno nuevo se pisen los nombres de los inputs
-        let index = {{ $legajo->grupoConviviente->count() }}; 
+@foreach($legajo->grupoConviviente as $familiar)
+    <script>
+        agregarFamiliar({
+            nombre: "{{ $familiar->nombre }}",
+            apellido: "{{ $familiar->apellido }}",
+            dni: "{{ $familiar->dni }}",
+            telefono: "{{ $familiar->telefono }}",
+            vinculo: "{{ $familiar->vinculo }}"
+        });
+    </script>
+@endforeach
 
-        @foreach($legajo->grupoConviviente as $familiar)
-            agregarFamiliar({
-                nombre: "{{ $familiar->nombre }}",
-                apellido: "{{ $familiar->apellido }}",
-                dni: "{{ $familiar->dni }}",
-                telefono: "{{ $familiar->telefono }}",
-                vinculo: "{{ $familiar->vinculo }}"
-            });
-        @endforeach
-    });
-</script>
 @endsection

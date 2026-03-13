@@ -31,7 +31,7 @@ class IveCasoController extends Controller
         // ve todos los casos
         $casos = IveCaso::with('persona')
             ->orderBy('created_at','desc')
-            ->get();
+            ->paginate(10);
 
     } else {
 
@@ -80,112 +80,112 @@ class IveCasoController extends Controller
     }
 
     public function store(Request $request) 
-{
-    $request->validate([
-        'persona_id' => 'required|exists:personas,id',
-        'fum' => 'nullable|date',
-        'eco_semanas' => 'nullable|integer',
-        'cantidad_hijos' => 'integer|min:0',
-        'encargado_id' => 'required|exists:encargados,id',
+    {
+        $request->validate([
+            'persona_id' => 'required|exists:personas,id',
+            'fum' => 'nullable|date',
+            'eco_semanas' => 'nullable|integer',
+            'cantidad_hijos' => 'integer|min:0',
+            'encargado_id' => 'required|exists:encargados,id',
 
-        'tipos_violencia' => 'nullable|array',
-        'tipos_violencia.*' => 'exists:tipos_violencia,id',
+            'tipos_violencia' => 'nullable|array',
+            'tipos_violencia.*' => 'exists:tipos_violencia,id',
 
-        'redes_contencion' => 'nullable|array',
-        'redes_contencion.*' => 'exists:red_contencion,id',
+            'redes_contencion' => 'nullable|array',
+            'redes_contencion.*' => 'exists:red_contencion,id',
 
-        'medicaciones.*.nombre' => 'nullable|string|max:255',
-        'medicaciones.*.numero_lote' => 'nullable|string|max:255',
+            'medicaciones.*.nombre' => 'nullable|string|max:255',
+            'medicaciones.*.numero_lote' => 'nullable|string|max:255',
 
-        'semanas_gestacion' => 'nullable|integer|min:0',
-        'estado_civil_id' => 'nullable|exists:estados_civiles,id',
-        'metodo_interrupcion_id' => 'nullable|exists:metodos_interrupcion,id',
-    ]);
+            'semanas_gestacion' => 'nullable|integer|min:0',
+            'estado_civil_id' => 'nullable|exists:estados_civiles,id',
+            'metodo_interrupcion_id' => 'nullable|exists:metodos_interrupcion,id',
+        ]);
 
-    DB::transaction(function() use ($request) {
+        DB::transaction(function() use ($request) {
 
-        $data = $request->all();
+            $data = $request->all();
 
-        $data['obra_social'] = $request->has('obra_social') ? 1 : 0;
-        $data['interrupcion_previa'] = $request->has('interrupcion_previa') ? 1 : 0;
-        $data['violencia_previa'] = $request->has('violencia_previa') ? 1 : 0;
+            $data['obra_social'] = $request->has('obra_social') ? 1 : 0;
+            $data['interrupcion_previa'] = $request->has('interrupcion_previa') ? 1 : 0;
+            $data['violencia_previa'] = $request->has('violencia_previa') ? 1 : 0;
 
-        $caso = IveCaso::create($data);
+            $caso = IveCaso::create($data);
 
-        if ($request->has('tipos_violencia')) {
-            $caso->tiposViolencia()->sync($request->tipos_violencia);
-        }
+            if ($request->has('tipos_violencia')) {
+                $caso->tiposViolencia()->sync($request->tipos_violencia);
+            }
 
-        if ($request->has('redes_contencion')) {
-            $caso->redesContencion()->sync($request->redes_contencion);
-        }
+            if ($request->has('redes_contencion')) {
+                $caso->redesContencion()->sync($request->redes_contencion);
+            }
 
-        if ($request->has('medicaciones')) {
-            foreach ($request->medicaciones as $med) {
-                if (!empty($med['nombre'])) {
-                    $caso->medicaciones()->create([
-                        'nombre' => $med['nombre'],
-                        'numero_lote' => $med['numero_lote'] ?? null
-                    ]);
+            if ($request->has('medicaciones')) {
+                foreach ($request->medicaciones as $med) {
+                    if (!empty($med['nombre'])) {
+                        $caso->medicaciones()->create([
+                            'nombre' => $med['nombre'],
+                            'numero_lote' => $med['numero_lote'] ?? null
+                        ]);
+                    }
                 }
             }
-        }
 
-        $caso->load([
-    'persona',
-    'estadoCivil',
-    'metodoInterrupcion',
-    'encargado',
-    'tiposViolencia',
-    'redesContencion',
-    'medicaciones'
-]);
+            $caso->load([
+        'persona',
+        'estadoCivil',
+        'metodoInterrupcion',
+        'encargado',
+        'tiposViolencia',
+        'redesContencion',
+        'medicaciones'
+    ]);
 
-        $rutaWord = $this->generarWordIve($caso);
+            $rutaWord = $this->generarWordIve($caso);
 
-        $path = storage_path('app/'.$rutaWord);
+            $path = storage_path('app/'.$rutaWord);
 
-        Adjunto::create([
-            'entidad_tipo' => 'ive',
-            'entidad_id' => $caso->id,
-            'nombre_original' => basename($rutaWord),
-            'nombre_guardado' => basename($rutaWord),
-            'ruta' => $rutaWord,
-            'tipo_mime' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'tamaño' => filesize($path),
-            'hash_sha256' => hash_file('sha256',$path),
-            'subido_por' => auth()->id(),
-            'confidencial' => 0
-        ]);
-    });
+            Adjunto::create([
+                'entidad_tipo' => 'ive',
+                'entidad_id' => $caso->id,
+                'nombre_original' => basename($rutaWord),
+                'nombre_guardado' => basename($rutaWord),
+                'ruta' => $rutaWord,
+                'tipo_mime' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'tamaño' => filesize($path),
+                'hash_sha256' => hash_file('sha256',$path),
+                'subido_por' => auth()->id(),
+                'confidencial' => 0
+            ]);
+        });
 
-    return redirect()
-        ->route('frontend.areas.ive.listado')
-        ->with('success', 'Legajo IVE creado correctamente');
-}
-
-   public function listado()
-{
-    $user = auth()->user();
-
-    // si tiene acceso al área IVE
-    if ($user->rol_id == 2 || $user->areas->contains('nombre','ive')) {
-
-        $casos = IveCaso::with('persona')
-            ->orderBy('created_at','desc')
-            ->get();
-
-    } else {
-
-        // solo casos asignados
-        $casos = $user->iveCasos()
-            ->with('persona')
-            ->orderBy('created_at','desc')
-            ->get();
+        return redirect()
+            ->route('frontend.areas.ive.listado')
+            ->with('success', 'Legajo IVE creado correctamente');
     }
 
-    return view('frontend.areas.ive.listado', compact('casos'));
-}
+    public function listado()
+    {
+        $user = auth()->user();
+
+        // si tiene acceso al área IVE
+        if ($user->rol_id == 2 || $user->areas->contains('nombre','ive')) {
+
+            $casos = IveCaso::with('persona')
+                ->orderBy('created_at','desc')
+                ->paginate(10);
+
+        } else {
+
+            // solo casos asignados
+            $casos = $user->iveCasos()
+                ->with('persona')
+                ->orderBy('created_at','desc')
+                ->paginate(10);
+        }
+
+        return view('frontend.areas.ive.listado', compact('casos'));
+    }
 
    public function edit($id)
 {
@@ -201,16 +201,7 @@ class IveCasoController extends Controller
 
     // 🔒 CONTROL DE ACCESO
 
-    if (!$user->ive_ver_todos) {
-
-        $permitido = $caso->usuariosPermitidos()
-            ->where('users.id', $user->id)
-            ->exists();
-
-        if (!$permitido) {
-            abort(403);
-        }
-    }
+    
 
     $legajo = $caso;
 

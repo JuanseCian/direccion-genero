@@ -23,8 +23,10 @@ class MasculinidadesCasoController extends Controller
 
     public function listado()
     {
-        $casos = \App\Models\MasculinidadesCaso::with('persona', 'encargado')->get();
-        
+        $casos = \App\Models\MasculinidadesCaso::with('persona', 'encargado')
+            ->orderBy('created_at','desc')
+            ->paginate(15);
+            
         return view('frontend.areas.masculinidades.listado', compact('casos'));
     }
 
@@ -365,7 +367,10 @@ class MasculinidadesCasoController extends Controller
 
         $tiposIntervencion = TipoIntervencion::all();
 
-        $agresores = Persona::where('sexo', 'Masculino')->get();
+        $agresores = Persona::where('sexo', 'Masculino')
+            ->orWhere('id', $caso->persona_id)
+            ->orderBy('apellido')
+            ->get();
         $casosGenero = DireccionGeneroCaso::with('persona')->get();
 
         $victimas = Persona::all();
