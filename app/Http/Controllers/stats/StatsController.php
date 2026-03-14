@@ -10,6 +10,11 @@ use App\Models\Persona;
 use Illuminate\Http\Request;
 use App\Models\MasculinidadesCaso;
 use App\Models\IveCaso;
+use App\Exports\GeneroCasosExport;
+use App\Exports\MasculinidadesCasosExport;
+use App\Exports\IntervencionesExport;
+use App\Exports\IveCasosExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
 
 
@@ -104,6 +109,15 @@ class StatsController extends Controller
             'violencias',
             'medidas'
         ));
+    }
+    
+    //exporta las estadisticas de genero
+    public function exportGenero(Request $request)
+    {
+        return Excel::download(
+            new GeneroCasosExport($request->desde, $request->hasta),
+            'reporte_genero.xlsx'
+        );
     }
 
     public function masculinidades(Request $request)
@@ -212,6 +226,14 @@ class StatsController extends Controller
             'reincidencias', 'debeDispositivo', 'finalizaron', 'enCurso',
             'edades', 'zonas', 'casosPorZona', 'desde', 'hasta', 'asisten', 'abandono', 'violencias', 'medidas', 'derivaciones', 'nivelesEducativos'
         ));
+    }
+    //exporta estaditicas de masculinidades
+    public function exportMasculinidades(Request $request)
+    {
+        return Excel::download(
+            new MasculinidadesCasosExport($request->desde, $request->hasta),
+            'reporte_masculinidades.xlsx'
+        );
     }
 
     public function ive(Request $request)
@@ -344,6 +366,15 @@ class StatsController extends Controller
         ));
     }
 
+    //exporta estadisticas de ive
+    public function exportIve(Request $request)
+    {
+        return Excel::download(
+            new IveCasosExport($request->desde, $request->hasta),
+            'reporte_ive.xlsx'
+        );
+    }
+
     public function intervenciones(Request $request)
     {
         $desde = $request->desde;
@@ -376,5 +407,15 @@ class StatsController extends Controller
             'desde',
             'hasta'
         ));
+    }
+
+    //exporta estadisticas de las intervenciones
+    public function exportIntervenciones(Request $request)
+    {
+
+        return Excel::download(
+            new IntervencionesExport($request->desde,$request->hasta),
+            'reporte_intervenciones.xlsx'
+        );
     }
 }

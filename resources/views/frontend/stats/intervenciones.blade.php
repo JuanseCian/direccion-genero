@@ -5,19 +5,24 @@
 @section('content')
 
 <div class="card card-soft p-4 shadow-sm border-0">
-
 <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 style="color:#5651A0;" class="mb-0">
+        <i class="bi bi-activity"></i>
+        Reporte de Intervenciones
+    </h2>
 
-<h2 style="color:#5651A0;">
-<i class="bi bi-activity"></i>
-Reporte de Intervenciones
-</h2>
+    <div class="d-flex gap-2">
+        <button onclick="window.print()" class="btn btn-light border">
+            <i class="bi bi-printer"></i> Imprimir
+        </button>
 
-<button onclick="window.print()" class="btn btn-light border">
-<i class="bi bi-printer"></i> Imprimir
-</button>
-
+        <a href="{{ route('stats.intervenciones.export',['desde'=>$desde,'hasta'=>$hasta]) }}" 
+           class="btn btn-success">
+            <i class="bi bi-file-earmark-excel"></i> Excel
+        </a>
+    </div>
 </div>
+
 
 {{-- FILTRO --}}
 

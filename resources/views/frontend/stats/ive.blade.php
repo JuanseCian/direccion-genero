@@ -23,6 +23,10 @@
             <button onclick="window.print()" class="btn btn-outline-secondary btn-sm shadow-sm">
                 <i class="bi bi-printer"></i> Imprimir Reporte
             </button>
+            <a href="{{ route('stats.ive.export',['desde'=>$desde,'hasta'=>$hasta]) }}"
+            class="btn btn-success btn-sm shadow-sm me-2">
+                <i class="bi bi-file-earmark-excel"></i> Excel
+            </a>
         </div>
     </div>
 

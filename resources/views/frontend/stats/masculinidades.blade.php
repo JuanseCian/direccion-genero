@@ -30,6 +30,10 @@
             <button onclick="window.print()" class="btn btn-outline-secondary btn-sm shadow-sm">
                 <i class="bi bi-printer"></i> Imprimir
             </button>
+            <a href="{{ route('stats.masculinidades.export',['desde'=>$desde,'hasta'=>$hasta]) }}"
+            class="btn btn-success btn-sm shadow-sm">
+                <i class="bi bi-file-earmark-excel"></i> Excel
+            </a>
         </div>
     </div>
 
