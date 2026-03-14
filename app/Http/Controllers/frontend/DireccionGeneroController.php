@@ -146,6 +146,11 @@ class DireccionGeneroController extends Controller
                 'agresor_trabajo' => $request->agresor_trabajo
             ]);
 
+
+            if ($request->has('agresores')) {
+                $legajo->agresores()->sync($request->agresores);
+            }
+
             if ($request->has('grupo')) {
 
                 foreach ($request->grupo as $conviviente) {

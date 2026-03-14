@@ -493,7 +493,7 @@
                                         <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.75rem;"></i>
                                     </a>
                                     
-                                    <button type="button" class="btn btn-sm btn-light border p-1 text-info shadow-sm" onclick="abrirInfoVinculo({{ $victima->id }}, '{{ $victima->persona->apellido }}, {{ $victima->persona->nombre }}')" title="Detalles del vínculo">
+                                    <button type="button" class="btn btn-sm btn-light border p-1 text-info shadow-sm" onclick='abrirInfoVinculo({{ $victima->id }}, {!! json_encode($victima->persona->apellido . ", " . $victima->persona->nombre) !!})' title="Detalles del vínculo">
                                         <i class="bi bi-info-circle-fill"></i>
                                     </button>
 
@@ -658,7 +658,7 @@
                                 <td>{{ $casoG->persona->apellido }}, {{ $casoG->persona->nombre }}</td>
                                 <td>{{ $casoG->persona->dni }}</td>
                                 <td class="text-end">
-                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="agregarVictima({{ $casoG->id }}, '{{ $casoG->persona->apellido }}, {{ $casoG->persona->nombre }}')">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick='agregarVictima({{ $casoG->id }}, {!! json_encode($casoG->persona->apellido . ", " . $casoG->persona->nombre) !!})'>
                                         <i class="bi bi-link-45deg"></i> Vincular
                                     </button>
                                 </td>
@@ -717,112 +717,11 @@
 
 {{-- --- SCRIPTS --- --}}
 <script>
-// 1. Lógica General (Dispositivo)
-function toggleDispositivo(){
-    let valor = document.getElementById('debeDispositivo').value;
-    let bloque = document.getElementById('camposDispositivo');
-    bloque.style.display = (valor == 1) ? 'flex' : 'none';
-}
-document.getElementById('debeDispositivo').addEventListener('change', toggleDispositivo);
-window.addEventListener('load', toggleDispositivo);
-
-// 2. Lógica Grupo Conviviente
-let integranteIdx = {{ $caso->grupoFamiliar->count() }};
-function agregarIntegrante() {
-    const html = `
-        <tr>
-            <td><input type="text" name="grupo_conviviente[${integranteIdx}][nombre]" class="form-control form-control-sm"></td>
-            <td><input type="number" name="grupo_conviviente[${integranteIdx}][edad]" class="form-control form-control-sm"></td>
-            <td><input type="text" name="grupo_conviviente[${integranteIdx}][vinculo]" class="form-control form-control-sm"></td>
-            <td class="text-center"><button type="button" class="btn btn-link text-danger p-0" onclick="eliminarFila(this)"><i class="bi bi-trash-fill"></i></button></td>
-        </tr>`;
-    document.getElementById('tabla-convivientes').insertAdjacentHTML('beforeend', html);
-    integranteIdx++;
-}
-function eliminarFila(btn) {
-    btn.closest('tr').remove();
-}
-
-// 3. Lógica Víctimas Vinculadas
-const urlBaseGenero = "{{ route('genero.edit', ':id') }}";
-
-function agregarVictima(id, nombre) {
-    if (document.getElementById('victima-item-' + id)) {
-        alert('Esta víctima ya está vinculada.');
-        return;
-    }
-    
-    const urlLegajo = urlBaseGenero.replace(':id', id);
-    const lista = document.getElementById('lista-victimas');
-    const html = `
-        <div class="col-md-6" id="victima-item-${id}">
-            <div class="card border-danger border-opacity-25 shadow-sm p-2 d-flex flex-row align-items-center justify-content-between bg-light">
-                <div class="small d-flex align-items-center">
-                    <a href="${urlLegajo}" class="text-decoration-none fw-bold text-danger me-2" target="_blank">
-                        <span>#${id}</span> - ${nombre} <i class="bi bi-box-arrow-up-right ms-1"></i>
-                    </a>
-                    <button type="button" class="btn btn-sm btn-light border p-1 text-info" onclick="abrirInfoVinculo(${id}, '${nombre}')">
-                        <i class="bi bi-info-circle-fill"></i>
-                    </button>
-                    <input type="hidden" name="victimas[${id}][hijos_en_comun]" id="hijos_${id}" value="0">
-                    <input type="hidden" name="victimas[${id}][relacion_actual]" id="relacion_${id}" value="0">
-                    <input type="hidden" name="victimas[${id}][descripcion_relacion]" id="desc_${id}" value="">
-                </div>
-                <button type="button" class="btn btn-link text-secondary p-0 ms-2" onclick="quitarVictima(${id})">
-                    <i class="bi bi-x-circle-fill"></i>
-                </button>
-            </div>
-        </div>`;
-    
-    lista.insertAdjacentHTML('beforeend', html);
-    bootstrap.Modal.getInstance(document.getElementById('modalVictimas')).hide();
-    setTimeout(() => abrirInfoVinculo(id, nombre), 400); 
-}
-
-function quitarVictima(id) {
-    document.getElementById('victima-item-' + id)?.remove();
-}
-
-// 4. Lógica Modal Info Vínculo
-document.getElementById('infoRelacion').addEventListener('change', function() {
-    document.getElementById('infoDescContainer').style.display = this.checked ? 'block' : 'none';
-});
-
-function abrirInfoVinculo(id, nombre) {
-    document.getElementById('infoVinculoId').value = id;
-    document.getElementById('infoVinculoNombre').innerText = "Expediente Género: " + nombre;
-    document.getElementById('infoHijos').value = document.getElementById('hijos_' + id).value || 0;
-    
-    let tieneRelacion = document.getElementById('relacion_' + id).value === "1";
-    document.getElementById('infoRelacion').checked = tieneRelacion;
-    document.getElementById('infoDesc').value = document.getElementById('desc_' + id).value || '';
-    document.getElementById('infoDescContainer').style.display = tieneRelacion ? 'block' : 'none';
-    
-    new bootstrap.Modal(document.getElementById('modalInfoVinculo')).show();
-}
-
-function guardarInfoVinculo() {
-    let id = document.getElementById('infoVinculoId').value;
-    document.getElementById('hijos_' + id).value = document.getElementById('infoHijos').value;
-    document.getElementById('relacion_' + id).value = document.getElementById('infoRelacion').checked ? "1" : "0";
-    document.getElementById('desc_' + id).value = document.getElementById('infoDesc').value;
-    bootstrap.Modal.getInstance(document.getElementById('modalInfoVinculo')).hide();
-}
-
-// 5. Buscador Modal
-document.getElementById('busquedaVictima')?.addEventListener('keyup', function() {
-    let filtro = this.value.toLowerCase();
-    document.querySelectorAll('#tablaResultadosVictimas .fila-victima').forEach(fila => {
-        fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' : 'none';
-    });
-});
-
+// 1. Lógica Grupo Conviviente
 let index = {{ $caso->grupoFamiliar ? $caso->grupoFamiliar->count() : 0 }};
 
 function agregarFamiliar() {
     const container = document.getElementById('grupoFamiliarContainer');
-    
-    // Si es el primer integrante que agregamos manualmente y no había nada antes, limpiamos el mensaje
     if(index === 0) container.innerHTML = ''; 
 
     const html = `
@@ -852,46 +751,122 @@ function agregarFamiliar() {
     index++;
 }
 
-// Lógica Trabaja
+// 2. Lógica Víctimas Vinculadas
+const urlBaseGenero = "{{ route('genero.edit', ':id') }}";
+
+function agregarVictima(id, nombre) {
+    if (document.getElementById('victima-item-' + id)) {
+        alert('Esta víctima ya está vinculada.');
+        return;
+    }
+    
+    const urlLegajo = urlBaseGenero.replace(':id', id);
+    const lista = document.getElementById('lista-victimas');
+    
+    const html = `
+        <div class="col-md-6" id="victima-item-${id}">
+            <div class="card border-danger border-opacity-25 shadow-sm p-2 d-flex flex-row align-items-center justify-content-between bg-light">
+                <div class="small d-flex align-items-center">
+                    <a href="${urlLegajo}" class="text-decoration-none fw-bold text-danger me-2" target="_blank">
+                        <span>#${id}</span> - ${nombre} <i class="bi bi-box-arrow-up-right ms-1"></i>
+                    </a>
+                    <button type="button" class="btn btn-sm btn-light border p-1 text-info shadow-sm" onclick='abrirInfoVinculo(${id}, ${JSON.stringify(nombre)})' title="Detalles del vínculo">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </button>
+                    <input type="hidden" name="victimas[${id}][hijos_en_comun]" id="hijos_${id}" value="0">
+                    <input type="hidden" name="victimas[${id}][relacion_actual]" id="relacion_${id}" value="0">
+                    <input type="hidden" name="victimas[${id}][descripcion_relacion]" id="desc_${id}" value="">
+                </div>
+                <button type="button" class="btn btn-link text-secondary p-0 ms-2" onclick="quitarVictima(${id})">
+                    <i class="bi bi-x-circle-fill"></i>
+                </button>
+            </div>
+        </div>`;
+    
+    lista.insertAdjacentHTML('beforeend', html);
+    
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalVictimas')).hide();
+    
+    setTimeout(() => abrirInfoVinculo(id, nombre), 400); 
+}
+
+function quitarVictima(id) {
+    document.getElementById('victima-item-' + id)?.remove();
+}
+
+// 3. Lógica Modal Info Vínculo
+document.getElementById('infoRelacion').addEventListener('change', function() {
+    document.getElementById('infoDescContainer').style.display = this.checked ? 'block' : 'none';
+});
+
+function abrirInfoVinculo(id, nombre) {
+    document.getElementById('infoVinculoId').value = id;
+    document.getElementById('infoVinculoNombre').innerText = "Expediente Género: " + nombre;
+    document.getElementById('infoHijos').value = document.getElementById('hijos_' + id).value || 0;
+    
+    let tieneRelacion = document.getElementById('relacion_' + id).value === "1";
+    document.getElementById('infoRelacion').checked = tieneRelacion;
+    document.getElementById('infoDesc').value = document.getElementById('desc_' + id).value || '';
+    document.getElementById('infoDescContainer').style.display = tieneRelacion ? 'block' : 'none';
+    
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalInfoVinculo')).show();
+}
+
+function guardarInfoVinculo() {
+    let id = document.getElementById('infoVinculoId').value;
+    document.getElementById('hijos_' + id).value = document.getElementById('infoHijos').value;
+    document.getElementById('relacion_' + id).value = document.getElementById('infoRelacion').checked ? "1" : "0";
+    document.getElementById('desc_' + id).value = document.getElementById('infoDesc').value;
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalInfoVinculo')).hide();
+}
+
+// 4. Buscador Modal
+document.getElementById('busquedaVictima')?.addEventListener('keyup', function() {
+    let filtro = this.value.toLowerCase();
+    document.querySelectorAll('#tablaResultadosVictimas .fila-victima').forEach(fila => {
+        fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? '' : 'none';
+    });
+});
+
+// 5. Lógica Trabaja
 const trabajaSwitch = document.getElementById('trabajaSwitch');
 const detalleTrabajoContainer = document.getElementById('detalleTrabajoContainer');
 
 function toggleTrabajo(){
-    if(trabajaSwitch.checked){
-        detalleTrabajoContainer.style.display = 'block';
-    }else{
-        detalleTrabajoContainer.style.display = 'none';
+    if(trabajaSwitch && detalleTrabajoContainer){
+        detalleTrabajoContainer.style.display = trabajaSwitch.checked ? 'block' : 'none';
     }
 }
-
 trabajaSwitch?.addEventListener('change', toggleTrabajo);
 window.addEventListener('load', toggleTrabajo);
-</script>
-<script>
+
+// 6. Lógica Dispositivo (Corregida)
 document.addEventListener('DOMContentLoaded', function () {
     const debe = document.getElementById('debeDispositivoEdit');
     const camposAsistencia = document.getElementById('camposAsistencia');
     const asistencia = document.getElementById('asistenciaSelect');
     const divFechaFin = document.getElementById('divFechaFin');
 
-    // Lógica para mostrar asistencia
-    debe.addEventListener('change', function() {
-        if(this.value == "1") {
-            camposAsistencia.style.display = 'block';
-        } else {
-            camposAsistencia.style.display = 'none';
-            divFechaFin.style.display = 'none';
-        }
-    });
+    if(debe && camposAsistencia && divFechaFin) {
+        debe.addEventListener('change', function() {
+            if(this.value == "1") {
+                camposAsistencia.style.display = 'block';
+            } else {
+                camposAsistencia.style.display = 'none';
+                divFechaFin.style.display = 'none';
+            }
+        });
 
-    // Lógica para mostrar fecha de fin
-    asistencia.addEventListener('change', function() {
-        if(this.value == "3" || this.value == "4") {
-            divFechaFin.style.display = 'block';
-        } else {
-            divFechaFin.style.display = 'none';
+        if(asistencia) {
+            asistencia.addEventListener('change', function() {
+                if(this.value == "3" || this.value == "4") {
+                    divFechaFin.style.display = 'block';
+                } else {
+                    divFechaFin.style.display = 'none';
+                }
+            });
         }
-    });
+    }
 });
 </script>
 

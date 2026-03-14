@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\DireccionGeneroCaso;
 use App\Models\MedidaCautelar;
 
 class MasculinidadesCaso extends Model
@@ -122,11 +123,11 @@ class MasculinidadesCaso extends Model
     
     public function situacionHabitacional()
     {
-        return $this->belongsTo(SituacionHabitacional::class, 'nivel_estudio_id');
+        return $this->belongsTo(SituacionHabitacional::class, 'situacion_habitacional_id');
     }
 
     public function situacionSanitaria()
     {
-        return $this->belongsTo(SituacionSanitaria::class, 'nivel_estudio_id');
+        return $this->belongsTo(SituacionSanitaria::class, 'situacion_sanitaria_id');
     }
 }
