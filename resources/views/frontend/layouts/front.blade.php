@@ -321,44 +321,106 @@
 </button>
 
 <div class="modal fade modal-info-custom" id="modalInfoSistema" tabindex="-1" aria-labelledby="modalInfoSistemaLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
         <div class="modal-content shadow">
-            <div class="modal-header py-3">
+            
+            <div class="modal-header py-3 bg-light">
                 <h5 class="modal-title d-flex align-items-center" id="modalInfoSistemaLabel">
-                    <i class="bi bi-cpu me-2"></i> Información del Sistema
+                    <i class="bi bi-info-circle text-primary me-2"></i> Información del Sistema
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body p-4">
-                <div class="text-center mb-4">
-                    <img src="{{ asset('assets/img/logo_genero.png') }}" alt="Logo" height="60" class="mb-2">
-                    <h6 class="fw-bold text-dark">Gestión Dirección de Género</h6>
-                    <span class="badge bg-light text-muted border">Versión 2.1.0</span>
-                </div>
-                
-                <ul class="list-group list-group-flush small">
-                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                        <span><i class="bi bi-check2-circle text-success me-2"></i>Estado del Servidor</span>
-                        <span class="text-success fw-bold">Activo</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                        <span><i class="bi bi-database text-primary me-2"></i>Base de Datos</span>
-                        <span class="text-muted">Conectada</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                        <span><i class="bi bi-shield-check text-info me-2"></i>Seguridad SSL</span>
-                        <span class="text-muted">Encriptado</span>
-                    </li>
-                </ul>
 
-                <div class="mt-4 p-3 bg-light rounded-3 small text-muted">
-                    <p class="mb-1"><strong>Desarrollado por:</strong> Área de Modernización</p>
-                    <p class="mb-0"><strong>Soporte:</strong> soporte@municipalidad.gov.ar</p>
+            <div class="modal-body p-4 bg-white" style="background-color: #f8f9fa;">
+                
+                <div class="text-center mb-5">
+                    <img src="{{ asset('assets/img/logo_genero.png') }}" alt="Logo" height="60" class="mb-3">
+                    <h5 class="fw-bold text-dark mb-1">Gestión Dirección de Género</h5>
+                    <p class="text-muted small mb-0">Sistema de Gestión de Casos de Violencia de Género, Interrupción Voluntaria del Embarazo y taller de Masculinidades</p>
                 </div>
+
+                <div class="mb-4">
+                    <h6 class="text-muted text-uppercase fw-semibold mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">Información General</h6>
+                    
+                    <div class="border rounded-3 p-3 mb-2 bg-white d-flex justify-content-between align-items-center shadow-sm">
+                        <span class="text-muted">Versión</span>
+                        <span class="fw-bold text-dark">1.0</span>
+                    </div>
+                    
+                    <div class="border rounded-3 p-3 mb-2 bg-white d-flex justify-content-between align-items-center shadow-sm">
+                        <span class="text-muted">Licencia</span>
+                        <span class="fw-medium text-dark">Institucional Restringida</span>
+                    </div>
+                    
+                    <div class="border rounded-3 p-3 mb-2 bg-white d-flex justify-content-between align-items-center shadow-sm">
+                        <span class="text-muted">Propósito</span>
+                        <span class="fw-medium text-dark">Gestión Integral</span>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="text-muted text-uppercase fw-semibold mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">Sobre este proyecto</h6>
+                    <div class="border rounded-3 p-4 bg-white shadow-sm text-muted small lh-lg">
+                        <p class="mb-3">Este Sistema fue desarrollado para la <strong>Municipalidad de San Nicolás</strong>. EspecíficameNte para la <strong>Secretaría de Desarrollo Humano</strong> bajo la secretaria <strong>Mendez María Rosa</strong>. Su funcionamiento principal está destinado a la <strong>Dirección de Género</strong>, a cargo de <strong>Beterete Florencia</strong>. Para la gestión, seguimiento y abordaje integral de casos, incluyendo módulos específicos para masculinidades.</p>
+                        <p class="mb-0">Su objetivo principal es facilitar al equipo técnico y profesional la organización del trabajo mediante la creación sencilla de legajos, registros de intervenciones y proporcionando un sistema de estadísticas confiable.</p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="text-muted text-uppercase fw-semibold mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">Equipo de Desarrollo</h6>
+                    
+                    <div class="border rounded-3 p-3 mb-2 bg-white d-flex align-items-center shadow-sm">
+                        <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3 fw-bold shadow-sm" style="width: 45px; height: 45px; background-color: #2c5263;">
+                            VH
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">Vilchez Hernan</h6>
+                            <span class="text-muted small">Analista en Sistemas</span>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-3 p-3 mb-2 bg-white d-flex align-items-center shadow-sm">
+                        <div class="rounded-circle text-white d-flex align-items-center justify-content-center me-3 fw-bold shadow-sm" style="width: 45px; height: 45px; background-color: #2c5263;">
+                            CS
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">Cian Juan Segundo</h6>
+                            <span class="text-muted small">Analista en Sistemas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="text-muted text-uppercase fw-semibold mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">Licenciamiento</h6>
+                    <div class="border rounded-3 p-4 bg-white shadow-sm text-muted small lh-lg">
+                        <p class="mb-3">Este sistema se encuentra bajo una licencia de uso institucional restringido. Está destinado exclusivamente a organismos y áreas autorizadas de la Municipalidad, y no puede ser distribuido, modificado ni reutilizado fuera del ámbito para el cual fue desarrollado.</p>
+                        <p class="mb-0">Su utilización está limitada a fines administrativos, sociales y de gestión interna, garantizando la protección de datos sensibles conforme a las normativas vigentes.</p>
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <h6 class="text-muted text-uppercase fw-semibold mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">Tecnologías</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        <div class="border rounded-3 px-3 py-2 bg-white shadow-sm d-flex align-items-center">
+                            <span class="fw-bold text-dark" style="color: #ff2d20;"><i class="bi bi-filetype-php me-1 text-primary"></i> Laravel</span>
+                        </div>
+                        <div class="border rounded-3 px-3 py-2 bg-white shadow-sm d-flex align-items-center">
+                            <span class="fw-bold text-dark" style="color: #7952b3;"><i class="bi bi-bootstrap-fill me-1" style="color: #7952b3;"></i> Bootstrap</span>
+                        </div>
+                        <div class="border rounded-3 px-3 py-2 bg-white shadow-sm d-flex align-items-center">
+                            <span class="fw-bold text-dark" style="color: #00758f;"><i class="bi bi-database-fill me-1 text-info"></i> MySQL</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
+
+            <div class="modal-footer border-top bg-light pt-3 pb-3">
+                <div class="me-auto text-muted small">
+                </div>
+                <button type="button" class="btn btn-secondary rounded-pill px-4 shadow-sm" data-bs-dismiss="modal">Cerrar</button>
             </div>
+            
         </div>
     </div>
 </div>

@@ -21,7 +21,114 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead style="background: #f8f9fa; border-bottom: 2px solid #ecebfa;">
                         <tr>
-                            <th class="ps-4 text-muted text-uppercase small fw-bold">Nombre Completo</th>
+                            <th class="ps-4 text-muted@extends('backend.layouts.app')
+
+@section('content')
+<div class="container-fluid py-2 py-md-4">
+    <div class="card shadow-sm border-0" style="border-radius: 12px;">
+        <div class="card-header d-flex flex-column flex-sm-row justify-content-between align-items-center text-white gap-3" 
+             style="background: #5651A0; border-radius: 12px 12px 0 0; padding: 1rem 1.5rem;">
+            
+            <h5 class="mb-0 d-flex align-items-center text-center text-sm-start">
+                <i class="bi bi-person-badge-fill me-2"></i> 
+                Gestión de Encargados
+            </h5>
+
+            <a href="{{ route('backend.encargados.create') }}" class="btn btn-light btn-sm fw-bold shadow-sm w-100 w-sm-auto">
+                <i class="bi bi-plus-lg me-1"></i> Nuevo Encargado
+            </a>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-3 ps-md-4 text-muted text-uppercase small fw-bold">Nombre Completo</th>
+                            <th class="text-muted text-uppercase small fw-bold">Áreas</th>
+                            <th width="120" class="text-center text-muted text-uppercase small fw-bold pe-3 pe-md-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($encargados as $encargado)
+                            <tr>
+                                <td class="ps-3 ps-md-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle me-2 me-md-3 text-white d-none d-sm-flex align-items-center justify-content-center shadow-sm flex-shrink-0" 
+                                             style="width: 38px; height: 38px; background: #9d99d3; border-radius: 50%; font-size: 0.8rem; font-weight: bold;">
+                                            {{ strtoupper(substr($encargado->nombre, 0, 1)) }}{{ strtoupper(substr($encargado->apellido, 0, 1)) }}
+                                        </div>
+                                        <div class="text-truncate">
+                                            <span class="fw-bold d-block text-dark text-truncate" style="max-width: 150px;">
+                                                {{ $encargado->apellido }}, {{ $encargado->nombre }}
+                                            </span>
+                                            <small class="text-muted">ID: #{{ $encargado->id }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        @foreach($encargado->areas as $area)
+                                            <span class="badge rounded-pill shadow-xs" 
+                                                  style="background: #ecebfa; color: #5651A0; border: 1px solid #dcd9f5; font-size: 0.7rem; padding: 0.4em 0.8em;">
+                                                {{ $area->nombre }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                </td>
+                                <td class="text-center pe-3 pe-md-4">
+                                    <div class="btn-group shadow-sm rounded">
+                                        <a href="{{ route('backend.encargados.edit', $encargado->id) }}" 
+                                           class="btn btn-white btn-sm border text-primary" 
+                                           title="Editar">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+
+                                        <form method="POST" 
+                                              action="{{ route('backend.encargados.destroy', $encargado->id) }}" 
+                                              class="d-inline form-delete">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="btn btn-white btn-sm border text-danger btn-delete" 
+                                                    title="Eliminar">
+                                                <i class="bi bi-trash3"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center py-5 text-muted">
+                                    <i class="bi bi-info-circle d-block mb-2 fs-3"></i>
+                                    No hay encargados registrados.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="card-footer bg-white border-0 py-3 text-muted small">
+            <i class="bi bi-info-circle me-1"></i> Total: <strong>{{ $encargados->count() }}</strong>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+    document.querySelectorAll('.btn-delete').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('¿Estás seguro de que deseas eliminar este encargado?')) {
+                this.closest('form').submit();
+            }
+        });
+    });
+</script>
+@endpush
+@endsection text-uppercase small fw-bold">Nombre Completo</th>
                             <th class="text-muted text-uppercase small fw-bold">Áreas Asignadas</th>
                             <th width="200" class="text-center text-muted text-uppercase small fw-bold">Acciones</th>
                         </tr>

@@ -105,8 +105,7 @@
                             <div class="col-md-6 background-image d-none d-md-block">
                                 <div class="d-flex align-items-center justify-content-center h-100 p-5 text-white">
                                     <div>
-                                    <h2 class="h3">Dirección de Género</h2>
-                                        
+                                        <img src="" alt="">
                                     </div>
                                 </div>
                             </div>
