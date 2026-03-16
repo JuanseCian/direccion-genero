@@ -296,6 +296,17 @@
                         </div>
                     </div>
                     <div class="col-md-4">
+                        <label class="form-label fw-bold">Nivel de Gravedad</label>
+
+                        <select name="nivel_gravedad" class="form-control">
+
+                        <option value="3">Alto</option>
+                        <option value="2">Medio</option>
+                        <option value="1">Bajo</option>
+
+                        </select>
+                        </div>
+                    <div class="col-md-4">
                         <label class="form-label fw-bold">Tipo de arma</label>
                         <input type="text"
                             name="amenaza_tipo_arma"

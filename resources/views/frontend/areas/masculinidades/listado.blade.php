@@ -107,19 +107,31 @@
                                     <strong>Encargado:</strong> {{ $caso->encargado->nombre ?? 'No asignado' }}
                                 </div>
                             </td>
-                            <td class="text-center">
+                             <td class="text-center">
                                 <div class="btn-group shadow-sm">
-                                    {{-- Nota: Ajustar rutas de edit/destroy cuando las definas en el controlador --}}
-                                    <a href="{{ route('masculinidades.edit', $caso->id) }}" class="btn btn-sm btn-outline-primary" title="Editar">
+
+                                    <a href="{{ route('masculinidades.edit', $caso->id) }}" 
+                                       class="btn btn-sm btn-outline-primary" 
+                                       title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
+
+                                    <a href="{{ route('masculinidades.descargar', $caso->id) }}" 
+                                       class="btn btn-sm btn-outline-success"
+                                       title="Descargar Word">
+                                        <i class="bi bi-file-earmark-word"></i>
+                                    </a>
+
                                     <form action="{{ route('masculinidades.destroy', $caso->id) }}" method="POST" class="d-inline">
                                         @csrf 
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Borrar Caso?')">
+                                        <button type="submit" 
+                                                class="btn btn-sm btn-outline-danger" 
+                                                onclick="return confirm('¿Borrar Caso?')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
+
                                 </div>
                             </td>
                         </tr>

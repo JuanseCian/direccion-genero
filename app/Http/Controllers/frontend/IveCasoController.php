@@ -48,7 +48,27 @@ class IveCasoController extends Controller
 
     return view('frontend.areas.ive.index', compact('casos'));
 }
+public function descargarWord($id)
+{
+    $caso = IveCaso::findOrFail($id);
 
+    $user = auth()->user();
+
+    // seguridad
+    if (
+        $user->rol_id != 2 &&
+        !$user->areas->contains('nombre','ive') &&
+        !$user->iveCasos->contains($caso->id)
+    ) {
+        abort(403);
+    }
+
+    $adjunto = Adjunto::where('entidad_tipo','ive')
+        ->where('entidad_id',$caso->id)
+        ->firstOrFail();
+
+    return Storage::download($adjunto->ruta, $adjunto->nombre_original);
+}
     public function create()
     {
         $idsConCaso = IveCaso::pluck('persona_id')->toArray();

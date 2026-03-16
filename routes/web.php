@@ -3,6 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdjuntoController;
+use App\Http\Controllers\Frontend\IveCasoController;
+use App\Http\Controllers\Frontend\DireccionGeneroController;
+use App\Http\Controllers\Frontend\MasculinidadesController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,7 +45,14 @@ Route::get('adjuntos/{id}/descargar', [AdjuntoController::class, 'descargar'])
 Route::get('/buscar', [App\Http\Controllers\PersonaController::class, 'index'])
     ->name('buscar')
     ->middleware(['auth','activo']);
+Route::get('/ive/caso/{id}/descargar', [IveCasoController::class, 'descargarWord'])
+    ->name('ive.descargar');
 
+ Route::get('/genero/caso/{id}/descargar', [DireccionGeneroController::class, 'descargarWord'])
+    ->name('genero.descargar');
+
+Route::get('/masculinidades/caso/{id}/descargar', [MasculinidadesController::class, 'descargarWord'])
+    ->name('masculinidades.descargar');
 require __DIR__.'/auth.php';
 
 //Rutas de Front/para usuarios comunes o administradores

@@ -37,6 +37,7 @@ class DireccionGeneroCaso extends Model
         'servicios_gas_natural',
         'denuncio_antes',
         'denuncio_antes_detalle',
+        'nivel_gravedad',
         'amenaza_con_arma',
         'fecha_ultima_denuncia',
         'amenaza_tipo_arma',

@@ -27,7 +27,7 @@ class DireccionGeneroController extends Controller
             'nivelEstudio',
             'encargado'
         ])
-        ->orderBy('created_at','desc')
+        ->orderBy('nivel_gravedad', 'desc')
         ->paginate(10);
         
         return view('frontend.areas.genero.listado', compact('legajos'));
@@ -101,7 +101,7 @@ class DireccionGeneroController extends Controller
         $trabaja = $request->has('trabaja') ? 1 : 0;
         $orgSocial = $request->has('organizacion_social') ? 1 : 0;
         $cursoMasculinidades = $request->has('debe_asistir_masculinidades') ? 1 : 0;
-
+        
         $servicios_luz = $request->has('servicios_luz') ? 1 : 0;
         $servicios_cable = $request->has('servicios_cable') ? 1 : 0;
         $servicios_gas = $request->has('servicios_gas_natural') ? 1 : 0;
@@ -126,6 +126,7 @@ class DireccionGeneroController extends Controller
                 'medida_cautelar_id' => $request->medida_cautelar_id,
                 'nivel_estudio_id' => $request->nivel_estudio_id,
                 'trabaja' => $trabaja,
+                'nivel_gravedad'=>$request->nivel_gravedad,
                 'organizacion_social' => $orgSocial,
                 'organizacion_social_detalle' => $request->organizacion_social_detalle,
                 'debe_asistir_masculinidades' => $cursoMasculinidades,
@@ -311,7 +312,25 @@ class DireccionGeneroController extends Controller
 
         return $ruta;
     }
+    public function descargarWord($id)
+    {
+        $caso = DireccionGeneroCaso::findOrFail($id);
 
+        $user = auth()->user();
+
+        if (
+            $user->rol_id != 2 &&
+            !$user->areas->contains('nombre','direccion_genero')
+        ) {
+            abort(403);
+        }
+
+        $adjunto = Adjunto::where('entidad_tipo','genero')
+            ->where('entidad_id',$caso->id)
+            ->firstOrFail();
+
+        return Storage::download($adjunto->ruta, $adjunto->nombre_original);
+    }
     public function edit($id)
     {
         $legajo = DireccionGeneroCaso::with([
@@ -396,7 +415,7 @@ class DireccionGeneroController extends Controller
                 'localidad_id' => $request->localidad_id,
                 'barrio_id' => $request->barrio_id,
                 'nivel_estudio_id' => $request->nivel_estudio_id,
-
+                'nivel_gravedad'=>$request->nivel_gravedad,
                 'trabaja' => $request->trabaja == "1" ? 1 : 0,
                 'organizacion_social' => $request->organizacion_social == "1" ? 1 : 0,
                 'organizacion_social_detalle' => $request->organizacion_social_detalle,

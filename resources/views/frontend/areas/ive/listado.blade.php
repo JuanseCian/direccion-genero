@@ -87,18 +87,39 @@
 
                             {{-- Acciones --}}
                             <td class="text-center">
-                                <div class="btn-group shadow-sm">
-                                    <a href="{{ route('frontend.areas.ive.edit', $caso->id) }}" class="btn btn-sm btn-outline-primary" title="Editar">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form action="{{ route('frontend.areas.ive.destroy', $caso->id) }}" method="POST" class="d-inline">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Borrar este registro?')">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
+    <div class="btn-group shadow-sm">
+
+        {{-- Editar --}}
+        <a href="{{ route('frontend.areas.ive.edit', $caso->id) }}" 
+           class="btn btn-sm btn-outline-primary" 
+           title="Editar">
+            <i class="bi bi-pencil"></i>
+        </a>
+
+        {{-- Descargar Word --}}
+        <a href="{{ route('ive.descargar', $caso->id) }}" 
+           class="btn btn-sm btn-outline-success" 
+           title="Descargar Word">
+            <i class="bi bi-file-earmark-word"></i>
+        </a>
+
+        {{-- Eliminar --}}
+        <form action="{{ route('frontend.areas.ive.destroy', $caso->id) }}" method="POST" class="d-inline">
+            @csrf
+            @method('DELETE')
+
+            <button type="submit" 
+                    class="btn btn-sm btn-outline-danger"
+                    onclick="return confirm('¿Borrar este registro?')">
+
+                <i class="bi bi-trash"></i>
+
+            </button>
+
+        </form>
+
+    </div>
+</td>
                         </tr>
                         @empty
                         <tr>

@@ -476,7 +476,25 @@ class MasculinidadesCasoController extends Controller
             ->route('masculinidades.listado')
             ->with('success', 'Caso actualizado correctamente.');
     }
-    
+    public function descargarWord($id)
+{
+    $caso = MasculinidadesCaso::findOrFail($id);
+
+    $user = auth()->user();
+
+    if (
+        $user->rol_id != 2 &&
+        !$user->areas->contains('nombre','masculinidades')
+    ) {
+        abort(403);
+    }
+
+    $adjunto = Adjunto::where('entidad_tipo','masculinidades')
+        ->where('entidad_id',$caso->id)
+        ->firstOrFail();
+
+    return Storage::download($adjunto->ruta, $adjunto->nombre_original);
+}
     public function destroy(string $id)
     {
         $caso = MasculinidadesCaso::findOrFail($id);

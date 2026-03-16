@@ -26,6 +26,7 @@
                             <th>Ubicación</th>
                             <th>Situación</th>
                             <th>Estudios</th>
+                            <th>Gravedad</th>
                             <th width="150" class="text-center">Acciones</th>
                         </tr>
                     </thead>
@@ -60,17 +61,42 @@
                                     {{ $legajo->nivelEstudio->nombre ?? 'Sin datos' }}
                                 </span>
                             </td>
-                            <td class="text-center">
+                            <td>
+
+                            @if($legajo->nivel_gravedad == 3)
+                            <span class="badge bg-danger">Alto</span>
+                            @elseif($legajo->nivel_gravedad == 2)
+                            <span class="badge bg-warning text-dark">Medio</span>
+                            @else
+                            <span class="badge bg-success">Bajo</span>
+                            @endif
+
+                            </td>
+                             <td class="text-center">
                                 <div class="btn-group shadow-sm">
-                                    <a href="{{ route('genero.edit', $legajo->id) }}" class="btn btn-sm btn-outline-primary" title="Editar">
+
+                                    <a href="{{ route('genero.edit', $legajo->id) }}" 
+                                       class="btn btn-sm btn-outline-primary" 
+                                       title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
+
+                                    <a href="{{ route('genero.descargar', $legajo->id) }}" 
+                                       class="btn btn-sm btn-outline-success"
+                                       title="Descargar Word">
+                                        <i class="bi bi-file-earmark-word"></i>
+                                    </a>
+
                                     <form action="{{ route('genero.destroy', $legajo->id) }}" method="POST" class="d-inline">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Borrar legajo?')">
+                                        @csrf 
+                                        @method('DELETE')
+                                        <button type="submit" 
+                                                class="btn btn-sm btn-outline-danger" 
+                                                onclick="return confirm('¿Borrar legajo?')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
+
                                 </div>
                             </td>
                         </tr>

@@ -277,6 +277,17 @@
                         </select>
                     </div>
                     <div class="col-md-4">
+                        <label class="form-label fw-bold">Nivel de Gravedad</label>
+
+                        <select name="nivel_gravedad" class="form-control">
+
+                        <option value="3">Alto</option>
+                        <option value="2">Medio</option>
+                        <option value="1">Bajo</option>
+
+                        </select>
+                        </div>
+                    <div class="col-md-4">
                         <label class="form-label fw-bold">Fecha última denuncia</label>
                         <input type="date" name="fecha_ultima_denuncia" class="form-control">
                     </div>
