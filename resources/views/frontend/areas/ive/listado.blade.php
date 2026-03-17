@@ -110,7 +110,7 @@
 
             <button type="submit" 
                     class="btn btn-sm btn-outline-danger"
-                    onclick="return confirm('¿Borrar este registro?')">
+                    >
 
                 <i class="bi bi-trash"></i>
 

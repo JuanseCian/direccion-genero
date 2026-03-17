@@ -101,34 +101,7 @@
                     </div>
                 </div>
 
-                {{-- Card 4: Acceso a Casos IVE --}}
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-header bg-light border-0 py-3">
-                        <h5 class="mb-0 text-secondary small text-uppercase fw-bold">
-                            <i class="fas fa-folder-open me-2"></i>Permisos Casos IVE
-                        </h5>
-                    </div>
-                    <div class="card-body bg-white">
-                        <label class="form-label fw-bold text-muted small mb-2">Casos específicos permitidos</label>
-                        <div class="p-2 border rounded bg-light" style="max-height:250px; overflow-y:auto;">
-                            <div class="row g-2">
-                                @foreach($iveCasos as $caso)
-                                    <div class="col-12 col-md-6">
-                                        <div class="form-check bg-white p-2 border rounded shadow-xs">
-                                            <input type="checkbox" name="ive_casos[]" value="{{ $caso->id }}"
-                                                   class="form-check-input ms-0 me-2" id="ive_caso_{{ $caso->id }}"
-                                                   {{ $user->iveCasos->contains($caso->id) ? 'checked' : '' }}>
-                                            <label class="form-check-label small text-truncate w-75" for="ive_caso_{{ $caso->id }}">
-                                                <strong>#{{ $caso->id }}</strong> - {{ $caso->persona->apellido ?? '' }}
-                                            </label>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+               
                 {{-- Botones de Acción Adaptativos --}}
                 <div class="d-flex flex-column flex-sm-row gap-2 mb-5">
                     <button type="submit" class="btn btn-success btn-lg px-md-5 shadow-sm order-last order-sm-first">

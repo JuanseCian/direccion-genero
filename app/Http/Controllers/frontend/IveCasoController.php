@@ -457,4 +457,50 @@ private function generarWordIve($caso)
 
     return $ruta;
 }
+public function destroy($id)
+{
+    $caso = IveCaso::findOrFail($id);
+
+    $user = auth()->user();
+
+    // 🔒 CONTROL DE ACCESO
+    if (
+        $user->rol_id != 2 &&
+        !$user->areas->contains('nombre','ive') &&
+        !$user->iveCasos->contains($caso->id)
+    ) {
+        abort(403, 'No tiene permisos para eliminar este caso');
+    }
+
+    DB::transaction(function() use ($caso) {
+
+        // Buscar adjunto
+        $adjunto = Adjunto::where('entidad_tipo','ive')
+            ->where('entidad_id',$caso->id)
+            ->first();
+
+        if ($adjunto) {
+
+            // Eliminar archivo físico
+            if (Storage::exists($adjunto->ruta)) {
+                Storage::delete($adjunto->ruta);
+            }
+
+            // Eliminar registro adjunto
+            $adjunto->delete();
+        }
+
+        // Eliminar relaciones (por seguridad)
+        $caso->tiposViolencia()->detach();
+        $caso->redesContencion()->detach();
+        $caso->medicaciones()->delete();
+
+        // Eliminar caso
+        $caso->delete();
+    });
+
+    return redirect()
+        ->route('frontend.areas.ive.listado')
+        ->with('success', 'Caso eliminado correctamente');
+}
 }
