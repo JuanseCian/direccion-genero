@@ -88,7 +88,7 @@
         <span class="menu-text">Panel de Usuarios</span>
     </a>
 
-    <a href="#">
+    <a href="{{ route('backend.papelera.index') }}">
         <i class="bi bi-trash"></i>
         <span class="menu-text">Registros Eliminados</span>
     </a>

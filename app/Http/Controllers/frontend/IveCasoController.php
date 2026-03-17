@@ -207,300 +207,288 @@ public function descargarWord($id)
         return view('frontend.areas.ive.listado', compact('casos'));
     }
 
-   public function edit($id)
-{
-    $user = auth()->user();
+    public function edit($id)
+    {
+        $user = auth()->user();
 
-    $caso = IveCaso::with([
-        'tiposViolencia',
-        'intervenciones.tipo', 
-        'intervenciones.encargado',
-        'redesContencion',
-        'medicaciones'
-    ])->findOrFail($id);
+        $caso = IveCaso::with([
+            'tiposViolencia',
+            'intervenciones.tipo', 
+            'intervenciones.encargado',
+            'redesContencion',
+            'medicaciones'
+        ])->findOrFail($id);
 
-    // 🔒 CONTROL DE ACCESO
+        // 🔒 CONTROL DE ACCESO
 
-    
+        
 
-    $legajo = $caso;
+        $legajo = $caso;
 
-    $personas = Persona::where('sexo', 'Femenino')->get();
-    $tiposViolencia = TipoViolencia::orderBy('nombre')->get();
-    $redes = RedContencion::orderBy('nombre')->get();
-    $tiposIntervencion = TipoIntervencion::all();
-    $estadosCiviles = EstadoCivil::orderBy('nombre')->get();
-    $metodos = MetodoInterrupcion::orderBy('nombre')->get();
+        $personas = Persona::where('sexo', 'Femenino')->get();
+        $tiposViolencia = TipoViolencia::orderBy('nombre')->get();
+        $redes = RedContencion::orderBy('nombre')->get();
+        $tiposIntervencion = TipoIntervencion::all();
+        $estadosCiviles = EstadoCivil::orderBy('nombre')->get();
+        $metodos = MetodoInterrupcion::orderBy('nombre')->get();
 
-    $encargados = Encargado::whereHas('areas', function($q){
-        $q->where('areas.id', 3);
-    })->get();
-                
-    $existeEnGenero = DireccionGeneroCaso::where('persona_id', $caso->persona_id)->exists();
+        $encargados = Encargado::whereHas('areas', function($q){
+            $q->where('areas.id', 3);
+        })->get();
+                    
+        $existeEnGenero = DireccionGeneroCaso::where('persona_id', $caso->persona_id)->exists();
 
-    return view('frontend.areas.ive.edit', compact(
-        'caso', 
-        'legajo', 
-        'personas', 
-        'existeEnGenero', 
-        'encargados',
-        'tiposViolencia',
-        'redes',
-        'tiposIntervencion',
-        'estadosCiviles',
-        'metodos'
-    ));
-}
+        return view('frontend.areas.ive.edit', compact(
+            'caso', 
+            'legajo', 
+            'personas', 
+            'existeEnGenero', 
+            'encargados',
+            'tiposViolencia',
+            'redes',
+            'tiposIntervencion',
+            'estadosCiviles',
+            'metodos'
+        ));
+    }
 
-  public function update(Request $request, $id)
-{
-    $caso = IveCaso::findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        $caso = IveCaso::findOrFail($id);
 
-    $request->validate([
-        'persona_id' => 'required|exists:personas,id',
-        'fum' => 'nullable|date',
-        'eco_semanas' => 'nullable|integer',
-        'cantidad_hijos' => 'integer|min:0',
-        'alta' => 'nullable|date',
-        'encargado_id' => 'required|exists:encargados,id',
+        $request->validate([
+            'persona_id' => 'required|exists:personas,id',
+            'fum' => 'nullable|date',
+            'eco_semanas' => 'nullable|integer',
+            'cantidad_hijos' => 'integer|min:0',
+            'alta' => 'nullable|date',
+            'encargado_id' => 'required|exists:encargados,id',
 
-        'tipos_violencia' => 'nullable|array',
-        'tipos_violencia.*' => 'exists:tipos_violencia,id',
+            'tipos_violencia' => 'nullable|array',
+            'tipos_violencia.*' => 'exists:tipos_violencia,id',
 
-        'redes_contencion' => 'nullable|array',
-        'redes_contencion.*' => 'exists:red_contencion,id',
+            'redes_contencion' => 'nullable|array',
+            'redes_contencion.*' => 'exists:red_contencion,id',
 
-        'medicaciones.*.nombre' => 'nullable|string|max:255',
-        'medicaciones.*.numero_lote' => 'nullable|string|max:255',
+            'medicaciones.*.nombre' => 'nullable|string|max:255',
+            'medicaciones.*.numero_lote' => 'nullable|string|max:255',
 
-        'semanas_gestacion' => 'nullable|integer|min:0',
-        'estado_civil_id' => 'nullable|exists:estados_civiles,id',
-        'metodo_interrupcion_id' => 'nullable|exists:metodos_interrupcion,id',
-    ]);
+            'semanas_gestacion' => 'nullable|integer|min:0',
+            'estado_civil_id' => 'nullable|exists:estados_civiles,id',
+            'metodo_interrupcion_id' => 'nullable|exists:metodos_interrupcion,id',
+        ]);
 
-    DB::transaction(function() use ($request, $caso) {
+        DB::transaction(function() use ($request, $caso) {
 
-        $data = $request->all();
+            $data = $request->all();
 
-        $data['obra_social'] = $request->has('obra_social') ? 1 : 0;
-        $data['interrupcion_previa'] = $request->has('interrupcion_previa') ? 1 : 0;
-        $data['violencia_previa'] = $request->has('violencia_previa') ? 1 : 0;
+            $data['obra_social'] = $request->has('obra_social') ? 1 : 0;
+            $data['interrupcion_previa'] = $request->has('interrupcion_previa') ? 1 : 0;
+            $data['violencia_previa'] = $request->has('violencia_previa') ? 1 : 0;
 
-        $caso->update($data);
+            $caso->update($data);
 
-        $caso->tiposViolencia()->sync($request->tipos_violencia ?? []);
-        $caso->redesContencion()->sync($request->redes_contencion ?? []);
+            $caso->tiposViolencia()->sync($request->tipos_violencia ?? []);
+            $caso->redesContencion()->sync($request->redes_contencion ?? []);
 
-        $caso->medicaciones()->delete();
+            $caso->medicaciones()->delete();
 
-        if ($request->has('medicaciones')) {
-            foreach ($request->medicaciones as $med) {
-                if (!empty($med['nombre'])) {
-                    $caso->medicaciones()->create([
-                        'nombre' => $med['nombre'],
-                        'numero_lote' => $med['numero_lote'] ?? null
-                    ]);
+            if ($request->has('medicaciones')) {
+                foreach ($request->medicaciones as $med) {
+                    if (!empty($med['nombre'])) {
+                        $caso->medicaciones()->create([
+                            'nombre' => $med['nombre'],
+                            'numero_lote' => $med['numero_lote'] ?? null
+                        ]);
+                    }
                 }
             }
-        }
 
-       $caso->load([
-    'persona',
-    'estadoCivil',
-    'metodoInterrupcion',
-    'encargado',
-    'tiposViolencia',
-    'redesContencion',
-    'medicaciones'
-]);
-
-        $rutaWord = $this->generarWordIve($caso);
-
-        $path = storage_path('app/'.$rutaWord);
-
-        $adjunto = Adjunto::where('entidad_tipo','ive')
-            ->where('entidad_id',$caso->id)
-            ->first();
-
-        if ($adjunto) {
-            $adjunto->update([
-                'tamaño' => filesize($path),
-                'hash_sha256' => hash_file('sha256',$path)
-            ]);
-        }
-    });
-
-    return redirect()
-        ->route('frontend.areas.ive.listado')
-        ->with('success', 'Caso actualizado correctamente');
-}
-private function generarWordIve($caso)
-{
-    $persona = $caso->persona;
-
-    $phpWord = new PhpWord();
-
-    $section = $phpWord->addSection([
-        'marginTop' => 1000,
-        'marginBottom' => 1000,
-        'marginLeft' => 1200,
-        'marginRight' => 1200
+        $caso->load([
+        'persona',
+        'estadoCivil',
+        'metodoInterrupcion',
+        'encargado',
+        'tiposViolencia',
+        'redesContencion',
+        'medicaciones'
     ]);
 
-    $section->addText(
-        'REGISTRO IVE',
-        ['bold'=>true,'size'=>16],
-        ['alignment'=>'center']
-    );
+            $rutaWord = $this->generarWordIve($caso);
 
-    $section->addTextBreak(2);
+            $path = storage_path('app/'.$rutaWord);
 
-    $table = $section->addTable([
-        'borderSize'=>6,
-        'borderColor'=>'999999'
-    ]);
+            $adjunto = Adjunto::where('entidad_tipo','ive')
+                ->where('entidad_id',$caso->id)
+                ->first();
 
-    // DATOS PERSONALES
-
-    $table->addRow();
-    $table->addCell(4000)->addText('Nombre');
-    $table->addCell(6000)->addText($persona->nombre.' '.$persona->apellido);
-
-    $table->addRow();
-    $table->addCell()->addText('DNI');
-    $table->addCell()->addText($persona->dni);
-
-    $table->addRow();
-    $table->addCell()->addText('Estado civil');
-    $table->addCell()->addText($caso->estadoCivil->nombre ?? '');
-
-    $table->addRow();
-    $table->addCell()->addText('Cantidad de hijos');
-    $table->addCell()->addText($caso->cantidad_hijos ?? '');
-
-    // DATOS MÉDICOS
-
-    $table->addRow();
-    $table->addCell()->addText('FUM');
-    $table->addCell()->addText($caso->fum ?? '');
-
-    $table->addRow();
-    $table->addCell()->addText('Semanas de gestación');
-    $table->addCell()->addText($caso->semanas_gestacion ?? '');
-
-    $table->addRow();
-    $table->addCell()->addText('Eco semanas');
-    $table->addCell()->addText($caso->eco_semanas ?? '');
-
-    $table->addRow();
-    $table->addCell()->addText('Método de interrupción');
-    $table->addCell()->addText($caso->metodoInterrupcion->nombre ?? '');
-
-    // SITUACIÓN SOCIAL
-
-    $section->addTextBreak();
-    $section->addText('SITUACIÓN SOCIAL', ['bold'=>true]);
-
-    $section->addText('Obra social: '.($caso->obra_social ? 'Sí' : 'No'));
-    $section->addText('Interrupción previa: '.($caso->interrupcion_previa ? 'Sí' : 'No'));
-    $section->addText('Violencia previa: '.($caso->violencia_previa ? 'Sí' : 'No'));
-
-    // TIPOS DE VIOLENCIA
-
-    $section->addTextBreak();
-    $section->addText('TIPOS DE VIOLENCIA', ['bold'=>true]);
-
-    foreach ($caso->tiposViolencia as $v) {
-        $section->addText('- '.$v->nombre);
-    }
-
-    // REDES DE CONTENCIÓN
-
-    $section->addTextBreak();
-    $section->addText('REDES DE CONTENCIÓN', ['bold'=>true]);
-
-    foreach ($caso->redesContencion as $r) {
-        $section->addText('- '.$r->nombre);
-    }
-
-    // MEDICACIONES
-
-    $section->addTextBreak();
-    $section->addText('MEDICACIONES', ['bold'=>true]);
-
-    foreach ($caso->medicaciones as $m) {
-        $section->addText($m->nombre.'   |   Lote: '.$m->numero_lote);
-    }
-
-    // ENCARGADO
-
-    $section->addTextBreak();
-    $section->addText('Encargado: '.$caso->encargado->nombre ?? '');
-
-    // NOMBRE DEL ARCHIVO
-
-    $numeroCaso = str_pad($caso->id,6,"0",STR_PAD_LEFT);
-    $dni = preg_replace('/[^0-9]/','',$persona->dni);
-
-    $nombreWord = "caso_ive_{$numeroCaso}_{$dni}.docx";
-
-    $ruta = "ive_certificados/".$nombreWord;
-
-    $path = storage_path('app/'.$ruta);
-
-    if(!file_exists(dirname($path))){
-        mkdir(dirname($path),0755,true);
-    }
-
-    $writer = IOFactory::createWriter($phpWord,'Word2007');
-    $writer->save($path);
-
-    return $ruta;
-}
-public function destroy($id)
-{
-    $caso = IveCaso::findOrFail($id);
-
-    $user = auth()->user();
-
-    // 🔒 CONTROL DE ACCESO
-    if (
-        $user->rol_id != 2 &&
-        !$user->areas->contains('nombre','ive') &&
-        !$user->iveCasos->contains($caso->id)
-    ) {
-        abort(403, 'No tiene permisos para eliminar este caso');
-    }
-
-    DB::transaction(function() use ($caso) {
-
-        // Buscar adjunto
-        $adjunto = Adjunto::where('entidad_tipo','ive')
-            ->where('entidad_id',$caso->id)
-            ->first();
-
-        if ($adjunto) {
-
-            // Eliminar archivo físico
-            if (Storage::exists($adjunto->ruta)) {
-                Storage::delete($adjunto->ruta);
+            if ($adjunto) {
+                $adjunto->update([
+                    'tamaño' => filesize($path),
+                    'hash_sha256' => hash_file('sha256',$path)
+                ]);
             }
+        });
 
-            // Eliminar registro adjunto
-            $adjunto->delete();
+        return redirect()
+            ->route('frontend.areas.ive.listado')
+            ->with('success', 'Caso actualizado correctamente');
+    }
+
+    private function generarWordIve($caso)
+    {
+        $persona = $caso->persona;
+
+        $phpWord = new PhpWord();
+
+        $section = $phpWord->addSection([
+            'marginTop' => 1000,
+            'marginBottom' => 1000,
+            'marginLeft' => 1200,
+            'marginRight' => 1200
+        ]);
+
+        $section->addText(
+            'REGISTRO IVE',
+            ['bold'=>true,'size'=>16],
+            ['alignment'=>'center']
+        );
+
+        $section->addTextBreak(2);
+
+        $table = $section->addTable([
+            'borderSize'=>6,
+            'borderColor'=>'999999'
+        ]);
+
+        // DATOS PERSONALES
+
+        $table->addRow();
+        $table->addCell(4000)->addText('Nombre');
+        $table->addCell(6000)->addText($persona->nombre.' '.$persona->apellido);
+
+        $table->addRow();
+        $table->addCell()->addText('DNI');
+        $table->addCell()->addText($persona->dni);
+
+        $table->addRow();
+        $table->addCell()->addText('Estado civil');
+        $table->addCell()->addText($caso->estadoCivil->nombre ?? '');
+
+        $table->addRow();
+        $table->addCell()->addText('Cantidad de hijos');
+        $table->addCell()->addText($caso->cantidad_hijos ?? '');
+
+        // DATOS MÉDICOS
+
+        $table->addRow();
+        $table->addCell()->addText('FUM');
+        $table->addCell()->addText($caso->fum ?? '');
+
+        $table->addRow();
+        $table->addCell()->addText('Semanas de gestación');
+        $table->addCell()->addText($caso->semanas_gestacion ?? '');
+
+        $table->addRow();
+        $table->addCell()->addText('Eco semanas');
+        $table->addCell()->addText($caso->eco_semanas ?? '');
+
+        $table->addRow();
+        $table->addCell()->addText('Método de interrupción');
+        $table->addCell()->addText($caso->metodoInterrupcion->nombre ?? '');
+
+        // SITUACIÓN SOCIAL
+
+        $section->addTextBreak();
+        $section->addText('SITUACIÓN SOCIAL', ['bold'=>true]);
+
+        $section->addText('Obra social: '.($caso->obra_social ? 'Sí' : 'No'));
+        $section->addText('Interrupción previa: '.($caso->interrupcion_previa ? 'Sí' : 'No'));
+        $section->addText('Violencia previa: '.($caso->violencia_previa ? 'Sí' : 'No'));
+
+        // TIPOS DE VIOLENCIA
+
+        $section->addTextBreak();
+        $section->addText('TIPOS DE VIOLENCIA', ['bold'=>true]);
+
+        foreach ($caso->tiposViolencia as $v) {
+            $section->addText('- '.$v->nombre);
         }
 
-        // Eliminar relaciones (por seguridad)
-        $caso->tiposViolencia()->detach();
-        $caso->redesContencion()->detach();
-        $caso->medicaciones()->delete();
+        // REDES DE CONTENCIÓN
 
-        // Eliminar caso
-        $caso->delete();
-    });
+        $section->addTextBreak();
+        $section->addText('REDES DE CONTENCIÓN', ['bold'=>true]);
 
-    return redirect()
-        ->route('frontend.areas.ive.listado')
-        ->with('success', 'Caso eliminado correctamente');
-}
+        foreach ($caso->redesContencion as $r) {
+            $section->addText('- '.$r->nombre);
+        }
+
+        // MEDICACIONES
+
+        $section->addTextBreak();
+        $section->addText('MEDICACIONES', ['bold'=>true]);
+
+        foreach ($caso->medicaciones as $m) {
+            $section->addText($m->nombre.'   |   Lote: '.$m->numero_lote);
+        }
+
+        // ENCARGADO
+
+        $section->addTextBreak();
+        $section->addText('Encargado: '.$caso->encargado->nombre ?? '');
+
+        // NOMBRE DEL ARCHIVO
+
+        $numeroCaso = str_pad($caso->id,6,"0",STR_PAD_LEFT);
+        $dni = preg_replace('/[^0-9]/','',$persona->dni);
+
+        $nombreWord = "caso_ive_{$numeroCaso}_{$dni}.docx";
+
+        $ruta = "ive_certificados/".$nombreWord;
+
+        $path = storage_path('app/'.$ruta);
+
+        if(!file_exists(dirname($path))){
+            mkdir(dirname($path),0755,true);
+        }
+
+        $writer = IOFactory::createWriter($phpWord,'Word2007');
+        $writer->save($path);
+
+        return $ruta;
+    }
+
+    public function destroy(Request $request, $id) // Agregamos Request para capturar el motivo
+    {
+        $caso = IveCaso::findOrFail($id);
+        $user = auth()->user();
+
+        // 🔒 CONTROL DE ACCESO (Mantenemos tu lógica)
+        if (
+            $user->rol_id != 2 &&
+            !$user->areas->contains('nombre','ive') &&
+            !$user->iveCasos->contains($caso->id)
+        ) {
+            abort(403, 'No tiene permisos para eliminar este caso');
+        }
+
+        // Validar que venga un motivo
+        $request->validate([
+            'motivo_eliminacion' => 'required|string|max:500'
+        ]);
+
+        DB::transaction(function() use ($caso, $request) {
+            // 1. Guardamos metadatos de quién y por qué elimina
+            $caso->deleted_by = auth()->id(); // Guarda el ID del usuario logueado
+            $caso->motivo_eliminacion = $request->motivo_eliminacion;
+            $caso->save();
+
+            $caso->delete(); 
+        });
+
+        return redirect()
+            ->route('frontend.areas.ive.listado')
+            ->with('success', 'El caso ha sido enviado a la papelera (disponible por 30 días)');
+    }
 }

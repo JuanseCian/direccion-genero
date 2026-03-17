@@ -122,12 +122,18 @@
                                         <i class="bi bi-file-earmark-word"></i>
                                     </a>
 
-                                    <form action="{{ route('masculinidades.destroy', $caso->id) }}" method="POST" class="d-inline">
-                                        @csrf 
+                                    <form action="{{ route('masculinidades.destroy', $caso->id) }}" 
+                                        method="POST" 
+                                        id="delete-form-{{ $caso->id }}" 
+                                        class="d-inline">
+                                        @csrf
                                         @method('DELETE')
-                                        <button type="submit" 
+                                        {{-- Este input recibirá el motivo desde el JS --}}
+                                        <input type="hidden" name="motivo_eliminacion" id="motivo-{{ $caso->id }}">
+                                        
+                                        <button type="button" 
                                                 class="btn btn-sm btn-outline-danger" 
-                                                onclick="return confirm('¿Borrar Caso?')">
+                                                onclick="confirmarEliminacion({{ $caso->id }}, '{{ $caso->persona->nombre }} {{ $caso->persona->apellido }}')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -135,6 +141,7 @@
                                 </div>
                             </td>
                         </tr>
+                        
                         @empty
                         <tr>
                             <td colspan="6" class="text-center py-4 text-muted">
@@ -180,4 +187,42 @@
         font-size: 0.7rem;
     }
 </style>
+
+<script>
+function confirmarEliminacion(id, nombrePersona) {
+    Swal.fire({
+        title: '¿Confirmar eliminación?',
+        text: "Estás por enviar a la papelera el caso de: " + nombrePersona,
+        icon: 'warning',
+        input: 'textarea',
+        inputPlaceholder: 'Escribe aquí el motivo de la eliminación...',
+        inputAttributes: {
+            'aria-label': 'Escribe aquí el motivo de la eliminación'
+        },
+        showCancelButton: true,
+        confirmButtonColor: '#5651A0', 
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="bi bi-check-circle"></i> Confirmar y Eliminar',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => {
+            if (!value || value.trim().length < 10) {
+                return 'Es obligatorio ingresar un motivo descriptivo (mínimo 10 caracteres).'
+            }
+        },
+        background: '#f8f9fa',
+        customClass: {
+            title: 'fw-bold',
+            confirmButton: 'btn btn-primary shadow-sm',
+            cancelButton: 'btn btn-secondary shadow-sm'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Asignamos el motivo al input oculto que creamos en el form
+            document.getElementById('motivo-' + id).value = result.value;
+            // Enviamos el formulario correspondiente
+            document.getElementById('delete-form-' + id).submit();
+        }
+    });
+}
+</script>
 @endsection

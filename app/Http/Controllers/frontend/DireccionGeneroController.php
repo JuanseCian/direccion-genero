@@ -489,11 +489,24 @@ class DireccionGeneroController extends Controller
     }
 
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        // 1. Validar que llegue el motivo
+        $request->validate([
+            'motivo_eliminacion' => 'required|string|min:10'
+        ]);
+
         $legajo = DireccionGeneroCaso::findOrFail($id);
+
+        // 2. Registrar rastro antes de eliminar
+        $legajo->deleted_by = auth()->id();
+        $legajo->motivo_eliminacion = $request->motivo_eliminacion;
+        $legajo->save();
+
+        // 3. Eliminar (Soft Delete)
         $legajo->delete();
 
-        return redirect()->route('genero.listado')->with('success', 'Legajo eliminado correctamente');
+        return redirect()->route('genero.listado')
+            ->with('success', 'El legajo ha sido enviado a la papelera correctamente.');
     }
 }

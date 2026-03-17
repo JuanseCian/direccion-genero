@@ -87,12 +87,19 @@
                                         <i class="bi bi-file-earmark-word"></i>
                                     </a>
 
-                                    <form action="{{ route('genero.destroy', $legajo->id) }}" method="POST" class="d-inline">
-                                        @csrf 
+                                    <form action="{{ route('genero.destroy', $legajo->id) }}" 
+                                        method="POST" 
+                                        id="delete-form-{{ $legajo->id }}" 
+                                        class="d-inline">
+                                        @csrf
                                         @method('DELETE')
-                                        <button type="submit" 
+                                        {{-- Input oculto para el motivo que llenaremos con JS --}}
+                                        <input type="hidden" name="motivo_eliminacion" id="motivo-{{ $legajo->id }}">
+                                        
+                                        <button type="button" 
                                                 class="btn btn-sm btn-outline-danger" 
-                                                onclick="return confirm('¿Borrar legajo?')">
+                                                title="Eliminar Legajo"
+                                                onclick="confirmarEliminacionGenero({{ $legajo->id }}, '{{ $legajo->persona->apellido }}, {{ $legajo->persona->nombre }}')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -141,4 +148,36 @@
         background-color: #f8f9ff !important;
     }
 </style>
+
+{{-- Incluir SweetAlert2 si no está en el layout --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+function confirmarEliminacionGenero(id, nombrePersona) {
+    Swal.fire({
+        title: '¿Eliminar Legajo?',
+        text: "El caso de " + nombrePersona + " se moverá a la papelera.",
+        icon: 'warning',
+        input: 'textarea',
+        inputPlaceholder: 'Indique obligatoriamente el motivo de la eliminación...',
+        showCancelButton: true,
+        confirmButtonColor: '#5651A0', // Tu color institucional
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Confirmar eliminación',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => {
+            if (!value || value.trim().length < 10) {
+                return 'Debe ingresar un motivo de al menos 10 caracteres.'
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Pasamos el texto del SweetAlert al input oculto del form
+            document.getElementById('motivo-' + id).value = result.value;
+            // Enviamos el formulario
+            document.getElementById('delete-form-' + id).submit();
+        }
+    });
+}
+</script>
 @endsection

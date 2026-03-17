@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DireccionGeneroCaso;
 use App\Models\MedidaCautelar;
+use App\Models\User;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MasculinidadesCaso extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'masculinidades_casos';
     
@@ -41,7 +43,9 @@ class MasculinidadesCaso extends Model
         'encargado_id',
         'debe_dispositivo',
         'asistencia_dispositivo',
-        'fecha_finalizacion'
+        'fecha_finalizacion',
+        'deleted_by',          
+        'motivo_eliminacion'
     ];
 
     public function persona()
@@ -129,5 +133,10 @@ class MasculinidadesCaso extends Model
     public function situacionSanitaria()
     {
         return $this->belongsTo(SituacionSanitaria::class, 'situacion_sanitaria_id');
+    }
+
+    public function eliminador()
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
     }
 }

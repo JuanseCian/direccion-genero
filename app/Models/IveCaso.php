@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\RedContencion;
 use App\Models\Encargado;
 use App\Models\User;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class IveCaso extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $fillable = [
         'persona_id',
         'fum',
@@ -22,7 +23,9 @@ class IveCaso extends Model
         'cantidad_hijos',
         'interrupcion_previa',
         'alta',
-        'encargado_id'
+        'encargado_id',
+        'deleted_by',           
+        'motivo_eliminacion'
     ];
 
     public function persona() {
@@ -57,15 +60,16 @@ class IveCaso extends Model
             'area_id'
         );
     }
+
     public function usuariosPermitidos()
-{
-    return $this->belongsToMany(
-        User::class,
-        'ive_caso_user',
-        'ive_caso_id',
-        'user_id'
-    );
-}
+    {
+        return $this->belongsToMany(
+            User::class,
+            'ive_caso_user',
+            'ive_caso_id',
+            'user_id'
+        );
+    }
     public function medicaciones()
     {
         return $this->hasMany(IveMedicacion::class, 'ive_caso_id');
@@ -86,7 +90,12 @@ class IveCaso extends Model
         return $this->belongsTo(MetodoInterrupcion::class,'metodo_interrupcion_id');
     }
     public function encargado()
-{
-    return $this->belongsTo(Encargado::class);
-}
+    {
+        return $this->belongsTo(Encargado::class);
+    }
+
+    public function eliminador()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'deleted_by');
+    }
 }

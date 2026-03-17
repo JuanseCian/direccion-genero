@@ -104,20 +104,20 @@
         </a>
 
         {{-- Eliminar --}}
-        <form action="{{ route('frontend.areas.ive.destroy', $caso->id) }}" method="POST" class="d-inline">
+        <form action="{{ route('frontend.areas.ive.destroy', $caso->id) }}" 
+            method="POST" 
+            id="delete-form-{{ $caso->id }}" 
+            class="d-inline">
             @csrf
             @method('DELETE')
-
-            <button type="submit" 
-                    class="btn btn-sm btn-outline-danger"
-                    >
-
+            <input type="hidden" name="motivo_eliminacion" id="motivo-{{ $caso->id }}">
+            
+            <button type="button" 
+                    class="btn btn-sm btn-outline-danger" 
+                    onclick="confirmarEliminacion({{ $caso->id }}, '{{ $caso->persona->nombre }} {{ $caso->persona->apellido }}')">
                 <i class="bi bi-trash"></i>
-
             </button>
-
         </form>
-
     </div>
 </td>
                         </tr>
@@ -160,5 +160,50 @@
         background-color: #f8f9ff !important;
     }
     .bg-success-soft { color: #2e7d32; }
+
+    .text-truncate-custom {
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 </style>
+
+<script>
+function confirmarEliminacion(id, nombrePersona) {
+    Swal.fire({
+        title: '¿Confirmar eliminación?',
+        text: "Estás por eliminar el caso de: " + nombrePersona,
+        icon: 'warning',
+        input: 'textarea',
+        inputPlaceholder: 'Escribe aquí el motivo de la eliminación...',
+        inputAttributes: {
+            'aria-label': 'Escribe aquí el motivo de la eliminación'
+        },
+        showCancelButton: true,
+        confirmButtonColor: '#5651A0', // El color violeta de tu cabecera
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="bi bi-check-circle"></i> Confirmar y Eliminar',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => {
+            if (!value || value.trim().length < 10) {
+                return 'Es obligatorio ingresar un motivo descriptivo (mínimo 10 caracteres).'
+            }
+        },
+        background: '#f8f9fa',
+        customClass: {
+            title: 'fw-bold',
+            confirmButton: 'btn btn-primary shadow-sm',
+            cancelButton: 'btn btn-secondary shadow-sm'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Asignamos el motivo al input oculto
+            document.getElementById('motivo-' + id).value = result.value;
+            // Enviamos el formulario
+            document.getElementById('delete-form-' + id).submit();
+        }
+    });
+}
+</script>
 @endsection

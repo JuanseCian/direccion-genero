@@ -115,3 +115,5 @@ require __DIR__.'/situacion-sanitaria.php';
 require __DIR__.'/tipo-violencia.php';
 //rutas tipo de intervencion
 require __DIR__.'/tipointervencion.php';
+//rutas tipos de papelera
+require __DIR__.'/papelera.php';

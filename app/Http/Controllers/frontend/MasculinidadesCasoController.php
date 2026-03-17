@@ -477,31 +477,43 @@ class MasculinidadesCasoController extends Controller
             ->with('success', 'Caso actualizado correctamente.');
     }
     public function descargarWord($id)
-{
-    $caso = MasculinidadesCaso::findOrFail($id);
-
-    $user = auth()->user();
-
-    if (
-        $user->rol_id != 2 &&
-        !$user->areas->contains('nombre','masculinidades')
-    ) {
-        abort(403);
-    }
-
-    $adjunto = Adjunto::where('entidad_tipo','masculinidades')
-        ->where('entidad_id',$caso->id)
-        ->firstOrFail();
-
-    return Storage::download($adjunto->ruta, $adjunto->nombre_original);
-}
-    public function destroy(string $id)
     {
         $caso = MasculinidadesCaso::findOrFail($id);
-        $caso->delete();
 
-        return redirect()
-            ->route('masculinidades.listado')
-            ->with('success', 'Caso eliminado correctamente');
+        $user = auth()->user();
+
+        if (
+            $user->rol_id != 2 &&
+            !$user->areas->contains('nombre','masculinidades')
+        ) {
+            abort(403);
+        }
+
+        $adjunto = Adjunto::where('entidad_tipo','masculinidades')
+            ->where('entidad_id',$caso->id)
+            ->firstOrFail();
+
+        return Storage::download($adjunto->ruta, $adjunto->nombre_original);
+    }
+    
+    public function destroy(Request $request, $id)
+    {
+        $request->validate([
+            'motivo_eliminacion' => 'required|min:10'
+        ]);
+
+        $caso = MasculinidadesCaso::findOrFail($id);
+        
+        // Asignamos manualmente
+        $caso->motivo_eliminacion = $request->motivo_eliminacion;
+        $caso->deleted_by = auth()->id();
+        
+        // Forzamos el guardado de los campos antes del soft delete
+        $caso->save(); 
+
+        // Ahora sí, eliminamos
+        $caso->delete(); 
+
+        return redirect()->back()->with('success', 'El caso se envió a la papelera correctamente.');
     }
 }

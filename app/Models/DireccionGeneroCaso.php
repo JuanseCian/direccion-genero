@@ -11,8 +11,12 @@ use App\Models\Localidad;
 use App\Models\Barrio;
 use App\Models\medidaCautelar;
 use App\Models\SituacionHabitacional;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class DireccionGeneroCaso extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'direccion_genero_casos';
 
     protected $fillable = [
@@ -45,7 +49,9 @@ class DireccionGeneroCaso extends Model
         'boton_panico_numero',
         'servicios_agua_potable',
         'servicios_internet',
-        'situacion_habitacional_id'
+        'situacion_habitacional_id',
+        'deleted_by',          
+        'motivo_eliminacion'
     ];
     protected $casts = [
         'debe_asistir_masculinidades' => 'boolean',
@@ -131,6 +137,11 @@ class DireccionGeneroCaso extends Model
     public function grupoConviviente()
     {
         return $this->hasMany(DireccionGeneroGrupoConviviente::class, 'caso_id');
+    }
+
+    public function eliminador()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'deleted_by');
     }
 
 }
