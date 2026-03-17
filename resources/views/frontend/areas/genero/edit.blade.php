@@ -767,4 +767,17 @@ function agregarFamiliar(datos = null) {
     </script>
 @endforeach
 
+<script>
+    $(document).ready(function() {
+        // Inicializar Select2
+        $('.select2-init').select2({
+            theme: 'bootstrap-5',
+            width: '100%'
+        });
+        
+        // MOVER MODALES AL BODY PARA EVITAR QUE SE ROMPAN
+        $('#modalAgresores, #modalInfoVinculo').appendTo('body');
+    });
+</script>
+
 @endsection

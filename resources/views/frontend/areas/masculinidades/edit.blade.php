@@ -715,8 +715,16 @@
     .border-primary-subtle { border-color:#5651a055 !important; }
 </style>
 
-{{-- --- SCRIPTS --- --}}
+
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modalVictimas = document.getElementById('modalVictimas');
+    const modalInfoVinculo = document.getElementById('modalInfoVinculo');
+    
+    if (modalVictimas) document.body.appendChild(modalVictimas);
+    if (modalInfoVinculo) document.body.appendChild(modalInfoVinculo);
+});
+
 // 1. Lógica Grupo Conviviente
 let index = {{ $caso->grupoFamiliar ? $caso->grupoFamiliar->count() : 0 }};
 
