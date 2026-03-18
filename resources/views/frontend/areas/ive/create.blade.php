@@ -22,6 +22,21 @@
         </a>
     </div>
 
+    @if ($errors->any())
+        <div class="alert alert-danger border-0 shadow-sm mb-4 animate__animated animate__shakeX">
+            <div class="d-flex">
+                <i class="bi bi-exclamation-octagon-fill me-3 fs-4"></i>
+                <div>
+                    <h6 class="fw-bold mb-1">Por favor, corrige los siguientes errores:</h6>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+    @endif
     <form action="{{ route('frontend.areas.ive.store') }}" method="POST">
         @csrf
 

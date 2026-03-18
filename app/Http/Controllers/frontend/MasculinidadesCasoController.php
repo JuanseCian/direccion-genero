@@ -33,7 +33,7 @@ class MasculinidadesCasoController extends Controller
     public function create()
     {
     
-        //$personasConCaso = MasculinidadesCaso::pluck('persona_id');
+        $personasConCaso = MasculinidadesCaso::pluck('persona_id')->toArray();
 
         $agresores = Persona::leftJoin('direccion_genero_casos', 'personas.id', '=', 'direccion_genero_casos.agresor_id')
             ->where('personas.agresor', 1)
@@ -41,8 +41,7 @@ class MasculinidadesCasoController extends Controller
                 $q->where('personas.debe_asistir_masculinidades', 1)
                 ->orWhere('direccion_genero_casos.debe_asistir_masculinidades', 1);
             })
-            // 2. ELIMINAR O COMENTAR ESTA LÍNEA PARA PERMITIR MÚLTIPLES CASOS AL MISMO AGRESOR:
-            // ->whereNotIn('personas.id', $personasConCaso)
+            ->whereNotIn('personas.id', $personasConCaso)
             ->select('personas.*')
             ->distinct()
             ->orderBy('personas.apellido')

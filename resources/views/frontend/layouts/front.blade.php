@@ -310,9 +310,9 @@
             {{-- DERECHA: Contacto --}}
             <div class="col-lg-4 text-center text-lg-end footer-contact">
                 <div class="d-inline-block text-start">
-                    <p><i class="bi bi-envelope-fill"></i> contacto@municipalidad.gov.ar</p>
+                    <p><i class="bi bi-envelope-fill"></i>denunciasviolenciasn@gmail.com</p>
                     <p><i class="bi bi-telephone-fill"></i> +54 (0336) 448-XXXX</p>
-                    <p><i class="bi bi-geo-alt-fill"></i> Calle Falsa 123, San Nicolás</p>
+                    <p><i class="bi bi-geo-alt-fill"></i>Almte. Brown y José Luis Lazarte, San Nicolás de Los Arroyos, Provincia de Buenos Aires</p>
                 </div>
             </div>
 
