@@ -128,10 +128,7 @@
             animation: fadePage 0.6s ease-out forwards;
         }
 
-        @keyframes fadePage {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        
 
         .dropdown-genero {
             border: none;
@@ -189,6 +186,13 @@
             filter: brightness(0) invert(1); 
         }
 
+        .modal {
+            z-index: 2000 !important;
+        }
+
+        .modal-backdrop {
+            z-index: 1990 !important;
+        }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
