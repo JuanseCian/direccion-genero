@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 17, 2026 at 10:51 PM
+-- Generation Time: Mar 18, 2026 at 05:24 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -44,30 +44,6 @@ CREATE TABLE `adjuntos` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `adjuntos`
---
-
-INSERT INTO `adjuntos` (`id`, `entidad_tipo`, `entidad_id`, `nombre_original`, `nombre_guardado`, `ruta`, `tipo_mime`, `tamaño`, `confidencial`, `hash_sha256`, `subido_por`, `eliminado_logico`, `fecha_eliminacion`, `created_at`) VALUES
-(21, 'intervencion_masculinidades', 17, 'doc.pdf', '69b0d488b7751_doc.pdf', 'adjuntos/intervenciones/69b0d488b7751_doc.pdf', 'application/pdf', 245594, 0, NULL, 1, 0, NULL, '2026-03-11 02:33:44'),
-(22, 'intervencion_masculinidades', 18, 'Vilchez_Claudio_CV.pdf', '69b0d4974fa4a_Vilchez_Claudio_CV.pdf', 'adjuntos/intervenciones/69b0d4974fa4a_Vilchez_Claudio_CV.pdf', 'application/pdf', 107440, 0, NULL, 1, 0, NULL, '2026-03-11 02:33:59'),
-(23, 'intervencion_masculinidades', 19, 'Vilchez_Claudio_CV.pdf', '69b0d61f477a7_Vilchez_Claudio_CV.pdf', 'adjuntos/intervenciones/69b0d61f477a7_Vilchez_Claudio_CV.pdf', 'application/pdf', 107440, 0, NULL, 1, 0, NULL, '2026-03-11 02:40:31'),
-(24, 'intervencion_masculinidades', 16, 'comprobante_135280187433.pdf', '69b0d936ed85b_comprobante_135280187433.pdf', 'adjuntos/intervenciones/69b0d936ed85b_comprobante_135280187433.pdf', 'application/pdf', 8920, 0, NULL, 1, 0, NULL, '2026-03-11 02:53:42'),
-(25, 'intervencion_masculinidades', 20, 'declaración.pdf', '69b0dc788a1b9_declaración.pdf', 'adjuntos/intervenciones/69b0dc788a1b9_declaración.pdf', 'application/pdf', 9784, 0, NULL, 1, 0, NULL, '2026-03-11 03:07:36'),
-(26, 'masculinidades', 27, 'caso_masc_000027_8898.docx', 'caso_masc_000027_8898.docx', 'masculinidades_certificados/caso_masc_000027_8898.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 356, 0, '7afdfdac4ccd22b7869f5edce415c410df28975cccaf22b47b31b58bf5b49e82', 1, 0, NULL, '2026-03-11 21:44:18'),
-(27, 'masculinidades', 28, 'caso_masc_000028_8898.docx', 'caso_masc_000028_8898.docx', 'masculinidades_certificados/caso_masc_000028_8898.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 356, 0, '5e46216a0b8f3aa5a3ceed61221449fbdbe1512e0f9d64e189d1006b9dca8314', 1, 0, NULL, '2026-03-11 21:45:13'),
-(28, 'masculinidades', 29, 'caso_masc_000029_8898.docx', 'caso_masc_000029_8898.docx', 'masculinidades_certificados/caso_masc_000029_8898.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 356, 0, '670ea11d551e9661298ba1d2c1c0d8a4693c0f4243325aed80dd5c0e1d8345e2', 1, 0, NULL, '2026-03-11 22:03:50'),
-(29, 'masculinidades', 30, 'caso_masc_000030_8898.docx', 'caso_masc_000030_8898.docx', 'masculinidades_certificados/caso_masc_000030_8898.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 356, 0, 'f1146d84fad4ad596d619e5f305c1fef951a0b5106f1e5113d5252cb244fb711', 1, 0, NULL, '2026-03-11 22:06:12'),
-(30, 'masculinidades', 31, 'caso_masc_000031_8898.docx', 'caso_masc_000031_8898.docx', 'masculinidades_certificados/caso_masc_000031_8898.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 356, 0, '75f97994dc56fcfdf83932f10ae314936ee838f00848313e978f7226335b80c1', 1, 0, NULL, '2026-03-12 01:10:50'),
-(31, 'masculinidades', 32, 'caso_masc_000032_123123.docx', 'caso_masc_000032_123123.docx', 'masculinidades_certificados/caso_masc_000032_123123.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 8440, 0, 'c81ac92e1fbefbabea2cd406b8b831fe53c92dd136a365afbc3e89583157d6bb', 1, 0, NULL, '2026-03-12 20:54:30'),
-(32, 'ive', 7, 'caso_ive_000007_666666.docx', 'caso_ive_000007_666666.docx', 'ive_certificados/caso_ive_000007_666666.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 7645, 0, '0feea02a784333f8abd429fe22a27e2886f8ad8be87a6418d0b0494cb19817bb', 1, 0, NULL, '2026-03-12 20:55:24'),
-(33, 'ive', 9, 'caso_ive_000009_22121.docx', 'caso_ive_000009_22121.docx', 'ive_certificados/caso_ive_000009_22121.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 7957, 0, '330e73aa0c355524a599874ad134fdb2dcd951dfbb3a9a1aef5a9da7e8b9f1d9', 1, 0, NULL, '2026-03-12 20:59:58'),
-(34, 'ive', 10, 'caso_ive_000010_123.docx', 'caso_ive_000010_123.docx', 'ive_certificados/caso_ive_000010_123.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 7954, 0, '65ccfdd60fafc2da8c493eba25f054937d6ea5f3e02982bf15b095a39fa76e61', 1, 0, NULL, '2026-03-16 19:54:12'),
-(35, 'genero', 24, 'caso_genero_000024_41899221.docx', 'caso_genero_000024_41899221.docx', 'genero_certificados/caso_genero_000024_41899221.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 8390, 0, '8a08ad8e8a198735f0a5a4df4566f52a1a5dd0aa7cb0aae97c38a9143926863e', 1, 0, NULL, '2026-03-16 20:48:06'),
-(36, 'genero', 25, 'caso_genero_000025_22121.docx', 'caso_genero_000025_22121.docx', 'genero_certificados/caso_genero_000025_22121.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 8372, 0, '13c8304bfd31406b29b9ed1b012ac38debabcda3aa0d3ac25d23c9b2d6eec3cc', 1, 0, NULL, '2026-03-16 20:48:44'),
-(37, 'masculinidades', 33, 'caso_masc_000033_123123.docx', 'caso_masc_000033_123123.docx', 'masculinidades_certificados/caso_masc_000033_123123.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 8370, 0, 'e90366a4258f826a340349834da0f88999ba16c4ba72b5988bd33392c6b165fb', 1, 0, NULL, '2026-03-17 20:45:05'),
-(38, 'ive', 11, 'caso_ive_000011_666666.docx', 'caso_ive_000011_666666.docx', 'ive_certificados/caso_ive_000011_666666.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 7844, 0, 'a58f251baeaceb18b01155532cefa6dec13f47794c1047842b1230bb0220e774', 1, 0, NULL, '2026-03-17 21:16:28');
-
 -- --------------------------------------------------------
 
 --
@@ -81,16 +57,6 @@ CREATE TABLE `adjuntos_descargas` (
   `fecha_descarga` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `ip` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `adjuntos_descargas`
---
-
-INSERT INTO `adjuntos_descargas` (`id`, `adjunto_id`, `usuario_id`, `fecha_descarga`, `ip`) VALUES
-(1, 22, 1, '2026-03-11 05:36:30', '127.0.0.1'),
-(2, 22, 1, '2026-03-11 05:36:52', '127.0.0.1'),
-(3, 21, 1, '2026-03-11 05:40:42', '127.0.0.1'),
-(4, 25, 1, '2026-03-11 06:07:48', '127.0.0.1');
 
 -- --------------------------------------------------------
 
@@ -136,9 +102,24 @@ INSERT INTO `area_user` (`id`, `user_id`, `area_id`) VALUES
 (7, 1, 2),
 (9, 1, 4),
 (10, 1, 3),
-(18, 2, 1),
-(19, 2, 2),
-(20, 3, 1);
+(21, 2, 1),
+(22, 2, 2),
+(23, 2, 3),
+(24, 2, 4),
+(25, 3, 1),
+(26, 3, 2),
+(27, 3, 3),
+(28, 3, 4),
+(29, 4, 1),
+(30, 4, 2),
+(31, 5, 1),
+(32, 6, 1),
+(33, 6, 3),
+(34, 7, 1),
+(35, 8, 1),
+(36, 9, 1),
+(37, 10, 2),
+(38, 11, 2);
 
 -- --------------------------------------------------------
 
@@ -279,16 +260,6 @@ CREATE TABLE `cud` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `cud`
---
-
-INSERT INTO `cud` (`id`, `persona_id`, `tiene_cud`, `numero_cud`, `fecha_emision`, `fecha_vencimiento`, `observaciones`, `archivo_adjunto`, `created_at`, `updated_at`) VALUES
-(1, 119, 1, '333', '2024-10-30', '2026-11-29', 'a', NULL, NULL, NULL),
-(2, 120, 1, '66', '2023-10-30', '2026-10-30', 'a', 'cuds/EcnkkenEq7pdmFgYPHnefTBTNeHASxWPAt9EXxw6.pdf', NULL, NULL),
-(3, 121, 1, '22`', '2024-10-29', '2025-10-29', 'a', NULL, NULL, NULL),
-(4, 122, 1, '2111', '2026-03-05', '2026-03-20', 'DOWN', 'cuds/hCzRQweolWphPJBiHJe6gt4s0ETHOw2oexTCGM0n.pdf', NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -336,14 +307,6 @@ CREATE TABLE `direccion_genero_casos` (
   `deleted_by` bigint UNSIGNED DEFAULT NULL,
   `motivo_eliminacion` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `direccion_genero_casos`
---
-
-INSERT INTO `direccion_genero_casos` (`id`, `persona_id`, `nivel_gravedad`, `estado_civil_id`, `genero`, `provincia_id`, `localidad_id`, `barrio_id`, `situacion_habitacional_id`, `nivel_estudio_id`, `trabaja`, `organizacion_social`, `organizacion_social_detalle`, `observaciones`, `created_at`, `updated_at`, `estado_id`, `nivel_riesgo_id`, `situacion_sanitaria`, `servicios_luz`, `servicios_cable`, `servicios_gas_natural`, `servicios_agua_potable`, `servicios_internet`, `tipo_violencia_id`, `denuncio_antes`, `denuncio_antes_detalle`, `amenaza_con_arma`, `amenaza_tipo_arma`, `fecha_ultima_denuncia`, `boton_panico_numero`, `encargado_id`, `agresor_id`, `agresor_trabajo`, `debe_asistir_masculinidades`, `medida_cautelar_id`, `deleted_at`, `deleted_by`, `motivo_eliminacion`) VALUES
-(24, 110, 2, 2, 'kuka', 2, 115, 63, 1, 6, 1, 1, NULL, 'asd', '2026-03-16 23:48:06', '2026-03-18 01:12:09', 1, NULL, NULL, 1, 1, 1, 1, 1, NULL, 0, 'asd', 1, 'asdasd', '2026-03-01', '333', 2, NULL, NULL, 0, 2, NULL, NULL, NULL),
-(25, 119, 3, 2, 'kuka', 3, 115, 98, 1, 5, 1, 1, NULL, 'asd', '2026-03-16 23:48:44', '2026-03-18 01:36:24', 1, NULL, NULL, 1, 1, 1, 1, 1, NULL, 0, NULL, 0, NULL, NULL, NULL, 4, NULL, NULL, 0, NULL, '2026-03-18 01:36:24', 1, 'hhhhhhhhhhhhhhhhhhhhhhhhhhh');
 
 -- --------------------------------------------------------
 
@@ -602,13 +565,6 @@ CREATE TABLE `ive_casos` (
   `motivo_eliminacion` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `ive_casos`
---
-
-INSERT INTO `ive_casos` (`id`, `persona_id`, `fum`, `eco_semanas`, `semanas_gestacion`, `estado_civil_id`, `metodo_interrupcion`, `obra_social`, `cantidad_hijos`, `interrupcion_previa`, `violencia_previa`, `alta`, `created_at`, `updated_at`, `encargado_id`, `metodo_interrupcion_id`, `deleted_at`, `deleted_by`, `motivo_eliminacion`) VALUES
-(11, 111, '2026-12-31', 1, 1, NULL, NULL, 1, 1, 1, 0, NULL, '2026-03-18 00:16:27', '2026-03-18 01:36:12', 2, NULL, '2026-03-18 01:36:12', 1, 'jjjjjjjjjjjjjjjjjjjjjjjjjj');
-
 -- --------------------------------------------------------
 
 --
@@ -644,13 +600,6 @@ CREATE TABLE `ive_caso_violencia` (
   `ive_caso_id` bigint UNSIGNED NOT NULL,
   `tipo_violencia_id` bigint UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `ive_caso_violencia`
---
-
-INSERT INTO `ive_caso_violencia` (`id`, `ive_caso_id`, `tipo_violencia_id`) VALUES
-(43, 11, 1);
 
 -- --------------------------------------------------------
 
@@ -950,13 +899,6 @@ CREATE TABLE `masculinidades_casos` (
   `motivo_eliminacion` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `masculinidades_casos`
---
-
-INSERT INTO `masculinidades_casos` (`id`, `persona_id`, `nivel_gravedad`, `victima_id`, `derivacion_id`, `situacion_habitacional_id`, `trabaja`, `detalle_trabajo`, `red_contencion`, `situacion_sanitaria_id`, `consumo`, `terapia`, `espacio_grupal_id`, `situacion_judicial`, `desobediencia`, `reincidencia`, `asistencia_dispositivo`, `observaciones`, `created_at`, `updated_at`, `encargado_id`, `fecha_finalizacion`, `debe_dispositivo`, `nivel_estudio_id`, `estado_civil_id`, `deleted_at`, `deleted_by`, `motivo_eliminacion`) VALUES
-(33, 124, 2, NULL, 2, 1, 0, NULL, 0, NULL, 0, 0, 2, NULL, 0, 0, NULL, NULL, '2026-03-17 23:44:59', '2026-03-18 01:50:33', 10, NULL, 0, NULL, NULL, '2026-03-18 01:50:33', 1, 'asssssssssasasas');
-
 -- --------------------------------------------------------
 
 --
@@ -980,13 +922,6 @@ CREATE TABLE `masculinidades_caso_violencia` (
   `caso_id` bigint UNSIGNED NOT NULL,
   `tipo_violencia_id` bigint UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `masculinidades_caso_violencia`
---
-
-INSERT INTO `masculinidades_caso_violencia` (`id`, `caso_id`, `tipo_violencia_id`) VALUES
-(135, 33, 3);
 
 -- --------------------------------------------------------
 
@@ -1080,6 +1015,7 @@ CREATE TABLE `medidas_cautelares` (
 
 INSERT INTO `medidas_cautelares` (`id`, `nombre`) VALUES
 (2, 'Boton de panico'),
+(4, 'Perímetro y Exclusión'),
 (1, 'Perimetros'),
 (3, 'Recorridas dinamicas');
 
@@ -1209,22 +1145,6 @@ CREATE TABLE `personas` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `debe_asistir_masculinidades` tinyint(1) DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `personas`
---
-
-INSERT INTO `personas` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `dni`, `sexo`, `agresor`, `victima`, `domicilio`, `provincia_id`, `localidad_id`, `barrio_id`, `telefono`, `nivel_estudio_id`, `trabaja`, `grupo_sanguineo`, `created_at`, `updated_at`, `debe_asistir_masculinidades`) VALUES
-(109, 'Juan Segundo', 'Cian', '2003-11-05', '45032239', 'Masculino', 1, 0, NULL, NULL, NULL, 99, '03364318066', 1, 1, NULL, '2026-03-10 05:06:57', '2026-03-10 05:06:57', 1),
-(110, 'Daniela', 'Abal', '1999-02-22', '41899221', 'Femenino', 0, 1, NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, '2026-03-10 05:07:26', '2026-03-10 05:07:26', 0),
-(111, 'aaa', 'aaa', '2020-09-27', '666666', 'Femenino', 0, 1, NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, '2026-03-10 15:18:43', '2026-03-10 15:18:43', 0),
-(119, 'aaa', 'aaa', '1998-09-28', '22121', 'Femenino', 0, 1, NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, '2026-03-10 16:49:43', '2026-03-10 16:49:43', 0),
-(120, 'aj', 'sj', '2025-10-30', '876', 'Masculino', 1, 0, NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, '2026-03-10 17:25:22', '2026-03-11 05:54:38', 1),
-(121, 'ascacd', 'e bciwsec', '2024-10-30', '5778278', 'Femenino', 0, 1, NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, '2026-03-10 18:16:46', '2026-03-10 18:16:46', 0),
-(122, 'Lezcano', 'Pablo', '2023-10-30', '666', 'Masculino', 0, 1, NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, '2026-03-11 06:08:34', '2026-03-11 06:08:34', 0),
-(123, 'snns', 'nsns', '2024-11-30', '8898', 'Femenino', 1, 0, NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, '2026-03-12 00:34:43', '2026-03-12 00:35:07', 1),
-(124, 'enzo', 'brandan', '2026-03-03', '123123', 'Masculino', 1, 0, 'asd', 1, 22, 78, '03364367123', 1, 1, 'B-', '2026-03-12 23:53:54', '2026-03-12 23:53:54', 1),
-(125, 'asdasd', 'asdasd', '2026-03-02', '123', 'Femenino', 0, 1, 'asd', 1, 203, 93, '03364367123', 2, 1, 'AB+', '2026-03-16 22:53:38', '2026-03-16 22:53:38', 0);
 
 -- --------------------------------------------------------
 
@@ -1451,8 +1371,16 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `password`, `nombre`, `apellido`, `email`, `email_verified_at`, `rol_id`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, 'admin', '$2y$12$SUDkLv7S68NuGcJSFlUTtuUyW8mib4MPSIM3zaXIUHdbFICp8NAEC', 'admin', 'admin', 'admin@gmail.com', NULL, 2, NULL, '2026-02-27 00:25:46', '2026-02-27 00:25:46'),
-(2, 'juan', '$2y$12$i8Ujv7SHD48/16/AjDZjKuyFlZ9JN0tQJe.0xM9xDOA2GNBhnSKaO', 'Juan Segundo', 'Cian', 'juansegundocian@gmail.com', NULL, 1, NULL, '2026-02-27 22:44:02', '2026-03-02 17:41:57'),
-(3, 'DaniAbal', '$2y$12$4TUvEvTJbpj8v1UBgW10SOcsWZlIKwBurbVhkHxnOWwnjKHcTWlSW', 'd', 'a', 'dani@gmail.com', NULL, 1, NULL, '2026-02-28 00:05:57', '2026-03-03 01:32:31');
+(2, 'betereteflorencia', '$2y$12$UTdBiJ6jZ6e79Z4PLKzvZ.V2168M28Ok5Oz.HNb1kfLlj164UjKPK', 'Florencia', 'Beterete', 'florencia_beterete@hotmail.com', NULL, 2, NULL, '2026-03-18 15:50:15', '2026-03-18 16:17:57'),
+(3, 'robertocoronel', '$2y$12$FPT2ALwtuj5FWKBfy0X9du/ma3BhVfKsS38P5QqpH1Ssq26dTA6Ue', 'Roberto', 'Coronel', 'robertodcoronel@hotmail.com', NULL, 2, NULL, '2026-03-18 15:53:24', '2026-03-18 16:18:20'),
+(4, 'margaritaromero', '$2y$12$373BtzvtvbUzacMBFTg4Ze23kflfxW/wwNfJ7Ol73E/PT2jxhmSFy', 'Margarita', 'Romero', 'margaromero87@hotmail.com', NULL, 1, NULL, '2026-03-18 15:54:56', '2026-03-18 16:18:37'),
+(5, 'julianabrett', '$2y$12$e6HfmGpS8zuSRX5TMJBMyO5wH21pnXhoLNgINsRlHV15lty0Dx3aq', 'Juliana', 'Brett', 'julianabrett_9@hotmail.com', NULL, 1, NULL, '2026-03-18 15:56:35', '2026-03-18 16:18:53'),
+(6, 'jenniferbaez', '$2y$12$HjSHDTvQyU/gYnuJt5YJ6.3BtGVXWZ1KYvweA2R2KkQ6MITbRWA/O', 'Jennifer', 'Baez', 'baezjennifer303@gmail.com', NULL, 1, NULL, '2026-03-18 16:02:11', '2026-03-18 16:19:10'),
+(7, 'brunomassoco', '$2y$12$93OVGrO19AcnY8SO4ACe/uBsiLZtTKt6tCpT7KFxQJkUZBl79PvXO', 'Bruno', 'Massocco', 'brunoo6.massocco@gmail.com', NULL, 1, NULL, '2026-03-18 16:09:56', '2026-03-18 16:19:22'),
+(8, 'yaelbuchert', '$2y$12$T0ex6/018GrSnkRr.007gOoydgMmQ8Uc6nESwwEIVcqSB.bIAe6Ci', 'Yael', 'Buchert', 'yaelbuchert@hotmail.com', NULL, 1, NULL, '2026-03-18 16:11:32', '2026-03-18 16:19:44'),
+(9, 'brendabuchert', '$2y$12$Ylii0u4MNwEiQbPwu5t2jODBzy8YUi2BycxGnyf1Hp21GGeVRx..W', 'brenda', 'buchert', 'brenda_buchert@hotmail.com', NULL, 1, NULL, '2026-03-18 16:12:58', '2026-03-18 16:19:54'),
+(10, 'florenciaramos', '$2y$12$r5CqKD.z6tiYvh9al6.qJ.B9a5ZB.Pu.CN8u23OTG6o9UGIh8CR12', 'Florencia', 'Ramos', 'florramos86@gmail.com', NULL, 1, NULL, '2026-03-18 16:13:54', '2026-03-18 16:20:09'),
+(11, 'julietamaccarrone', '$2y$12$9InOXwkkg9iUTtAA7EWDlO1f2Z9JP2JK5tW0KAmMkjJi8ZFg0nUTW', 'Julieta', 'Maccarrone', 'julietamaccarrone09@gmail.com', NULL, 1, NULL, '2026-03-18 16:15:38', '2026-03-18 16:20:25');
 
 -- --------------------------------------------------------
 
@@ -1471,14 +1399,6 @@ CREATE TABLE `vinculos_casos` (
   `observaciones` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `fecha_vinculacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `vinculos_casos`
---
-
-INSERT INTO `vinculos_casos` (`id`, `genero_caso_id`, `masculinidad_caso_id`, `hijos_en_comun`, `relacion_actual`, `descripcion_relacion`, `tipo_vinculo`, `observaciones`, `fecha_vinculacion`) VALUES
-(10, 25, 33, 1, 1, 'aa', NULL, NULL, '2026-03-17 20:53:17'),
-(11, 24, 33, 0, 0, NULL, NULL, NULL, '2026-03-17 20:53:31');
 
 -- --------------------------------------------------------
 
@@ -1921,13 +1841,13 @@ ALTER TABLE `zona_barrio`
 -- AUTO_INCREMENT for table `adjuntos`
 --
 ALTER TABLE `adjuntos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `adjuntos_descargas`
 --
 ALTER TABLE `adjuntos_descargas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `areas`
@@ -1939,7 +1859,7 @@ ALTER TABLE `areas`
 -- AUTO_INCREMENT for table `area_user`
 --
 ALTER TABLE `area_user`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `barrio`
@@ -1951,13 +1871,13 @@ ALTER TABLE `barrio`
 -- AUTO_INCREMENT for table `cud`
 --
 ALTER TABLE `cud`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `direccion_genero_casos`
 --
 ALTER TABLE `direccion_genero_casos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `direccion_genero_caso_programa`
@@ -1975,19 +1895,19 @@ ALTER TABLE `direccion_genero_estados`
 -- AUTO_INCREMENT for table `direccion_genero_grupo_conviviente`
 --
 ALTER TABLE `direccion_genero_grupo_conviviente`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `direccion_genero_intervenciones`
 --
 ALTER TABLE `direccion_genero_intervenciones`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `direccion_genero_niveles_riesgo`
 --
 ALTER TABLE `direccion_genero_niveles_riesgo`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `direccion_genero_red_contencion`
@@ -2029,7 +1949,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `ive_casos`
 --
 ALTER TABLE `ive_casos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `ive_caso_red`
@@ -2053,13 +1973,13 @@ ALTER TABLE `ive_caso_violencia`
 -- AUTO_INCREMENT for table `ive_intervenciones`
 --
 ALTER TABLE `ive_intervenciones`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `ive_medicaciones`
 --
 ALTER TABLE `ive_medicaciones`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `localidad`
@@ -2071,19 +1991,19 @@ ALTER TABLE `localidad`
 -- AUTO_INCREMENT for table `masculinidades_casos`
 --
 ALTER TABLE `masculinidades_casos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `masculinidades_caso_medida`
 --
 ALTER TABLE `masculinidades_caso_medida`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `masculinidades_caso_violencia`
 --
 ALTER TABLE `masculinidades_caso_violencia`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
 
 --
 -- AUTO_INCREMENT for table `masculinidades_derivaciones`
@@ -2095,13 +2015,13 @@ ALTER TABLE `masculinidades_derivaciones`
 -- AUTO_INCREMENT for table `masculinidades_grupo_familiar`
 --
 ALTER TABLE `masculinidades_grupo_familiar`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `masculinidades_intervenciones`
 --
 ALTER TABLE `masculinidades_intervenciones`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `masculinidades_tipos_violencia`
@@ -2113,7 +2033,7 @@ ALTER TABLE `masculinidades_tipos_violencia`
 -- AUTO_INCREMENT for table `medidas_cautelares`
 --
 ALTER TABLE `medidas_cautelares`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `metodos_interrupcion`
@@ -2143,7 +2063,7 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `personas`
 --
 ALTER TABLE `personas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `programas_asistencia`
@@ -2197,13 +2117,13 @@ ALTER TABLE `tipos_violencia`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `vinculos_casos`
 --
 ALTER TABLE `vinculos_casos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `zona_barrio`
