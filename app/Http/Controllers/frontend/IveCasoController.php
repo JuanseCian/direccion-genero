@@ -13,62 +13,61 @@ use App\Models\TipoIntervencion;
 use App\Models\RedContencion;
 use App\Models\EstadoCivil;
 use App\Models\Adjunto;
-use App\Models\MetodoInterrupcion;
+use App\Models\Metodointerrupcion;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
+
 class IveCasoController extends Controller
 {
     public function index()
-{
-    $user = auth()->user();
+    {
+        $user = auth()->user();
 
-    $tieneAreaIVE = $user->rol_id == 2 || $user->areas->contains('id', 3);
+        $tieneAreaIVE = $user->rol_id == 2 || $user->areas->contains('id', 3);
 
-    if ($tieneAreaIVE) {
+        if ($tieneAreaIVE) {
 
-        // ve todos los casos
-        $casos = IveCaso::with('persona')
-            ->orderBy('created_at','desc')
-            ->paginate(10);
+            $casos = IveCaso::with('persona')
+                ->orderBy('created_at','desc')
+                ->paginate(10);
 
-    } else {
+        } else {
 
-        // solo casos asignados
-        $casos = $user->iveCasos()
-            ->with('persona')
-            ->orderBy('created_at','desc')
-            ->get();
+            $casos = $user->iveCasos()
+                ->with('persona')
+                ->orderBy('created_at','desc')
+                ->get();
 
-        if ($casos->isEmpty()) {
-            abort(403, 'No tiene acceso');
+            if ($casos->isEmpty()) {
+                abort(403, 'No tiene acceso');
+            }
         }
+
+        return view('frontend.areas.ive.index', compact('casos'));
+    }
+    public function descargarWord($id)
+    {
+        $caso = IveCaso::findOrFail($id);
+
+        $user = auth()->user();
+
+        if (
+            $user->rol_id != 2 &&
+            !$user->areas->contains('nombre','ive') &&
+            !$user->iveCasos->contains($caso->id)
+        ) {
+            abort(403);
+        }
+
+        $adjunto = Adjunto::where('entidad_tipo','ive')
+            ->where('entidad_id',$caso->id)
+            ->firstOrFail();
+
+        return Storage::download($adjunto->ruta, $adjunto->nombre_original);
     }
 
-    return view('frontend.areas.ive.index', compact('casos'));
-}
-public function descargarWord($id)
-{
-    $caso = IveCaso::findOrFail($id);
-
-    $user = auth()->user();
-
-    // seguridad
-    if (
-        $user->rol_id != 2 &&
-        !$user->areas->contains('nombre','ive') &&
-        !$user->iveCasos->contains($caso->id)
-    ) {
-        abort(403);
-    }
-
-    $adjunto = Adjunto::where('entidad_tipo','ive')
-        ->where('entidad_id',$caso->id)
-        ->firstOrFail();
-
-    return Storage::download($adjunto->ruta, $adjunto->nombre_original);
-}
     public function create()
     {
         $idsConCaso = IveCaso::pluck('persona_id')->toArray();
@@ -85,7 +84,7 @@ public function descargarWord($id)
         $idsEnGenero = DireccionGeneroCaso::pluck('persona_id')->toArray();
         $tiposViolencia = TipoViolencia::orderBy('nombre')->get();
         $estadosCiviles = EstadoCivil::orderBy('nombre')->get();
-        $metodos = MetodoInterrupcion::orderBy('nombre')->get();
+        $metodos = Metodointerrupcion::orderBy('nombre')->get();
         $redes = RedContencion::orderBy('nombre')->get();
 
         return view('frontend.areas.ive.create', compact(
@@ -188,7 +187,6 @@ public function descargarWord($id)
     {
         $user = auth()->user();
 
-        // si tiene acceso al área IVE
         if ($user->rol_id == 2 || $user->areas->contains('nombre','ive')) {
 
             $casos = IveCaso::with('persona')
@@ -197,7 +195,6 @@ public function descargarWord($id)
 
         } else {
 
-            // solo casos asignados
             $casos = $user->iveCasos()
                 ->with('persona')
                 ->orderBy('created_at','desc')
@@ -219,9 +216,6 @@ public function descargarWord($id)
             'medicaciones'
         ])->findOrFail($id);
 
-        // 🔒 CONTROL DE ACCESO
-
-        
 
         $legajo = $caso;
 
@@ -397,7 +391,6 @@ public function descargarWord($id)
         $table->addCell()->addText('Método de interrupción');
         $table->addCell()->addText($caso->metodoInterrupcion->nombre ?? '');
 
-        // SITUACIÓN SOCIAL
 
         $section->addTextBreak();
         $section->addText('SITUACIÓN SOCIAL', ['bold'=>true]);
@@ -406,7 +399,6 @@ public function descargarWord($id)
         $section->addText('Interrupción previa: '.($caso->interrupcion_previa ? 'Sí' : 'No'));
         $section->addText('Violencia previa: '.($caso->violencia_previa ? 'Sí' : 'No'));
 
-        // TIPOS DE VIOLENCIA
 
         $section->addTextBreak();
         $section->addText('TIPOS DE VIOLENCIA', ['bold'=>true]);
@@ -415,7 +407,6 @@ public function descargarWord($id)
             $section->addText('- '.$v->nombre);
         }
 
-        // REDES DE CONTENCIÓN
 
         $section->addTextBreak();
         $section->addText('REDES DE CONTENCIÓN', ['bold'=>true]);
@@ -424,7 +415,6 @@ public function descargarWord($id)
             $section->addText('- '.$r->nombre);
         }
 
-        // MEDICACIONES
 
         $section->addTextBreak();
         $section->addText('MEDICACIONES', ['bold'=>true]);
@@ -433,12 +423,10 @@ public function descargarWord($id)
             $section->addText($m->nombre.'   |   Lote: '.$m->numero_lote);
         }
 
-        // ENCARGADO
 
         $section->addTextBreak();
         $section->addText('Encargado: '.$caso->encargado->nombre ?? '');
 
-        // NOMBRE DEL ARCHIVO
 
         $numeroCaso = str_pad($caso->id,6,"0",STR_PAD_LEFT);
         $dni = preg_replace('/[^0-9]/','',$persona->dni);
@@ -459,12 +447,11 @@ public function descargarWord($id)
         return $ruta;
     }
 
-    public function destroy(Request $request, $id) // Agregamos Request para capturar el motivo
+    public function destroy(Request $request, $id)
     {
         $caso = IveCaso::findOrFail($id);
         $user = auth()->user();
 
-        // 🔒 CONTROL DE ACCESO (Mantenemos tu lógica)
         if (
             $user->rol_id != 2 &&
             !$user->areas->contains('nombre','ive') &&
@@ -473,14 +460,12 @@ public function descargarWord($id)
             abort(403, 'No tiene permisos para eliminar este caso');
         }
 
-        // Validar que venga un motivo
         $request->validate([
             'motivo_eliminacion' => 'required|string|max:500'
         ]);
 
         DB::transaction(function() use ($caso, $request) {
-            // 1. Guardamos metadatos de quién y por qué elimina
-            $caso->deleted_by = auth()->id(); // Guarda el ID del usuario logueado
+            $caso->deleted_by = auth()->id(); 
             $caso->motivo_eliminacion = $request->motivo_eliminacion;
             $caso->save();
 

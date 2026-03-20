@@ -87,7 +87,7 @@ class IveCaso extends Model
 
     public function metodoInterrupcion()
     {
-        return $this->belongsTo(MetodoInterrupcion::class,'metodo_interrupcion_id');
+        return $this->belongsTo(Metodointerrupcion::class,'metodo_interrupcion_id');
     }
     public function encargado()
     {

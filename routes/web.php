@@ -3,9 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdjuntoController;
-use App\Http\Controllers\Frontend\IveCasoController;
-use App\Http\Controllers\Frontend\DireccionGeneroController;
-use App\Http\Controllers\Frontend\MasculinidadesController;
+use App\Http\Controllers\frontend\IveCasoController;
+use App\Http\Controllers\frontend\DireccionGeneroController;
+use App\Http\Controllers\frontend\MasculinidadesCasoController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -51,7 +51,7 @@ Route::get('/ive/caso/{id}/descargar', [IveCasoController::class, 'descargarWord
  Route::get('/genero/caso/{id}/descargar', [DireccionGeneroController::class, 'descargarWord'])
     ->name('genero.descargar');
 
-Route::get('/masculinidades/caso/{id}/descargar', [MasculinidadesController::class, 'descargarWord'])
+Route::get('/masculinidades/caso/{id}/descargar', [MasculinidadesCasoController::class, 'descargarWord'])
     ->name('masculinidades.descargar');
 require __DIR__.'/auth.php';
 
