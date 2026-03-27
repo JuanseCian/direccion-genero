@@ -1,5 +1,5 @@
 <?php
-use App\Http\Controllers\Backend\ZonaBarrioController;
+use App\Http\Controllers\backend\ZonaBarrioController;
 
 
 Route::resource('zonas', ZonaBarrioController::class);

@@ -1,4 +1,4 @@
 <?php
-use App\Http\Controllers\Backend\LocalidadController;
+use App\Http\Controllers\backend\LocalidadController;
 
 Route::resource('localidades', LocalidadController::class);

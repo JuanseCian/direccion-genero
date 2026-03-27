@@ -2,5 +2,5 @@
 
 Route::resource(
         'backend/situaciones-sanitarias',
-        App\Http\Controllers\Backend\SituacionSanitariaController::class
+        App\Http\Controllers\backend\SituacionSanitariaController::class
         )->names('backend.situaciones-sanitarias');

@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Backend\EncargadoController;
+use App\Http\Controllers\backend\EncargadoController;
 
 Route::group(['prefix'=>'backend','as'=>'backend.'],function(){
 

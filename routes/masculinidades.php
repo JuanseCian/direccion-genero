@@ -16,3 +16,4 @@ Route::prefix('masculinidades')->group(function () {
     route::delete('/destroy/{id}', [MasculinidadesCasoController::class, 'destroy'])->name('masculinidades.destroy');
 
 });
+

@@ -1,7 +1,7 @@
 <?php
 use App\Http\Controllers\frontend\intervenciones\IveIntervencionController;
-use App\Http\Controllers\Frontend\Intervenciones\DireccionGeneroIntervencionController;
-use App\Http\Controllers\Frontend\Intervenciones\MasculinidadesIntervencionController;
+use App\Http\Controllers\frontend\intervenciones\DireccionGeneroIntervencionController;
+use App\Http\Controllers\frontend\intervenciones\MasculinidadesIntervencionController;
 
 //ive
 Route::prefix('frontend/areas/ive')->name('frontend.areas.ive.')->group(function () {

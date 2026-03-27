@@ -1,5 +1,5 @@
 <?php
-use App\Http\Controllers\Stats\StatsController;
+use App\Http\Controllers\stats\StatsController;
 
 Route::prefix('estadisticas')->name('stats.')->group(function () {
 

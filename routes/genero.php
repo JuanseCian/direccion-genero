@@ -1,5 +1,5 @@
 <?php
-use App\Http\Controllers\Frontend\DireccionGeneroController;
+use App\Http\Controllers\frontend\DireccionGeneroController;
 
 Route::group(['prefix' => 'genero', 'as' => 'genero.'], function () {
     Route::get('/', [DireccionGeneroController::class, 'index'])->name('index'); 

@@ -231,7 +231,7 @@
                 
                 @auth
                     <li class="nav-item mx-lg-1">
-                        <a class="nav-link nav-destacado" href="{{ route('manuales') }}">
+                        <a class="nav-link nav-destacado" href="/manuales/manual.pdf" target="_blank">
                             <i class="bi bi-journal-text"></i> Manuales
                         </a>
                     </li>

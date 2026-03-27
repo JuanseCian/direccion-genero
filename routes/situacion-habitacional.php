@@ -2,5 +2,5 @@
 
 Route::resource(
         'backend/situaciones-habitacionales',
-        App\Http\Controllers\Backend\SituacionHabitacionalController::class
+        App\Http\Controllers\backend\SituacionHabitacionalController::class
         )->names('backend.situaciones-habitacionales');

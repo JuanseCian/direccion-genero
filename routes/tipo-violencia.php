@@ -2,5 +2,5 @@
 
 Route::resource(
         'backend/tipo-violencia',
-        App\Http\Controllers\Backend\TipoViolenciaController::class
+        App\Http\Controllers\backend\TipoViolenciaController::class
         )->names('backend.tipo-violencia');
