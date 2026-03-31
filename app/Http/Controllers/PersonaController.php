@@ -26,7 +26,7 @@ class PersonaController extends Controller
                     ->orWhere('nombre', 'like', "%$buscar%")
                     ->orWhere('apellido', 'like', "%$buscar%");
             })
-            ->orderBy('apellido')
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
 
 
@@ -54,11 +54,13 @@ class PersonaController extends Controller
             'nombre' => 'required',
             'apellido' => 'required',
             'dni' => 'required|unique:personas,dni',
-            'fecha_nacimiento' => 'required',
-            'trabaja'=> 'required',
+            'fecha_nacimiento' => 'nullable',
+            'trabaja'=> 'nullable',
             'archivo_cud' => 'nullable|mimes:pdf,jpg,jpeg,png,jfif|max:2048',
+        ], [
+            'dni.required' => 'El DNI es obligatorio.',
+            'dni.unique' => 'Este DNI ya está registrado.',
         ]);
-
         $persona = Persona::create([
             'nombre' => $request->nombre,
             'apellido' => $request->apellido,
@@ -126,6 +128,9 @@ class PersonaController extends Controller
             'apellido' => 'required',
             'nombre' => 'required',
             'archivo_cud' => 'nullable|mimes:pdf,jpg,jpeg,png,jfif|max:2048',
+        ], [
+            'dni.required' => 'El DNI es obligatorio.',
+            'dni.unique' => 'Este DNI ya está registrado.',
         ]);
 
         $persona->update($request->only([

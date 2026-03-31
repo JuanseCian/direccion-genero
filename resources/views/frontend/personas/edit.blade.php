@@ -126,8 +126,16 @@
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label">Fecha nacimiento</label>
-                    <input type="date" name="fecha_nacimiento" value="{{ old('fecha_nacimiento', $persona->fecha_nacimiento) }}" class="form-control" >
+                    <label class="form-label">
+                        Fecha nacimiento 
+                        <span id="edadTexto" class="text-muted"></span>
+                    </label>
+
+                    <input type="date" 
+                        name="fecha_nacimiento" 
+                        id="fecha_nacimiento"
+                        class="form-control"
+                        value="{{ $persona->fecha_nacimiento }}">
                 </div>
                 
                 <div class="col-md-3">
@@ -428,6 +436,41 @@ document.addEventListener('DOMContentLoaded', function(){
         // Muestra el badge dentro del modal (y opcionalmente podrías agregar un Toast aquí si quieres)
         document.getElementById('cudCargado').classList.remove('d-none');
     });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+
+    const fechaInput = document.getElementById('fecha_nacimiento');
+    const edadTexto = document.getElementById('edadTexto');
+
+    function calcularEdad(fecha) {
+        if (!fecha) return '';
+
+        const hoy = new Date();
+        const nacimiento = new Date(fecha);
+
+        let edad = hoy.getFullYear() - nacimiento.getFullYear();
+        const mes = hoy.getMonth() - nacimiento.getMonth();
+
+        if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+            edad--;
+        }
+
+        return edad;
+    }
+
+    function actualizarEdad() {
+        const edad = calcularEdad(fechaInput.value);
+        edadTexto.innerHTML = edad ? `(${edad} años)` : '';
+    }
+
+    fechaInput.addEventListener('change', actualizarEdad);
+
+    // 👇 importante: calcular al cargar
+    actualizarEdad();
+
 });
 </script>
 

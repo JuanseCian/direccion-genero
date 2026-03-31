@@ -108,8 +108,10 @@
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label">Fecha nacimiento</label>
-                    <input type="date" name="fecha_nacimiento" class="form-control">
+                    <label class="form-label">
+                        Fecha nacimiento <span id="edadTexto" class="text-muted"></span>
+                    </label>
+                    <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" class="form-control">
                 </div>
                 
                 <div class="col-md-3">
@@ -371,6 +373,42 @@ document.addEventListener('DOMContentLoaded', function(){
             Toast.fire({ icon: 'info', title: 'Datos de CUD pre-guardados en el formulario.' });
         }
     });
+});
+
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+
+    const fechaInput = document.getElementById('fecha_nacimiento');
+    const edadTexto = document.getElementById('edadTexto');
+
+    function calcularEdad(fecha) {
+        if (!fecha) return '';
+
+        const hoy = new Date();
+        const nacimiento = new Date(fecha);
+
+        let edad = hoy.getFullYear() - nacimiento.getFullYear();
+        const mes = hoy.getMonth() - nacimiento.getMonth();
+
+        if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+            edad--;
+        }
+
+        return edad;
+    }
+
+    fechaInput.addEventListener('change', function(){
+        const edad = calcularEdad(this.value);
+
+        if (edad >= 0) {
+            edadTexto.innerHTML = `(${edad} años)`;
+        } else {
+            edadTexto.innerHTML = '';
+        }
+    });
+
 });
 </script>
 
