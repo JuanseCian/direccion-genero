@@ -7,16 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Denuncia extends Model
 {
+    use HasFactory;
+
+    protected $table = 'denuncias';
+
     protected $fillable = [
         'fecha',
-        'atendio_nombre',
-        'atendio_apellido',
-        'nombre',
-        'apellido',
+        'atendido_por',
+        'denunciante',
         'dni',
+        'telefono',
         'direccion',
         'barrio',
-        'telefono',
         'agresor',
         'tipo_violencia',
         'observaciones'
