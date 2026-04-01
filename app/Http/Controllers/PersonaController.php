@@ -53,7 +53,7 @@ class PersonaController extends Controller
         $request->validate([
             'nombre' => 'required',
             'apellido' => 'required',
-            'dni' => 'required|unique:personas,dni',
+            'dni' => 'nullable|unique:personas,dni',
             'fecha_nacimiento' => 'nullable',
             'trabaja'=> 'nullable',
             'archivo_cud' => 'nullable|mimes:pdf,jpg,jpeg,png,jfif|max:2048',
@@ -124,7 +124,7 @@ class PersonaController extends Controller
         $persona = Persona::findOrFail($id);
 
         $request->validate([
-            'dni' => 'required|unique:personas,dni,' . $persona->id,
+            'dni' => 'nullable|unique:personas,dni,' . $persona->id,
             'apellido' => 'required',
             'nombre' => 'required',
             'archivo_cud' => 'nullable|mimes:pdf,jpg,jpeg,png,jfif|max:2048',
