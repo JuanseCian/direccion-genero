@@ -24,7 +24,7 @@ class DenunciaController extends Controller
         Denuncia::create($data);
 
         return redirect()
-            ->route('frontend.denuncias.index')
+            ->route('denuncias.index')
             ->with('success', 'Denuncia creada correctamente');
     }
 
@@ -40,7 +40,7 @@ class DenunciaController extends Controller
         $denuncia->update($this->validar($request));
 
         return redirect()
-            ->route('frontend.denuncias.index')
+            ->route('denuncias.index')
             ->with('success', 'Denuncia actualizada correctamente');
     }
 
@@ -49,7 +49,7 @@ class DenunciaController extends Controller
         Denuncia::findOrFail($id)->delete();
 
         return redirect()
-            ->route('frontend.denuncias.index')
+            ->route('denuncias.index')
             ->with('success', 'Denuncia eliminada');
     }
 
