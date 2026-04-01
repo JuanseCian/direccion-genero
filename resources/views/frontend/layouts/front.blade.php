@@ -228,6 +228,11 @@
                         <i class="bi bi-bar-chart"></i> Estadísticas
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('denuncias.index') }}" class="nav-link">
+                        <i class="bi bi-exclamation-triangle"></i> Denuncias
+                    </a>
+                </li>
                 
                 @auth
                     <li class="nav-item mx-lg-1">

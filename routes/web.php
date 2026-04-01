@@ -6,6 +6,8 @@ use App\Http\Controllers\AdjuntoController;
 use App\Http\Controllers\frontend\IveCasoController;
 use App\Http\Controllers\frontend\DireccionGeneroController;
 use App\Http\Controllers\frontend\MasculinidadesCasoController;
+use App\Http\Controllers\frontend\DenunciaController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -53,8 +55,16 @@ Route::get('/ive/caso/{id}/descargar', [IveCasoController::class, 'descargarWord
 
 Route::get('/masculinidades/caso/{id}/descargar', [MasculinidadesCasoController::class, 'descargarWord'])
     ->name('masculinidades.descargar');
+
+
 require __DIR__.'/auth.php';
 
+
+Route::prefix('denuncias')->group(function () {
+    Route::get('/', [DenunciaController::class,'index'])->name('denuncias.index');
+    Route::get('/create', [DenunciaController::class,'create'])->name('denuncias.create');
+    Route::post('/', [DenunciaController::class,'store'])->name('denuncias.store');
+});
 //Rutas de Front/para usuarios comunes o administradores
 //rutas home
 require __DIR__.'/home.php';
