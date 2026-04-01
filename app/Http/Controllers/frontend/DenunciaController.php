@@ -25,25 +25,34 @@ class DenunciaController extends Controller
         return view('frontend.denuncias.create', compact('personas'));
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'persona_id' => 'required|exists:personas,id',
-            'agresor_id' => 'nullable|exists:personas,id',
-        ]);
+   public function store(Request $request)
+{
+    $request->validate([
+        'fecha' => 'nullable|date',
+        'atendio_nombre' => 'nullable|string|max:150',
+        'atendio_apellido' => 'nullable|string|max:150',
+        'nombre' => 'nullable|string|max:150',
+        'apellido' => 'nullable|string|max:150',
+        'dni' => 'nullable|string|max:20',
+    ]);
 
-        Denuncia::create([
-            'persona_id' => $request->persona_id,
-            'agresor_id' => $request->agresor_id,
-            'fecha' => $request->fecha,
-            'descripcion' => $request->descripcion,
-            'tipo_violencia' => $request->tipo_violencia,
-            'lugar' => $request->lugar,
-            'requiere_intervencion' => $request->has('requiere_intervencion') ? 1 : 0,
-        ]);
+    Denuncia::create([
+        'fecha' => $request->fecha,
+        'atendio_nombre' => $request->atendio_nombre,
+        'atendio_apellido' => $request->atendio_apellido,
+        'nombre' => $request->nombre,
+        'apellido' => $request->apellido,
+        'dni' => $request->dni,
+        'direccion' => $request->direccion,
+        'barrio' => $request->barrio,
+        'telefono' => $request->telefono,
+        'agresor' => $request->agresor,
+        'tipo_violencia' => $request->tipo_violencia,
+        'observaciones' => $request->observaciones,
+    ]);
 
-        return redirect()
-            ->route('denuncias.index')
-            ->with('success','Denuncia creada correctamente');
-    }
+    return redirect()
+        ->route('denuncias.index')
+        ->with('success','Denuncia creada correctamente');
+}
 }

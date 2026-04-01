@@ -8,22 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Denuncia extends Model
 {
     protected $fillable = [
-        'persona_id',
-        'agresor_id',
         'fecha',
-        'descripcion',
+        'atendio_nombre',
+        'atendio_apellido',
+        'nombre',
+        'apellido',
+        'dni',
+        'direccion',
+        'barrio',
+        'telefono',
+        'agresor',
         'tipo_violencia',
-        'lugar',
-        'requiere_intervencion'
+        'observaciones'
     ];
-
-    public function persona()
-    {
-        return $this->belongsTo(Persona::class);
-    }
-
-    public function agresor()
-    {
-        return $this->belongsTo(Persona::class, 'agresor_id');
-    }
 }

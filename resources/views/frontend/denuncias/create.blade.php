@@ -1,70 +1,110 @@
 @extends('frontend.layouts.front')
 
 @section('content')
-<div class="container py-4">
+<div class="container-fluid py-4">
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm border-0">
+
         <div class="card-header text-white" style="background:#5651A0;">
-            <h5 class="mb-0">Nueva Denuncia</h5>
+            <h5 class="mb-0">
+                <i class="bi bi-plus-circle me-2"></i> Nueva Denuncia
+            </h5>
         </div>
 
-        <div class="card-body">
+        <div class="card-body bg-light">
 
             <form method="POST" action="{{ route('denuncias.store') }}">
                 @csrf
 
-                <div class="mb-3">
-                    <label>Persona</label>
-                    <select name="persona_id" class="form-control" required>
-                        <option value="">Seleccionar</option>
-                        @foreach($personas as $p)
-                            <option value="{{ $p->id }}">
-                                {{ $p->apellido }}, {{ $p->nombre }}
-                            </option>
-                        @endforeach
-                    </select>
+                <div class="row">
+
+                    {{-- FECHA --}}
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Fecha</label>
+                        <input type="date" name="fecha" class="form-control" required>
+                    </div>
+
+                    {{-- ATENDIÓ --}}
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Atendió (Nombre)</label>
+                        <input type="text" name="atendio_nombre" class="form-control">
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Atendió (Apellido)</label>
+                        <input type="text" name="atendio_apellido" class="form-control">
+                    </div>
+
                 </div>
 
-                <div class="mb-3">
-                    <label>Agresor</label>
-                    <select name="agresor_id" class="form-control">
-                        <option value="">Sin especificar</option>
-                        @foreach($personas as $p)
-                            <option value="{{ $p->id }}">
-                                {{ $p->apellido }}, {{ $p->nombre }}
-                            </option>
-                        @endforeach
-                    </select>
+                <hr>
+
+                {{-- DENUNCIANTE --}}
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" name="denunciante_nombre" class="form-control">
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Apellido</label>
+                        <input type="text" name="denunciante_apellido" class="form-control">
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">DNI</label>
+                        <input type="text" name="dni" class="form-control">
+                    </div>
+
                 </div>
 
-                <div class="mb-3">
-                    <label>Fecha</label>
-                    <input type="date" name="fecha" class="form-control">
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Dirección</label>
+                        <input type="text" name="direccion" class="form-control">
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Barrio</label>
+                        <input type="text" name="barrio" class="form-control">
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" name="telefono" class="form-control">
+                    </div>
+
                 </div>
 
+                <hr>
+
+                {{-- AGRESOR --}}
                 <div class="mb-3">
-                    <label>Tipo de violencia</label>
+                    <label class="form-label">Agresor (Nombre y Apellido)</label>
+                    <input type="text" name="agresor" class="form-control">
+                </div>
+
+                {{-- TIPO VIOLENCIA --}}
+                <div class="mb-3">
+                    <label class="form-label">Tipo de Violencia</label>
                     <input type="text" name="tipo_violencia" class="form-control">
                 </div>
 
+                {{-- OBSERVACIONES --}}
                 <div class="mb-3">
-                    <label>Lugar</label>
-                    <input type="text" name="lugar" class="form-control">
-                </div>
-
-                <div class="mb-3">
-                    <label>Descripción</label>
-                    <textarea name="descripcion" class="form-control"></textarea>
-                </div>
-
-                <div class="form-check mb-3">
-                    <input type="checkbox" name="requiere_intervencion" class="form-check-input">
-                    <label class="form-check-label">Requiere intervención</label>
+                    <label class="form-label">Observaciones</label>
+                    <textarea name="observaciones" rows="4" class="form-control"></textarea>
                 </div>
 
                 <button class="btn btn-success">
-                    Guardar Denuncia
+                    <i class="bi bi-save"></i> Guardar
                 </button>
+
+                <a href="{{ route('denuncias.index') }}" class="btn btn-secondary">
+                    Cancelar
+                </a>
 
             </form>
 
