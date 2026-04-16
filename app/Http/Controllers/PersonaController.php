@@ -10,6 +10,7 @@ use App\Models\Provincia;
 use App\Models\Cud;
 use App\Models\Localidad;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class PersonaController extends Controller
 {
@@ -17,7 +18,6 @@ class PersonaController extends Controller
 
     public function index(Request $request)
     {
-
         $buscar = $request->buscar;
 
         $personas = Persona::query()
@@ -29,12 +29,48 @@ class PersonaController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
+        $dnis = $personas->pluck('dni')->filter()->values()->toArray();
+
+        try {
+            $response = Http::withHeaders([
+                'API-KEY' => env('API_KEY')
+            ])->timeout(3)
+            ->post(env('ENTRAMADOS_API_URL') . '/legajos/batch', [
+                'dnis' => $dnis
+            ]);
+
+            $data = $response->json()['data'] ?? [];
+
+            $mapa = collect($data)->keyBy('dni');
+
+            foreach ($personas as $p) {
+                if (isset($mapa[$p->dni])) {
+                    $p->existe_en_entramados = true;
+                    $p->entramados_id = $mapa[$p->dni]['id'];
+                } else {
+                    $p->existe_en_entramados = false;
+                    $p->entramados_id = null;
+                }
+            }
+
+        } catch (\Exception $e) {
+            $dnisExistentes = [];
+        }
+
+        foreach ($personas as $p) {
+            if (isset($mapa[$p->dni])) {
+                $p->existe_en_entramados = true;
+                $p->entramados_id = $mapa[$p->dni]['id'];
+            } else {
+                $p->existe_en_entramados = false;
+                $p->entramados_id = null;
+            }
+        }
 
         return view(
             'frontend.personas.index',
             compact('personas','buscar')
         );
-
     }
 
 

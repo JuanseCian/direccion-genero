@@ -91,7 +91,7 @@
             <div class="row g-4">
                 <div class="col-md-3">
                     <label class="form-label">DNI</label>
-                    <input type="text" name="dni" class="form-control @error('dni') is-invalid @enderror" placeholder="Ej: 35123456">
+                    <input type="text" id="dni" name="dni" class="form-control @error('dni') is-invalid @enderror" placeholder="Ej: 35123456">
                     @error('dni')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -99,24 +99,24 @@
 
                 <div class="col-md-3">
                     <label class="form-label">Apellido</label>
-                    <input type="text" name="apellido" class="form-control" placeholder="Apellido">
+                    <input type="text" id="apellido" name="apellido" class="form-control" placeholder="Apellido">
                 </div>
 
                 <div class="col-md-3">
                     <label class="form-label">Nombre</label>
-                    <input type="text" name="nombre" class="form-control" placeholder="Nombre">
+                    <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Nombre">
                 </div>
 
                 <div class="col-md-3">
                     <label class="form-label">
                         Fecha nacimiento <span id="edadTexto" class="text-muted"></span>
                     </label>
-                    <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" class="form-control">
+                    <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" id="fecha_nacimiento" class="form-control">
                 </div>
                 
                 <div class="col-md-3">
                     <label class="form-label">Sexo</label>
-                    <select name="sexo" class="form-select">
+                    <select id="genero" name="sexo" class="form-select">
                         <option value="">Seleccione...</option>
                         <option value="Masculino">Masculino</option>
                         <option value="Femenino">Femenino</option>
@@ -166,7 +166,7 @@
                     <label class="form-label">Teléfono</label>
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0"><i class="bi bi-telephone text-muted"></i></span>
-                        <input type="text" name="telefono" class="form-control border-start-0 ps-0" placeholder="Ej: 3364 123456">
+                        <input type="text" id="telefono" name="telefono" class="form-control border-start-0 ps-0" placeholder="Ej: 3364 123456">
                     </div>
                 </div>
 
@@ -190,7 +190,7 @@
 
                 <div class="col-md-6">
                     <label class="form-label">Localidad</label>
-                    <select name="localidad_id" class="form-select">
+                    <select id="localidad" name="localidad_id" class="form-select">
                         <option value="">Seleccione Localidad...</option>
                         @foreach($localidad as $localidad)
                             <option value="{{ $localidad->id }}"> {{ $localidad->nombre }} </option>
@@ -200,7 +200,7 @@
 
                 <div class="col-md-6">
                     <label class="form-label">Barrio</label>
-                    <select name="barrio_id" class="form-select">
+                    <select id="barrio" name="barrio_id" class="form-select">
                         <option value="">Seleccione Barrio...</option>
                         @foreach($barrios as $barrio)
                             <option value="{{ $barrio->id }}"> {{ $barrio->nombre }} </option>
@@ -411,5 +411,113 @@ document.addEventListener('DOMContentLoaded', function(){
 
 });
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const dniInput = document.getElementById('dni');
+
+    let timeout = null;
+    let ultimoDniConsultado = null;
+
+    dniInput.addEventListener('input', function () {
+
+        let dni = this.value;
+
+        // Solo si tiene al menos 6-7 números (evita llamadas innecesarias)
+        if (dni.length < 7) return;
+
+        // Evitar repetir misma consulta
+        if (dni === ultimoDniConsultado) return;
+
+        // Debounce (espera 500ms después de dejar de escribir)
+        clearTimeout(timeout);
+
+        timeout = setTimeout(() => {
+            consultarDni(dni);
+        }, 500);
+    });
+
+    function consultarDni(dni) {
+
+        ultimoDniConsultado = dni;
+
+        fetch('/api/consultar-dni/' + dni)
+            .then(response => response.json())
+            .then(data => {
+
+                if (!data.existe) return;
+
+                let persona = data.data;
+
+                mostrarAlerta();
+
+                // Autocompletar básicos
+                document.getElementById('nombre').value = persona.nombre || '';
+                document.getElementById('apellido').value = persona.apellido || '';
+                document.getElementById('fecha_nacimiento').value = persona.fecha_nacimiento || '';
+                document.getElementById('telefono').value = persona.telefono || '';
+                document.querySelector('[name="domicilio"]').value = persona.direccion || '';
+
+                // Género inteligente
+                setGenero(persona.genero);
+
+                // Selects por texto
+                setSelectByText('localidad', persona.localidad);
+                setSelectByText('barrio', persona.barrio);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function setGenero(valor) {
+        if (!valor) return;
+
+        valor = valor.toLowerCase();
+
+        let generoNormalizado = '';
+
+        if (valor.includes('hombre') || valor.includes('masc') || valor === 'm') {
+            generoNormalizado = 'Masculino';
+        } 
+        else if (valor.includes('mujer') || valor.includes('fem') || valor === 'f') {
+            generoNormalizado = 'Femenino';
+        }
+
+        document.getElementById('genero').value = generoNormalizado;
+    }
+
+    function setSelectByText(selectId, text) {
+        if (!text) return;
+
+        let select = document.getElementById(selectId);
+
+        for (let option of select.options) {
+            if (option.text.trim().toLowerCase() === text.trim().toLowerCase()) {
+                select.value = option.value;
+                break;
+            }
+        }
+    }
+
+    function mostrarAlerta() {
+        let alerta = document.getElementById('alertaEntramados');
+
+        if (!alerta) {
+            alerta = document.createElement('div');
+            alerta.id = 'alertaEntramados';
+            alerta.className = 'alert alert-info mt-3';
+            alerta.innerHTML = '<strong>Info:</strong> Esta persona ya existe en el sistema de Entramados. Se han autocompletado los datos disponibles.';
+
+            document.querySelector('.card').prepend(alerta);
+        } else {
+            alerta.classList.remove('d-none');
+        }
+    }
+
+});
+</script>
+            
 
 @endsection

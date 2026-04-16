@@ -29,6 +29,7 @@
                             <th class="border-0 py-3 text-uppercase small fw-bold">Contacto</th>
                             <th class="border-0 py-3 text-uppercase small fw-bold">Ubicación</th>
                             <th class="border-0 py-3 text-uppercase small fw-bold text-center">Áreas de Intervención</th>
+                            <th class="border-0 py-3 text-uppercase small fw-bold text-center">Intervenciones externas</th>
                             <th class="border-0 pe-4 py-3 text-uppercase small fw-bold text-end">Acciones</th>
                         </tr>
                     </thead>
@@ -106,6 +107,21 @@
                                         </span>
                                     @endif
                                 </div>
+                            </td>
+
+                            <td class="text-center">
+                                @if($p->existe_en_entramados)
+                                <a href="{{ env('ENTRAMADOS_URL') }}/legajo/{{ $p->entramados_id }}/edit"
+                                    target="_blank"
+                                    class="badge text-white px-3 py-2 text-decoration-none shadow-sm"
+                                    style="background: linear-gradient(45deg, #0dcaf0, #31d2f2); border-radius: 50px;">
+                                        <i class="fas fa-external-link-alt me-1"></i> Entramados
+                                    </a>
+                                @else
+                                    <span class="badge bg-light text-muted px-3 py-2">
+                                        —
+                                    </span>
+                                @endif
                             </td>
 
                             {{-- Botón de Acción --}}

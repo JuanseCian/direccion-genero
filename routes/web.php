@@ -122,3 +122,16 @@ require __DIR__.'/tipo-violencia.php';
 require __DIR__.'/tipointervencion.php';
 //rutas tipos de papelera
 require __DIR__.'/papelera.php';
+
+
+//Llama API de entramados
+Route::get('/api/consultar-dni/{dni}', function ($dni) {
+
+    $response = Http::withHeaders([
+        'API-KEY' => env('API_KEY')
+    ])->get(env('ENTRAMADOS_API_URL') . '/legajo/' . $dni);
+
+    return $response->json();
+});
+
+
