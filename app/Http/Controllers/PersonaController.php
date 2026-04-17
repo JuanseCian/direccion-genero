@@ -137,6 +137,88 @@ class PersonaController extends Controller
         return redirect()->route('personas.index')->with('success','Persona creada correctamente');
     }
 
+    public function buscarPorDni($dni)
+    {
+        $persona = Persona::with([
+            'provincia',
+            'localidad',
+            'barrio'
+        ])->where('dni', $dni)->first();
+
+        if (!$persona) {
+            return response()->json([
+                'existe' => false
+            ]);
+        }
+
+        return response()->json([
+            'existe' => true,
+            'data' => [
+                'dni' => $persona->dni,
+                'nombre' => $persona->nombre,
+                'apellido' => $persona->apellido,
+                'fecha_nacimiento' => $persona->fecha_nacimiento,
+                'telefono' => $persona->telefono,
+                'sexo' => $persona->sexo,
+                'direccion' => $persona->domicilio,
+
+                'provincia_id' => $persona->provincia_id,
+                'localidad_id' => $persona->localidad_id,
+                'barrio_id' => $persona->barrio_id,
+
+                'provincia' => $persona->provincia?->nombre,
+                'localidad' => $persona->localidad?->nombre,
+                'barrio' => $persona->barrio?->nombre,
+            ]
+        ]);
+    }
+
+    public function buscarVariosDni(Request $request)
+    {
+        $dnis = $request->input('dnis', []);
+
+        if (!is_array($dnis) || empty($dnis)) {
+            return response()->json([
+                'data' => []
+            ]);
+        }
+
+        $personas = Persona::with([
+            'casosIve',
+            'casosGenero',
+            'casosMasculinidades'
+        ])
+        ->whereIn('dni', $dnis)
+        ->get();
+
+        $data = $personas->map(function ($p) {
+
+            $areas = [];
+
+            if ($p->casosIve->isNotEmpty()) {
+                $areas[] = 'IVE';
+            }
+
+            if ($p->casosGenero->isNotEmpty()) {
+                $areas[] = 'GÉNERO';
+            }
+
+            if ($p->casosMasculinidades->isNotEmpty()) {
+                $areas[] = 'MASCULINIDADES';
+            }
+
+            return [
+                'id' => $p->id,
+                'dni' => $p->dni,
+                'areas' => $areas
+            ];
+        });
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
     public function edit($id)
     {
         $persona = Persona::with('cud')->findOrFail($id);

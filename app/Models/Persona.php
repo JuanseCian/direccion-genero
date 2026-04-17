@@ -28,10 +28,6 @@ class Persona extends Model
     'debe_asistir_masculinidades'
     ];
 
-    public function barrio()
-    {
-        return $this->belongsTo(Barrio::class);
-    }
     public function casosAgresor()
     {
         return $this->hasMany(DireccionGeneroCaso::class,'agresor_id');
@@ -49,10 +45,10 @@ class Persona extends Model
         return $this->hasMany(\App\Models\MasculinidadesCaso::class);
     }
 
-        public function casosMasculinidades()
+    public function casosMasculinidades()
         {
-            return $this->hasMany(\App\Models\MasculinidadesCaso::class, 'persona_id');
-        }
+        return $this->hasMany(\App\Models\MasculinidadesCaso::class, 'persona_id');
+    }
 
     public function barrios()
     {
@@ -62,5 +58,20 @@ class Persona extends Model
     public function cud()
     {
         return $this->hasOne(Cud::class);
+    }
+
+    public function provincia()
+    {
+        return $this->belongsTo(Provincia::class, 'provincia_id');
+    }
+
+    public function localidad()
+    {
+        return $this->belongsTo(Localidad::class, 'localidad_id');
+    }
+
+    public function barrio()
+    {
+        return $this->belongsTo(Barrio::class, 'barrio_id');
     }
 }
