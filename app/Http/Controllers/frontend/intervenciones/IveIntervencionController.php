@@ -32,8 +32,8 @@ class IveIntervencionController extends Controller
             'tipo_intervencion_id' => 'required|exists:tipos_intervencion,id',
             'encargado_id'         => 'required|exists:encargados,id',
             'detalle'              => 'required|string',
-            'archivo'              => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240'
-        ]);
+            'archivos.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:51200'
+            ]);
 
         $caso = IveCaso::findOrFail($casoId);
 
@@ -45,21 +45,25 @@ class IveIntervencionController extends Controller
             'encargado_id'         => $request->encargado_id,
         ]);
 
-        if ($request->hasFile('archivo')) {
-            $archivo = $request->file('archivo');
-            $nombreGuardado = uniqid().'_'.$archivo->getClientOriginalName();
-            $ruta = $archivo->storeAs('adjuntos/intervenciones_ive', $nombreGuardado);
+        if ($request->hasFile('archivos')) {
 
-            Adjunto::create([
-                'entidad_tipo'    => 'intervencion_ive',
-                'entidad_id'      => $intervencion->id,
-                'nombre_original' => $archivo->getClientOriginalName(),
-                'nombre_guardado' => $nombreGuardado,
-                'ruta'            => $ruta,
-                'tipo_mime'       => $archivo->getMimeType(),
-                'tamaño'          => $archivo->getSize(),
-                'subido_por'      => auth()->id() ?? 1,
-            ]);
+            foreach ($request->file('archivos') as $archivo) {
+
+                $nombreGuardado = uniqid().'_'.$archivo->getClientOriginalName();
+
+                $ruta = $archivo->storeAs('adjuntos/intervenciones_ive', $nombreGuardado);
+
+                Adjunto::create([
+                    'entidad_tipo'    => 'intervencion_ive',
+                    'entidad_id'      => $intervencion->id,
+                    'nombre_original' => $archivo->getClientOriginalName(),
+                    'nombre_guardado' => $nombreGuardado,
+                    'ruta'            => $ruta,
+                    'tipo_mime'       => $archivo->getMimeType(),
+                    'tamaño'          => $archivo->getSize(),
+                    'subido_por'      => auth()->id() ?? 1,
+                ]);
+            }
         }
 
         return redirect()
@@ -86,8 +90,7 @@ class IveIntervencionController extends Controller
             'tipo_intervencion_id' => 'required|exists:tipos_intervencion,id',
             'encargado_id'         => 'required|exists:encargados,id',
             'detalle'              => 'required|string',
-            'archivo'              => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240'
-        ]);
+            'archivos.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:51200'        ]);
 
         $intervencion = IveIntervencion::findOrFail($id);
 
@@ -99,32 +102,25 @@ class IveIntervencionController extends Controller
         ]);
 
         // Reemplazo de archivo si sube uno nuevo
-        if ($request->hasFile('archivo')) {
-            $adjuntoExistente = Adjunto::where('entidad_tipo','intervencion_ive')
-                ->where('entidad_id',$intervencion->id)
-                ->first();
+        if ($request->hasFile('archivos')) {
 
-            if ($adjuntoExistente) {
-                if (Storage::exists($adjuntoExistente->ruta)) {
-                    Storage::delete($adjuntoExistente->ruta);
-                }
-                $adjuntoExistente->delete();
+            foreach ($request->file('archivos') as $archivo) {
+
+                $nombreGuardado = uniqid().'_'.$archivo->getClientOriginalName();
+
+                $ruta = $archivo->storeAs('adjuntos/intervenciones_ive', $nombreGuardado);
+
+                Adjunto::create([
+                    'entidad_tipo'    => 'intervencion_ive',
+                    'entidad_id'      => $intervencion->id,
+                    'nombre_original' => $archivo->getClientOriginalName(),
+                    'nombre_guardado' => $nombreGuardado,
+                    'ruta'            => $ruta,
+                    'tipo_mime'       => $archivo->getMimeType(),
+                    'tamaño'          => $archivo->getSize(),
+                    'subido_por'      => auth()->id() ?? 1,
+                ]);
             }
-
-            $archivo = $request->file('archivo');
-            $nombreGuardado = uniqid().'_'.$archivo->getClientOriginalName();
-            $ruta = $archivo->storeAs('adjuntos/intervenciones_ive', $nombreGuardado);
-
-            Adjunto::create([
-                'entidad_tipo'    => 'intervencion_ive',
-                'entidad_id'      => $intervencion->id,
-                'nombre_original' => $archivo->getClientOriginalName(),
-                'nombre_guardado' => $nombreGuardado,
-                'ruta'            => $ruta,
-                'tipo_mime'       => $archivo->getMimeType(),
-                'tamaño'          => $archivo->getSize(),
-                'subido_por'      => auth()->id() ?? 1,
-            ]);
         }
 
         return redirect()
@@ -136,17 +132,17 @@ class IveIntervencionController extends Controller
     {
         $intervencion = IveIntervencion::findOrFail($id);
 
-        $adjunto = Adjunto::where('entidad_tipo','intervencion_ive')
-            ->where('entidad_id',$intervencion->id)
-            ->first();
+       $adjuntos = Adjunto::where('entidad_tipo','intervencion_ive')
+    ->where('entidad_id',$intervencion->id)
+            ->get();
 
-        if ($adjunto) {
+        foreach ($adjuntos as $adjunto) {
             if (Storage::exists($adjunto->ruta)) {
                 Storage::delete($adjunto->ruta);
             }
             $adjunto->delete();
         }
-
+        
         $intervencion->delete();
 
         return redirect()->back()

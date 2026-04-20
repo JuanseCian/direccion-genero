@@ -125,8 +125,8 @@ required></textarea>
     </label>
 
     <input type="file"
-    name="archivo"
-    class="form-control">
+    name="archivos[]"
+    class="form-control" multiple>
 
     </div>
 

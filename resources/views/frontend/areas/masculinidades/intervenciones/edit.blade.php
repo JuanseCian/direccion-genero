@@ -104,8 +104,42 @@ Adjuntar archivo nuevo
 </label>
 
 <input type="file"
-name="archivo"
-class="form-control">
+       name="archivos[]"
+       class="form-control"
+       multiple
+       accept=".pdf,.jpg,.jpeg,.png">
+
+
+@php
+    $adjuntos = \App\Models\Adjunto::where('entidad_tipo','intervencion_masculinidades')
+        ->where('entidad_id',$intervencion->id)
+        ->get();
+@endphp
+
+@if($adjuntos->count())
+    <div class="mt-3">
+        <label class="form-label fw-bold">Archivos adjuntos</label>
+
+        <ul class="list-group">
+            @foreach($adjuntos as $adjunto)
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    
+                    <span>
+                        <i class="bi bi-paperclip"></i>
+                        {{ $adjunto->nombre_original }}
+                    </span>
+
+                    <a href="{{ route('adjuntos.descargar', $adjunto->id) }}"
+                       class="btn btn-sm btn-outline-primary"
+                       target="_blank">
+                        <i class="bi bi-download"></i> Descargar
+                    </a>
+
+                </li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
 </div>
 

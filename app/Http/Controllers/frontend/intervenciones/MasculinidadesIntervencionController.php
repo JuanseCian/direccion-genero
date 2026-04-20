@@ -36,7 +36,7 @@ public function store(Request $request, $casoId)
         'tipo_intervencion_id' => 'required|exists:tipos_intervencion,id',
         'encargado_id' => 'required|exists:encargados,id',
         'detalle' => 'required|string',
-        'certificado' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120'
+        'archivos.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:51200'
     ]);
 
     $intervencion = MasculinidadesIntervencion::create([
@@ -48,30 +48,33 @@ public function store(Request $request, $casoId)
     ]);
    
     // Guardar archivo si existe
-    if ($request->hasFile('archivo')) {
+    if ($request->hasFile('archivos')) {
 
-    $archivo = $request->file('archivo');
+        foreach ($request->file('archivos') as $archivo) {
 
-    $nombreGuardado = uniqid().'_'.$archivo->getClientOriginalName();
+            $nombreGuardado = uniqid().'_'.$archivo->getClientOriginalName();
 
-    $ruta = $archivo->storeAs(
-    'adjuntos/intervenciones',
-    $nombreGuardado
-);
+            $ruta = $archivo->storeAs(
+                'adjuntos/intervenciones_masculinidades',
+                $nombreGuardado
+            );
 
-    Adjunto::create([
-        'entidad_tipo' => 'intervencion_masculinidades',
-        'entidad_id' => $intervencion->id,
-        'nombre_original' => $archivo->getClientOriginalName(),
-        'nombre_guardado' => $nombreGuardado,
-        'ruta' => $ruta,
-        'tipo_mime' => $archivo->getMimeType(),
-        'tamaño' => $archivo->getSize(),
-        'subido_por' => auth()->id() ?? 1,
-    ]);
-}
+            Adjunto::create([
+                'entidad_tipo' => 'intervencion_masculinidades',
+                'entidad_id' => $intervencion->id,
+                'nombre_original' => $archivo->getClientOriginalName(),
+                'nombre_guardado' => $nombreGuardado,
+                'ruta' => $ruta,
+                'tipo_mime' => $archivo->getMimeType(),
+                'tamaño' => $archivo->getSize(),
+                'subido_por' => auth()->id() ?? 1,
+            ]);
+        }
+    }
 
-    return redirect()->back()->with('success', 'Intervención registrada correctamente.');
+    return redirect()
+        ->route('masculinidades.edit', $casoId)
+        ->with('success', 'Intervención registrada correctamente.');
 }
 
 
@@ -96,7 +99,7 @@ public function update(Request $request,$id)
         'tipo_intervencion_id' => 'required|exists:tipos_intervencion,id',
         'encargado_id' => 'required|exists:encargados,id',
         'detalle' => 'required|string',
-        'archivo' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240'
+        'archivos.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:51200'
     ]);
 
     $intervencion = MasculinidadesIntervencion::findOrFail($id);
@@ -108,41 +111,28 @@ public function update(Request $request,$id)
         'detalle' => $request->detalle,
     ]);
 
-    // REEMPLAZAR archivo si se sube uno nuevo
-    if ($request->hasFile('archivo')) {
+    if ($request->hasFile('archivos')) {
 
-        $adjuntoExistente = Adjunto::where('entidad_tipo','intervencion_masculinidades')
-            ->where('entidad_id',$intervencion->id)
-            ->first();
+        foreach ($request->file('archivos') as $archivo) {
 
-        if ($adjuntoExistente) {
+            $nombreGuardado = uniqid().'_'.$archivo->getClientOriginalName();
 
-            if (Storage::exists($adjuntoExistente->ruta)) {
-                Storage::delete($adjuntoExistente->ruta);
-            }
+            $ruta = $archivo->storeAs(
+                'adjuntos/intervenciones_masculinidades',
+                $nombreGuardado
+            );
 
-            $adjuntoExistente->delete();
+            Adjunto::create([
+                'entidad_tipo' => 'intervencion_masculinidades',
+                'entidad_id' => $intervencion->id,
+                'nombre_original' => $archivo->getClientOriginalName(),
+                'nombre_guardado' => $nombreGuardado,
+                'ruta' => $ruta,
+                'tipo_mime' => $archivo->getMimeType(),
+                'tamaño' => $archivo->getSize(),
+                'subido_por' => auth()->id() ?? 1,
+            ]);
         }
-
-        $archivo = $request->file('archivo');
-
-        $nombreGuardado = uniqid().'_'.$archivo->getClientOriginalName();
-
-        $ruta = $archivo->storeAs(
-            'adjuntos/intervenciones',
-            $nombreGuardado
-        );
-
-        Adjunto::create([
-            'entidad_tipo' => 'intervencion_masculinidades',
-            'entidad_id' => $intervencion->id,
-            'nombre_original' => $archivo->getClientOriginalName(),
-            'nombre_guardado' => $nombreGuardado,
-            'ruta' => $ruta,
-            'tipo_mime' => $archivo->getMimeType(),
-            'tamaño' => $archivo->getSize(),
-            'subido_por' => auth()->id() ?? 1,
-        ]);
     }
 
     return redirect()

@@ -118,8 +118,10 @@ Adjuntar archivo
 </label>
 
 <input type="file"
-name="archivo"
-class="form-control">
+       name="archivos[]"
+       class="form-control"
+       multiple
+       accept=".pdf,.jpg,.jpeg,.png">
 
 </div>
 
