@@ -4,16 +4,39 @@
 <div class="container-fluid py-4">
     <div class="card shadow-sm border-0">
         {{-- HEADER CON EL COLOR INSTITUCIONAL --}}
-        <div class="card-header d-flex justify-content-between align-items-center text-white" 
-             style="background:#5651A0; border-radius:8px 8px 0 0;">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2 text-white" 
+            style="background:#5651A0; border-radius:8px 8px 0 0;">
             
             <h5 class="mb-0">
                 <i class="bi bi-people-fill me-2"></i> Listado de casos: Masculinidades
             </h5>
 
-            <a href="{{ route('masculinidades.create') }}" class="btn btn-light btn-sm shadow-sm">
-                <i class="bi bi-plus-lg"></i> Nuevo Caso
-            </a>
+            <div class="d-flex align-items-center gap-2">
+
+                {{-- BUSCADOR --}}
+                <form action="{{ route('masculinidades.listado') }}" 
+                    method="GET" 
+                    class="d-flex">
+
+                    <input type="text"
+                        name="buscar"
+                        class="form-control form-control-sm"
+                        placeholder="Buscar por nombre, apellido o DNI..."
+                        value="{{ request('buscar') }}">
+
+                    <button class="btn btn-light btn-sm ms-2">
+                        <i class="bi bi-search"></i>
+                    </button>
+
+                </form>
+
+                {{-- NUEVO CASO --}}
+                <a href="{{ route('masculinidades.create') }}" 
+                class="btn btn-light btn-sm shadow-sm">
+                    <i class="bi bi-plus-lg"></i> Nuevo Caso
+                </a>
+
+            </div>
         </div>
 
         <div class="card-body bg-light">

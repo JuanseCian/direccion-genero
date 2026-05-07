@@ -6,16 +6,37 @@
     <div class="card shadow-sm border-0">
         
         {{-- HEADER --}}
-        <div class="card-header d-flex justify-content-between align-items-center text-white" 
-             style="background:#5651A0;">
-            
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2 text-white" 
+            style="background:#5651A0;">
+
             <h5 class="mb-0">
                 <i class="bi bi-exclamation-triangle me-2"></i> Denuncias
             </h5>
 
-            <a href="{{ route('denuncias.create') }}" class="btn btn-light btn-sm shadow-sm">
-                <i class="bi bi-plus-lg"></i> Nueva Denuncia
-            </a>
+            <div class="d-flex align-items-center gap-2">
+
+                {{-- BUSCADOR --}}
+                <form action="{{ route('denuncias.index') }}" method="GET" class="d-flex">
+
+                    <input type="text"
+                        name="buscar"
+                        class="form-control form-control-sm me-2"
+                        placeholder="Buscar denunciante..."
+                        value="{{ request('buscar') }}">
+
+                    <button class="btn btn-light btn-sm">
+                        <i class="bi bi-search"></i>
+                    </button>
+
+                </form>
+
+                {{-- BOTON NUEVO --}}
+                <a href="{{ route('denuncias.create') }}" 
+                class="btn btn-light btn-sm shadow-sm">
+                    <i class="bi bi-plus-lg"></i> Nueva Denuncia
+                </a>
+
+            </div>
         </div>
 
         {{-- BODY --}}

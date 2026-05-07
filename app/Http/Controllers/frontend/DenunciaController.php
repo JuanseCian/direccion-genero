@@ -1,16 +1,25 @@
 <?php
 
 namespace App\Http\Controllers\frontend;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Denuncia;
 
 class DenunciaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $denuncias = Denuncia::orderByDesc('fecha')->paginate(10);
-        return view('frontend.denuncias.index', compact('denuncias'));
+        $buscar = $request->buscar;
+
+        $denuncias = Denuncia::when($buscar, function ($query, $buscar) {
+                $query->where('denunciante', 'like', '%' . $buscar . '%');
+            })
+            ->orderByDesc('fecha')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('frontend.denuncias.index', compact('denuncias', 'buscar'));
     }
 
     public function create()
@@ -21,6 +30,7 @@ class DenunciaController extends Controller
     public function store(Request $request)
     {
         $data = $this->validar($request);
+
         Denuncia::create($data);
 
         return redirect()
@@ -31,12 +41,14 @@ class DenunciaController extends Controller
     public function edit($id)
     {
         $denuncia = Denuncia::findOrFail($id);
+
         return view('frontend.denuncias.edit', compact('denuncia'));
     }
 
     public function update(Request $request, $id)
     {
         $denuncia = Denuncia::findOrFail($id);
+
         $denuncia->update($this->validar($request));
 
         return redirect()

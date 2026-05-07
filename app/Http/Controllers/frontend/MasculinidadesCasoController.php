@@ -21,13 +21,27 @@ class MasculinidadesCasoController extends Controller
         return view('frontend.areas.masculinidades.index');
     }
 
-    public function listado()
+    public function listado(Request $request)
     {
-        $casos = \App\Models\MasculinidadesCaso::with('persona', 'encargado')
+        $buscar = $request->buscar;
+
+        $casos = MasculinidadesCaso::with('persona', 'encargado')
+            ->when($buscar, function($query, $buscar){
+
+                $query->whereHas('persona', function($q) use ($buscar){
+
+                    $q->where('nombre', 'like', "%{$buscar}%")
+                    ->orWhere('apellido', 'like', "%{$buscar}%")
+                    ->orWhere('dni', 'like', "%{$buscar}%");
+
+                });
+
+            })
             ->orderBy('created_at','desc')
-            ->paginate(15);
-            
-        return view('frontend.areas.masculinidades.listado', compact('casos'));
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('frontend.areas.masculinidades.listado', compact('casos', 'buscar'));
     }
 
     public function create()

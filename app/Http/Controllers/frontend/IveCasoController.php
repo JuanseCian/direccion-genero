@@ -47,6 +47,7 @@ class IveCasoController extends Controller
 
         return view('frontend.areas.ive.index', compact('casos'));
     }
+
     public function descargarWord($id)
     {
         $caso = IveCaso::findOrFail($id);
@@ -183,25 +184,51 @@ class IveCasoController extends Controller
             ->with('success', 'Legajo IVE creado correctamente');
     }
 
-    public function listado()
+    public function listado(Request $request)
     {
         $user = auth()->user();
+
+        $buscar = $request->buscar;
 
         if ($user->rol_id == 2 || $user->areas->contains('nombre','ive')) {
 
             $casos = IveCaso::with('persona')
+                ->when($buscar, function($query, $buscar){
+
+                    $query->whereHas('persona', function($q) use ($buscar){
+
+                        $q->where('nombre', 'like', "%{$buscar}%")
+                        ->orWhere('apellido', 'like', "%{$buscar}%")
+                        ->orWhere('dni', 'like', "%{$buscar}%");
+
+                    });
+
+                })
                 ->orderBy('created_at','desc')
-                ->paginate(10);
+                ->paginate(10)
+                ->withQueryString();
 
         } else {
 
             $casos = $user->iveCasos()
                 ->with('persona')
+                ->when($buscar, function($query, $buscar){
+
+                    $query->whereHas('persona', function($q) use ($buscar){
+
+                        $q->where('nombre', 'like', "%{$buscar}%")
+                        ->orWhere('apellido', 'like', "%{$buscar}%")
+                        ->orWhere('dni', 'like', "%{$buscar}%");
+
+                    });
+
+                })
                 ->orderBy('created_at','desc')
-                ->paginate(10);
+                ->paginate(10)
+                ->withQueryString();
         }
 
-        return view('frontend.areas.ive.listado', compact('casos'));
+        return view('frontend.areas.ive.listado', compact('casos', 'buscar'));
     }
 
     public function edit($id)

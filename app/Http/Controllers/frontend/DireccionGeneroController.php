@@ -19,8 +19,10 @@ class DireccionGeneroController extends Controller
         return view('frontend.areas.genero.index', compact('casos'));
     }
 
-    public function listado()
+    public function listado(Request $request)
     {
+        $buscar = $request->buscar;
+
         $legajos = DireccionGeneroCaso::with([
             'persona',
             'localidad',
@@ -28,10 +30,22 @@ class DireccionGeneroController extends Controller
             'nivelEstudio',
             'encargado'
         ])
+        ->when($buscar, function($query, $buscar){
+
+            $query->whereHas('persona', function($q) use ($buscar){
+
+                $q->where('nombre', 'like', "%{$buscar}%")
+                ->orWhere('apellido', 'like', "%{$buscar}%")
+                ->orWhere('dni', 'like', "%{$buscar}%");
+
+            });
+
+        })
         ->orderBy('nivel_gravedad', 'desc')
-        ->paginate(10);
-        
-        return view('frontend.areas.genero.listado', compact('legajos'));
+        ->paginate(10)
+        ->withQueryString();
+
+        return view('frontend.areas.genero.listado', compact('legajos', 'buscar'));
     }
 
     public function create()
