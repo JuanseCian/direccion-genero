@@ -442,7 +442,7 @@
         toast: true,
         position: 'top-end',
         showConfirmButton: false,
-        timer: 3500,
+        timer: 1435,
         timerProgressBar: true
     });
 

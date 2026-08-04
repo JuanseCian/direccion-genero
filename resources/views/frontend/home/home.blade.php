@@ -5,23 +5,29 @@
 @section('content')
 
 @php
-$user = auth()->user();
+    $user = auth()->user();
 
-$esAdmin = $user->rol_id == 2;
+    $esAdmin = $user->rol_id == 2;
 
-$tieneGenero = $esAdmin || $user->areas->contains('nombre','direccion_genero');
-$tieneMasc = $esAdmin || $user->areas->contains('nombre','masculinidades');
-$tieneIVE = $esAdmin 
-    || $user->areas->contains('id',3) 
-    || $user->iveCasos()->exists();
+    $tieneGenero = $esAdmin
+        || $user->areas->contains('nombre', 'direccion_genero');
+
+    $tieneMasc = $esAdmin
+        || $user->areas->contains('nombre', 'masculinidades');
+
+    $tieneIVE = $esAdmin
+        || $user->areas->contains('id', 3)
+        || $user->iveCasos()->exists();
 @endphp
+
+
+{{-- ENCABEZADO --}}
 
 <div class="card card-soft p-4 mb-4">
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
 
         <div>
-
             <h3 class="mb-1">
                 Bienvenido
             </h3>
@@ -29,20 +35,26 @@ $tieneIVE = $esAdmin
             <p class="mb-0 text-muted">
                 Sistema de la Dirección de Género
             </p>
-
         </div>
 
 
-        <div class="mt-2">
+        <div class="d-flex flex-wrap gap-2">
 
-            <a href="{{ route('personas.index') }}" class="btn btn-primary btn-lg me-2">
+            <a
+                href="{{ route('personas.index') }}"
+                class="btn btn-primary btn-lg"
+            >
+                <i class="bi bi-people me-1"></i>
+                Personas
+            </a>
 
-               <i class="bi bi-people"></i> Personas </a>
-
-
-                <a href="{{ route('personas.create') }}" class="btn btn-success btn-lg">
-
-                <i class="bi bi-person-plus"></i> Nueva Persona </a>
+            <a
+                href="{{ route('personas.create') }}"
+                class="btn btn-success btn-lg"
+            >
+                <i class="bi bi-person-plus me-1"></i>
+                Nueva Persona
+            </a>
 
         </div>
 
@@ -51,26 +63,32 @@ $tieneIVE = $esAdmin
 </div>
 
 
-
-<!-- CARDS AREAS -->
+{{-- CARDS DE ÁREAS --}}
 
 <div class="row text-center justify-content-center">
 
 
-    <!-- GENERO -->
+    {{-- GÉNERO Y DIVERSIDAD --}}
 
     <div class="col-lg-4 col-md-6 mb-4">
 
         @if($tieneGenero)
-        <a href="{{ route('genero.index') }}" class="text-decoration-none">
+            <a
+                href="{{ route('genero.index') }}"
+                class="text-decoration-none"
+            >
         @endif
 
-        <div class="card card-soft p-4 h-100 area-card area-genero
-        {{ !$tieneGenero ? 'bloqueado' : '' }}">
+        <div
+            class="card card-soft p-4 h-100 area-card area-genero
+            {{ !$tieneGenero ? 'bloqueado' : '' }}"
+        >
 
-            <div class="liston">
-                Solo personal autorizado
-            </div>
+            @unless($tieneGenero)
+                <div class="liston">
+                    Solo personal autorizado
+                </div>
+            @endunless
 
             <i class="bi bi-gender-ambiguous area-icon"></i>
 
@@ -78,34 +96,40 @@ $tieneIVE = $esAdmin
                 Género y Diversidad
             </h4>
 
-            <p class="text-muted">
+            <p class="text-muted mb-0">
                 Gestión de legajos e intervenciones
             </p>
 
         </div>
 
         @if($tieneGenero)
-        </a>
+            </a>
         @endif
 
-        </div>
+    </div>
 
 
-
-    <!-- MASCULINIDADES -->
+    {{-- MASCULINIDADES --}}
 
     <div class="col-lg-4 col-md-6 mb-4">
 
         @if($tieneMasc)
-        <a href="{{ route('masculinidades.index') }}" class="text-decoration-none">
+            <a
+                href="{{ route('masculinidades.index') }}"
+                class="text-decoration-none"
+            >
         @endif
 
-        <div class="card card-soft p-4 h-100 area-card area-masc
-        {{ !$tieneMasc ? 'bloqueado' : '' }}">
+        <div
+            class="card card-soft p-4 h-100 area-card area-masc
+            {{ !$tieneMasc ? 'bloqueado' : '' }}"
+        >
 
-            <div class="liston">
-                Solo personal autorizado
-            </div>
+            @unless($tieneMasc)
+                <div class="liston">
+                    Solo personal autorizado
+                </div>
+            @endunless
 
             <i class="bi bi-people area-icon"></i>
 
@@ -113,32 +137,40 @@ $tieneIVE = $esAdmin
                 Agresores/Masculinidades
             </h4>
 
-            <p class="text-muted">
+            <p class="text-muted mb-0">
                 Seguimiento de casos
             </p>
 
         </div>
 
         @if($tieneMasc)
-        </a>
+            </a>
         @endif
 
     </div>
 
-    <!-- IVE -->
+
+    {{-- IVE --}}
 
     <div class="col-lg-4 col-md-6 mb-4">
 
         @if($tieneIVE)
-        <a href="{{ route('frontend.areas.ive.index') }}" class="text-decoration-none">
+            <a
+                href="{{ route('frontend.areas.ive.index') }}"
+                class="text-decoration-none"
+            >
         @endif
 
-        <div class="card card-soft p-4 h-100 area-card area-ive
-        {{ !$tieneIVE ? 'bloqueado' : '' }}">
+        <div
+            class="card card-soft p-4 h-100 area-card area-ive
+            {{ !$tieneIVE ? 'bloqueado' : '' }}"
+        >
 
-            <div class="liston">
-                Solo personal autorizado
-            </div>
+            @unless($tieneIVE)
+                <div class="liston">
+                    Solo personal autorizado
+                </div>
+            @endunless
 
             <i class="bi bi-heart-pulse area-icon"></i>
 
@@ -146,193 +178,336 @@ $tieneIVE = $esAdmin
                 IVE
             </h4>
 
-            <p class="text-muted">
+            <p class="text-muted mb-0">
                 Atención y acompañamiento
             </p>
 
         </div>
 
         @if($tieneIVE)
-        </a>
+            </a>
         @endif
 
     </div>
 
-
 </div>
 
 
-
-<!-- ESTILOS (DESPUÉS LOS PASAMOS A CSS) -->
-
 <style>
 
-.area-icon{
+    /* CARDS DE ÁREAS */
 
-    font-size:55px;
-    color:#6c63ff;
+    .area-card {
+        position: relative;
+        overflow: hidden;
+        min-height: 250px;
+        border-radius: 14px;
+        cursor: pointer;
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            background-color 0.25s ease,
+            color 0.25s ease;
+    }
 
-}
+    .area-icon {
+        font-size: 55px;
+        color: #6c63ff;
+        transition:
+            color 0.25s ease,
+            transform 0.25s ease;
+    }
 
+    .area-card h4,
+    .area-card p {
+        transition: color 0.25s ease;
+    }
 
-.area-card{
-    transition:.25s;
-    cursor:pointer;
-    border-radius:14px;
-}
+    .area-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
 
+    .area-card:hover .area-icon {
+        transform: scale(1.08);
+        color: #ffffff;
+    }
 
-/* GENERO */
-
-.area-genero:hover{
-    transform:translateY(-6px);
-    box-shadow:0 10px 25px rgba(0,0,0,.12);
-    background:#b8b3f5;
-    color:white;
-}
-
-
-/* MASCULINIDADES */
-
-.area-masc:hover{
-    transform:translateY(-6px);
-    box-shadow:0 10px 25px rgba(0,0,0,.12);
-    background:#7ec8ff;
-    color:white;
+    .area-card:hover h4,
+    .area-card:hover p {
+        color: #ffffff !important;
     }
 
 
-/* IVE */
+    /* GÉNERO */
 
-.area-ive:hover{
-    transform:translateY(-6px);
-    box-shadow:0 10px 25px rgba(0,0,0,.12);
-    background:#63c97a;
-    color:white;
-}
+    .area-genero:hover {
+        background-color: #8e86e8;
+        color: #ffffff;
+    }
 
 
-.area-card:hover h4,
-.area-card:hover p{
-    color:white !important;
+    /* MASCULINIDADES */
 
-}
-.area-icon{
-    font-size:55px;
-    color:#6c63ff;
-}
-
-.area-card{
-    transition:.25s;
-    cursor:pointer;
-    border-radius:14px;
-    position:relative;
-    overflow:hidden;
-}
+    .area-masc:hover {
+        background-color: #50aeee;
+        color: #ffffff;
+    }
 
 
-/* EFECTOS NORMALES */
+    /* IVE */
 
-.area-genero:hover{
-    transform:translateY(-6px);
-    box-shadow:0 10px 25px rgba(0,0,0,.12);
-    background:#b8b3f5;
-    color:white;
-}
-
-.area-masc:hover{
-    transform:translateY(-6px);
-    box-shadow:0 10px 25px rgba(0,0,0,.12);
-    background:#7ec8ff;
-    color:white;
-}
-
-.area-ive:hover{
-    transform:translateY(-6px);
-    box-shadow:0 10px 25px rgba(0,0,0,.12);
-    background:#63c97a;
-    color:white;
-}
-
-.area-card:hover h4,
-.area-card:hover p{
-    color:white !important;
-}
+    .area-ive:hover {
+        background-color: #52b96a;
+        color: #ffffff;
+    }
 
 
-/* BLOQUEADO */
+    /* ÁREA BLOQUEADA */
 
-.bloqueado{
-    opacity:0.9;
-    cursor:not-allowed;
-}
+    .area-card.bloqueado {
+        opacity: 0.88;
+        cursor: not-allowed;
+    }
 
-/* HOVER BLOQUEADO */
+    .area-card.bloqueado:hover {
+        background-color: #d9534f;
+        color: #ffffff;
+        transform: translateY(-4px);
+    }
 
-.bloqueado:hover{
-    background:#ff5c5c;
-    color:white;
-    transform:translateY(-4px);
-}
-
-/* LISTON */
-
-.liston{
-    position:absolute;
-    top:50%;
-    left:-40%;
-    width:180%;
-    text-align:center;
-    background:#8b0000;
-    color:white;
-    font-weight:bold;
-    padding:10px;
-    transform:rotate(-25deg);
-    opacity:0;
-    transition:.3s;
-    font-size:14px;
-}
+    .area-card.bloqueado:hover .area-icon {
+        color: #ffffff;
+    }
 
 
-/* APARECE SOLO EN HOVER */
+    /* LISTÓN DE ÁREA BLOQUEADA */
 
-.bloqueado:hover .liston{
-    opacity:1;
-}
+    .liston {
+        position: absolute;
+        top: 50%;
+        left: -40%;
+        z-index: 3;
+        width: 180%;
+        padding: 10px;
+        background-color: #8b0000;
+        color: #ffffff;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        opacity: 0;
+        transform: translateY(-50%) rotate(-25deg);
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+
+    .bloqueado:hover .liston {
+        opacity: 1;
+    }
+
+
+    /* SWEETALERT */
+
+    .swal-toast-personalizado {
+        width: auto !important;
+        min-width: 330px !important;
+        max-width: 430px !important;
+        padding: 14px 18px !important;
+        border-radius: 14px !important;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18) !important;
+    }
+
+    .swal-toast-titulo {
+        margin: 0 10px !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        line-height: 1.4 !important;
+        text-align: left !important;
+    }
+
+    .swal-toast-cerrar {
+        font-size: 25px !important;
+        transition:
+            color 0.2s ease,
+            transform 0.2s ease !important;
+    }
+
+    .swal-toast-cerrar:hover {
+        transform: scale(1.12);
+    }
+
+    .swal-toast-barra {
+        height: 4px !important;
+        background-color: rgba(108, 99, 255, 0.75) !important;
+    }
+
+
+    /* ANIMACIÓN DE ENTRADA */
+
+    .swal-toast-entrada {
+        animation: swalToastEntrada 0.45s ease-out forwards;
+    }
+
+    @keyframes swalToastEntrada {
+
+        from {
+            opacity: 0;
+            transform: translateX(120%);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+    }
+
+
+    /* ANIMACIÓN DE SALIDA */
+
+    .swal-toast-salida {
+        animation: swalToastSalida 0.35s ease-in forwards;
+    }
+
+    @keyframes swalToastSalida {
+
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        to {
+            opacity: 0;
+            transform: translateX(120%);
+        }
+
+    }
+
+
+    /* RESPONSIVE */
+
+    @media (max-width: 576px) {
+
+        .swal-toast-personalizado {
+            min-width: calc(100vw - 30px) !important;
+            max-width: calc(100vw - 30px) !important;
+        }
+
+        .area-card {
+            min-height: 220px;
+        }
+
+    }
+
 </style>
 
 
-
-<!-- ALERTAS -->
+{{-- SWEETALERT2 --}}
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
-@if(session('success'))
-
 <script>
 
-Swal.fire({
+    document.addEventListener('DOMContentLoaded', function () {
 
-toast:true,
+        const Toast = Swal.mixin({
 
-position:'top-end',
+            toast: true,
 
-icon:'success',
+            position: 'top-end',
 
-title:'{{ session('success') }}',
+            showConfirmButton: false,
 
-showConfirmButton:false,
+            showCloseButton: true,
 
-timer:3000,
+            timer: 1435,
 
-timerProgressBar:true
+            timerProgressBar: true,
 
-});
+            customClass: {
+                popup: 'swal-toast-personalizado',
+                title: 'swal-toast-titulo',
+                closeButton: 'swal-toast-cerrar',
+                timerProgressBar: 'swal-toast-barra'
+            },
+
+            showClass: {
+                popup: 'swal-toast-entrada'
+            },
+
+            hideClass: {
+                popup: 'swal-toast-salida'
+            },
+
+            didOpen: function (toast) {
+
+                toast.addEventListener(
+                    'mouseenter',
+                    Swal.stopTimer
+                );
+
+                toast.addEventListener(
+                    'mouseleave',
+                    Swal.resumeTimer
+                );
+
+            }
+
+        });
+
+
+        @if(session('success'))
+
+            Toast.fire({
+                icon: 'success',
+                title: @json(session('success'))
+            });
+
+        @endif
+
+
+        @if(session('error'))
+
+            Toast.fire({
+                icon: 'error',
+                title: @json(session('error'))
+            });
+
+        @endif
+
+
+        @if(session('warning'))
+
+            Toast.fire({
+                icon: 'warning',
+                title: @json(session('warning'))
+            });
+
+        @endif
+
+
+        @if(session('info'))
+
+            Toast.fire({
+                icon: 'info',
+                title: @json(session('info'))
+            });
+
+        @endif
+
+
+        @if($errors->any())
+
+            Toast.fire({
+                icon: 'error',
+                title: @json($errors->first())
+            });
+
+        @endif
+
+    });
 
 </script>
-
-@endif
-
 
 @endsection
