@@ -26,11 +26,17 @@ class IveIntervencion extends Model
     public function tipo() {
         return $this->belongsTo(TipoIntervencion::class, 'tipo_intervencion_id');
     }
-    public function adjunto()
-{
-    return $this->hasOne(Adjunto::class, 'entidad_id')
-                ->where('entidad_tipo', 'intervencion_ive');
-}
+    public function adjuntos()
+    {
+        return $this->hasMany(
+            Adjunto::class,
+            'entidad_id',
+            'id'
+        )->where(
+            'entidad_tipo',
+            'intervencion_ive'
+        );
+    }
     public function encargado() {
         return $this->belongsTo(Encargado::class, 'encargado_id');
     }

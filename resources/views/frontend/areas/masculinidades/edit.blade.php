@@ -572,7 +572,17 @@
                         </td>
 
                         <td class="text-end align-middle">
+                            <a href="{{ route('masculinidades.intervenciones.show', [
+                                    'caso' => $intervencion->caso_id,
+                                    'intervencion' => $intervencion->id,
+                                ]) }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn btn-sm btn-outline-primary"
+                            title="Visualizar intervención">
 
+                                <i class="bi bi-eye"></i>
+                            </a>
                             <a href="{{ route('masculinidades.intervenciones.edit', $intervencion->id) }}"
                                class="btn btn-sm btn-outline-secondary shadow-sm">
                                 <i class="bi bi-pencil-square"></i>

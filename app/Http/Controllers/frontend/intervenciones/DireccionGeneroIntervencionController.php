@@ -26,53 +26,100 @@ class DireccionGeneroIntervencionController extends Controller
         ));
     }
 
-   public function store(Request $request, $casoId)
-{
-    $request->validate([
-        'fecha_intervencion'   => 'required|date',
-        'tipo_intervencion_id' => 'required|exists:tipos_intervencion,id',
-        'encargado_id'         => 'required|exists:encargados,id',
-        'detalle'              => 'required|string',
-        'archivo.*'              => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:51200'
-    ]);
+    public function store(Request $request, $casoId)
+    {
+        $request->validate([
+            'fecha_intervencion'   => 'required|date',
+            'tipo_intervencion_id' => 'required|exists:tipos_intervencion,id',
+            'encargado_id'         => 'required|exists:encargados,id',
+            'detalle'              => 'required|string',
+            'archivo.*'              => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:51200'
+        ]);
 
-    $intervencion = DireccionGeneroIntervencion::create([
-        'caso_id'              => $casoId,
-        'tipo_intervencion_id' => $request->tipo_intervencion_id,
-        'fecha_intervencion'   => $request->fecha_intervencion,
-        'detalle'              => $request->detalle,
-        'encargado_id'         => $request->encargado_id,
-    ]);
+        $intervencion = DireccionGeneroIntervencion::create([
+            'caso_id'              => $casoId,
+            'tipo_intervencion_id' => $request->tipo_intervencion_id,
+            'fecha_intervencion'   => $request->fecha_intervencion,
+            'detalle'              => $request->detalle,
+            'encargado_id'         => $request->encargado_id,
+        ]);
 
-    if ($request->hasFile('archivos')) {
+        if ($request->hasFile('archivos')) {
 
-        foreach ($request->file('archivos') as $archivo) {
+            foreach ($request->file('archivos') as $archivo) {
 
-            $nombreGuardado = uniqid().'_'.$archivo->getClientOriginalName();
+                $nombreGuardado = uniqid().'_'.$archivo->getClientOriginalName();
 
-            $ruta = $archivo->storeAs(
-                'adjuntos/intervenciones_genero',
-                $nombreGuardado
-            );
+                $ruta = $archivo->storeAs(
+                    'adjuntos/intervenciones_genero',
+                    $nombreGuardado
+                );
 
-            Adjunto::create([
-                'entidad_tipo' => 'intervencion_genero',
-                'entidad_id' => $intervencion->id,
-                'nombre_original' => $archivo->getClientOriginalName(),
-                'nombre_guardado' => $nombreGuardado,
-                'ruta' => $ruta,
-                'tipo_mime' => $archivo->getMimeType(),
-                'tamaño' => $archivo->getSize(),
-                'subido_por' => auth()->id() ?? 1,
-            ]);
+                Adjunto::create([
+                    'entidad_tipo' => 'intervencion_genero',
+                    'entidad_id' => $intervencion->id,
+                    'nombre_original' => $archivo->getClientOriginalName(),
+                    'nombre_guardado' => $nombreGuardado,
+                    'ruta' => $ruta,
+                    'tipo_mime' => $archivo->getMimeType(),
+                    'tamaño' => $archivo->getSize(),
+                    'subido_por' => auth()->id() ?? 1,
+                ]);
+            }
         }
+
+        return redirect()
+            ->route('genero.edit', $casoId)
+            ->with('success', 'Intervención registrada correctamente.');
+    }
+    public function show($casoId, $intervencionId)
+    {
+        $caso = DireccionGeneroCaso::with('persona')
+            ->findOrFail($casoId);
+
+        $intervencion = DireccionGeneroIntervencion::with([
+                'tipo',
+                'encargado',
+                'adjuntos',
+            ])
+            ->where('caso_id', $caso->id)
+            ->findOrFail($intervencionId);
+
+        return view(
+            'frontend.areas.genero.intervenciones.show',
+            compact('caso', 'intervencion')
+        );
     }
 
-    return redirect()
-        ->route('genero.edit', $casoId)
-        ->with('success', 'Intervención registrada correctamente.');
-}
+    public function visualizarAdjunto($id)
+    {
+        $adjunto = Adjunto::where('entidad_tipo', 'intervencion_genero')
+            ->findOrFail($id);
 
+        if (!Storage::exists($adjunto->ruta)) {
+            abort(404, 'El archivo no existe en el almacenamiento.');
+        }
+
+        $mime = $adjunto->tipo_mime
+            ?: Storage::mimeType($adjunto->ruta)
+            ?: 'application/octet-stream';
+
+        $nombre = str_replace(
+            ['"', "\r", "\n"],
+            '',
+            $adjunto->nombre_original
+        );
+
+        return response()->file(
+            Storage::path($adjunto->ruta),
+            [
+                'Content-Type' => $mime,
+                'Content-Disposition' => 'inline; filename="' . $nombre . '"',
+                'X-Content-Type-Options' => 'nosniff',
+            ]
+        );
+    }
+    
     public function edit($id)
     {
         $intervencion = DireccionGeneroIntervencion::findOrFail($id);

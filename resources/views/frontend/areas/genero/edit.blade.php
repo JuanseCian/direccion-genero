@@ -420,24 +420,44 @@
                             {{ \Illuminate\Support\Str::limit($intervencion->detalle, 60) }}
                         </td>
 
-                        <td class="align-middle text-center">
-
-                            @if($intervencion->adjunto)
-                                <a href="{{ route('adjuntos.descargar', $intervencion->adjunto->id) }}"
-                                   class="btn btn-sm btn-outline-success"
-                                   title="Descargar archivo">
-                                    <i class="bi bi-download"></i>
-                                </a>
+                        <td class="align-middle">
+                        @if($intervencion->adjuntos->isNotEmpty())
+                            <div class="d-flex flex-column gap-2">
+                                @foreach($intervencion->adjuntos as $adjunto)
+                                    <div class="d-flex align-items-center gap-2">
+                                            <a href="{{ route('adjuntos.descargar', $adjunto->id) }}"
+                                            class="btn btn-sm btn-outline-success"
+                                            title="Descargar {{ $adjunto->nombre_original }}">
+                                                <i class="bi bi-download"></i>
+                                            </a>
+                                            <span class="small text-muted text-truncate"
+                                                style="max-width: 150px;"
+                                                title="{{ $adjunto->nombre_original }}">
+                                                {{ $adjunto->nombre_original }}
+                                            </span>
+                                        </div>
+                                    @endforeach
+                                </div>
                             @else
-                                <span class="text-muted small">Sin archivo</span>
+                                <span class="badge bg-light text-muted border fw-normal">
+                                    Sin archivo
+                                </span>
                             @endif
-
                         </td>
-
                         <td class="text-end align-middle">
+                            <a href="{{ route('genero.intervenciones.show', [
+                                    'caso' => $intervencion->caso_id,
+                                    'intervencion' => $intervencion->id,
+                                ]) }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn btn-sm btn-outline-primary"
+                            title="Visualizar intervención">
 
+                                <i class="bi bi-eye"></i>
+                            </a>
                             <a href="{{ route('genero.intervenciones.edit', $intervencion->id) }}"
-                               class="btn btn-sm btn-outline-secondary shadow-sm">
+                                class="btn btn-sm btn-outline-secondary shadow-sm">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
 

@@ -11,7 +11,17 @@ Route::prefix('frontend/areas/ive')->name('frontend.areas.ive.')->group(function
 
     Route::post('intervenciones/store/{caso}', [IveIntervencionController::class, 'store'])
         ->name('intervenciones.store');
+        
+    Route::get(
+        '/ive/intervenciones/adjuntos/{id}/visualizar',
+        [IveIntervencionController::class, 'visualizarAdjunto']
+    )->name('ive.intervenciones.adjuntos.visualizar');
 
+    Route::get(
+        '/ive/{caso}/intervenciones/{intervencion}',
+        [IveIntervencionController::class, 'show']
+    )->name('ive.intervenciones.show');
+    
     Route::get('intervenciones/{intervencion}/edit', [IveIntervencionController::class, 'edit'])
         ->name('intervenciones.edit');
 
@@ -30,6 +40,16 @@ Route::post(
     '/genero/{id}/intervenciones',
     [DireccionGeneroIntervencionController::class, 'store']
 )->name('genero.intervenciones.store');
+
+Route::get(
+    '/genero/{caso}/intervenciones/{intervencion}',
+    [DireccionGeneroIntervencionController::class, 'show']
+)->name('genero.intervenciones.show');
+
+Route::get(
+    '/genero/intervenciones/adjuntos/{id}/visualizar',
+    [DireccionGeneroIntervencionController::class, 'visualizarAdjunto']
+)->name('genero.intervenciones.adjuntos.visualizar');
 
 Route::get(
 '/genero/intervenciones/{id}/edit',
@@ -51,6 +71,16 @@ Route::post(
 '/masculinidades/{caso}/intervenciones',
 [MasculinidadesIntervencionController::class,'store']
 )->name('masculinidades.intervenciones.store');
+
+Route::get(
+    '/masculinidades/intervenciones/adjuntos/{id}/visualizar',
+    [MasculinidadesIntervencionController::class, 'visualizarAdjunto']
+)->name('masculinidades.intervenciones.adjuntos.visualizar');
+
+Route::get(
+    '/masculinidades/{caso}/intervenciones/{intervencion}',
+    [MasculinidadesIntervencionController::class, 'show']
+)->name('masculinidades.intervenciones.show');  
 
 Route::get(
 '/masculinidades/intervenciones/{id}/edit',

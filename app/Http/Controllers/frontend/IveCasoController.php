@@ -236,41 +236,63 @@ class IveCasoController extends Controller
         $user = auth()->user();
 
         $caso = IveCaso::with([
+            'persona',
+            'persona.cud',
             'tiposViolencia',
-            'intervenciones.tipo', 
+            'intervenciones.tipo',
             'intervenciones.encargado',
+            'intervenciones.adjuntos',
             'redesContencion',
-            'medicaciones'
+            'medicaciones',
         ])->findOrFail($id);
 
+        $personas = Persona::where('sexo', 'Femenino')
+            ->orderBy('apellido')
+            ->get();
 
-        $legajo = $caso;
+        $tiposViolencia = TipoViolencia::orderBy('nombre')
+            ->get();
 
-        $personas = Persona::where('sexo', 'Femenino')->get();
-        $tiposViolencia = TipoViolencia::orderBy('nombre')->get();
-        $redes = RedContencion::orderBy('nombre')->get();
-        $tiposIntervencion = TipoIntervencion::all();
-        $estadosCiviles = EstadoCivil::orderBy('nombre')->get();
-        $metodos = MetodoInterrupcion::orderBy('nombre')->get();
+        $redes = RedContencion::orderBy('nombre')
+            ->get();
 
-        $encargados = Encargado::whereHas('areas', function($q){
-            $q->where('areas.id', 3);
-        })->get();
-                    
-        $existeEnGenero = DireccionGeneroCaso::where('persona_id', $caso->persona_id)->exists();
+        $tiposIntervencion = TipoIntervencion::orderBy('nombre')
+            ->get();
 
-        return view('frontend.areas.ive.edit', compact(
-            'caso', 
-            'legajo', 
-            'personas', 
-            'existeEnGenero', 
-            'encargados',
-            'tiposViolencia',
-            'redes',
-            'tiposIntervencion',
-            'estadosCiviles',
-            'metodos'
-        ));
+        $estadosCiviles = EstadoCivil::orderBy('nombre')
+            ->get();
+
+        $metodos = MetodoInterrupcion::orderBy('nombre')
+            ->get();
+
+        $encargados = Encargado::whereHas(
+            'areas',
+            function ($q) {
+                $q->where('areas.id', 3);
+            }
+        )
+        ->orderBy('apellido')
+        ->get();
+
+        $existeEnGenero = DireccionGeneroCaso::where(
+            'persona_id',
+            $caso->persona_id
+        )->exists();
+
+        return view(
+            'frontend.areas.ive.edit',
+            compact(
+                'caso',
+                'personas',
+                'existeEnGenero',
+                'encargados',
+                'tiposViolencia',
+                'redes',
+                'tiposIntervencion',
+                'estadosCiviles',
+                'metodos'
+            )
+        );
     }
 
     public function update(Request $request, $id)
