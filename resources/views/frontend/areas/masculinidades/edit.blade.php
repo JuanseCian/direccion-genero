@@ -609,6 +609,11 @@
     </div>
 </div>
 
+        {{-- 6. DENUNCIAS VINCULADAS POR DNI --}}
+        @include('frontend.areas.partials.denuncias', [
+            'denuncias' => $caso->persona->denuncias,
+        ])
+
         {{-- 6. SITUACIÓN JUDICIAL Y OBSERVACIONES --}}
         <div class="card shadow-sm border-0 mb-5">
             <div class="card-header bg-white py-3">

@@ -60,6 +60,13 @@ class Persona extends Model
         return $this->hasOne(Cud::class);
     }
 
+    public function denuncias()
+    {
+        return $this->hasMany(Denuncia::class, 'dni', 'dni')
+            ->whereNotNull('dni')
+            ->orderByDesc('fecha');
+    }
+
     public function provincia()
     {
         return $this->belongsTo(Provincia::class, 'provincia_id');

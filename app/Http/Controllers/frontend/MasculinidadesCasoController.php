@@ -367,6 +367,7 @@ class MasculinidadesCasoController extends Controller
     public function edit($id)
     {
         $caso = MasculinidadesCaso::with([
+            'persona.denuncias',
             'medidas',
             'tiposViolencia',
             'grupoFamiliar',

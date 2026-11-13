@@ -349,7 +349,7 @@ class DireccionGeneroController extends Controller
     public function edit($id)
     {
         $legajo = DireccionGeneroCaso::with([
-            'persona',
+            'persona.denuncias',
             'intervenciones.tipo',
             'intervenciones.encargado',
             'intervenciones.adjuntos',

@@ -236,7 +236,7 @@ class IveCasoController extends Controller
         $user = auth()->user();
 
         $caso = IveCaso::with([
-            'persona',
+            'persona.denuncias',
             'persona.cud',
             'tiposViolencia',
             'intervenciones.tipo',
