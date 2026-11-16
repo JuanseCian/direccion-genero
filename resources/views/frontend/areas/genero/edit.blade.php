@@ -484,7 +484,7 @@
 
         {{-- 8. DENUNCIAS VINCULADAS POR DNI --}}
         @include('frontend.areas.partials.denuncias', [
-            'denuncias' => $legajo->persona->denuncias,
+            'denuncias' => $denuncias,
         ])
 
         {{-- 8. RESPONSABLE Y CIERRE --}}

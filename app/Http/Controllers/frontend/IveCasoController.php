@@ -14,6 +14,7 @@ use App\Models\RedContencion;
 use App\Models\EstadoCivil;
 use App\Models\Adjunto;
 use App\Models\Metodointerrupcion;
+use App\Models\Denuncia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\PhpWord;
@@ -236,7 +237,7 @@ class IveCasoController extends Controller
         $user = auth()->user();
 
         $caso = IveCaso::with([
-            'persona.denuncias',
+            'persona',
             'persona.cud',
             'tiposViolencia',
             'intervenciones.tipo',
@@ -245,6 +246,8 @@ class IveCasoController extends Controller
             'redesContencion',
             'medicaciones',
         ])->findOrFail($id);
+
+        $denuncias = Denuncia::forDni($caso->persona->dni)->get();
 
         $personas = Persona::where('sexo', 'Femenino')
             ->orderBy('apellido')
@@ -290,7 +293,8 @@ class IveCasoController extends Controller
                 'redes',
                 'tiposIntervencion',
                 'estadosCiviles',
-                'metodos'
+                'metodos',
+                'denuncias'
             )
         );
     }

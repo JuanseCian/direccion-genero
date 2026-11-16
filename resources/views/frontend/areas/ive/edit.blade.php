@@ -1191,7 +1191,7 @@
 
         {{-- 6. DENUNCIAS VINCULADAS POR DNI --}}
         @include('frontend.areas.partials.denuncias', [
-            'denuncias' => $caso->persona->denuncias,
+            'denuncias' => $denuncias,
         ])
 
         {{-- ========================================================

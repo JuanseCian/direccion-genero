@@ -8,7 +8,7 @@ use Illuminate\Validation\Rule;
 
 use App\Models\{Persona, MasculinidadesCaso,
  Encargado, MasculinidadesDerivacion,SituacionSanitaria,SituacionHabitacional,NivelEstudio,EspacioGrupal,MedidaCautelar,TipoViolencia,DireccionGeneroCaso,
-  TipoIntervencion, MasculinidadesIntervencion, Adjunto};
+  TipoIntervencion, MasculinidadesIntervencion, Adjunto, Denuncia};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\PhpWord;
@@ -367,13 +367,15 @@ class MasculinidadesCasoController extends Controller
     public function edit($id)
     {
         $caso = MasculinidadesCaso::with([
-            'persona.denuncias',
+            'persona',
             'medidas',
             'tiposViolencia',
             'grupoFamiliar',
             'intervenciones.tipo', 
             'intervenciones.encargado'
         ])->findOrFail($id);
+
+        $denuncias = Denuncia::forDni($caso->persona->dni)->get();
 
 
         $tiposIntervencion = TipoIntervencion::all();
@@ -422,7 +424,8 @@ class MasculinidadesCasoController extends Controller
             'tiposIntervencion',
             'niveles',
             'estadosCiviles',
-            'historial'
+            'historial',
+            'denuncias'
         ));
     }
 

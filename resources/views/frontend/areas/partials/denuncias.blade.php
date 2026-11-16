@@ -4,9 +4,12 @@
         <h5 class="mb-0 text-danger fw-bold">
             <i class="bi bi-exclamation-triangle me-2"></i>Denuncias
         </h5>
-        <span class="badge bg-danger-subtle text-danger">
-            {{ $denuncias->count() }} {{ $denuncias->count() === 1 ? 'registro' : 'registros' }}
-        </span>
+        <div class="text-end">
+            <div class="small text-muted">Historial completo asociado al DNI</div>
+            <span class="badge bg-danger-subtle text-danger">
+                {{ $denuncias->count() }} {{ $denuncias->count() === 1 ? 'registro' : 'registros' }}
+            </span>
+        </div>
     </div>
 
     <div class="card-body p-0">

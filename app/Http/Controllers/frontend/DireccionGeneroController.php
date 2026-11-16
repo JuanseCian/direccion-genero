@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\{DireccionGeneroCaso, Persona, Provincia, Localidad, Barrio, EstadoCivil, NivelEstudio, IveCaso, MasculinidadesCaso, Encargado, TipoViolencia, RedContencion, TipoIntervencion,SituacionHabitacional,MedidaCautelar,Adjunto, DireccionGeneroGrupoConviviente};
+use App\Models\{DireccionGeneroCaso, Persona, Provincia, Localidad, Barrio, EstadoCivil, NivelEstudio, IveCaso, MasculinidadesCaso, Encargado, TipoViolencia, RedContencion, TipoIntervencion,SituacionHabitacional,MedidaCautelar,Adjunto, DireccionGeneroGrupoConviviente, Denuncia};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -349,12 +349,14 @@ class DireccionGeneroController extends Controller
     public function edit($id)
     {
         $legajo = DireccionGeneroCaso::with([
-            'persona.denuncias',
+            'persona',
             'intervenciones.tipo',
             'intervenciones.encargado',
             'intervenciones.adjuntos',
             'grupoConviviente',
         ])->findOrFail($id);
+
+        $denuncias = Denuncia::forDni($legajo->persona->dni)->get();
 
         $personas = Persona::where('sexo', 'Femenino')
             ->orderBy('apellido')
@@ -397,7 +399,8 @@ class DireccionGeneroController extends Controller
             'tiposIntervencion',
             'tipos_violencia',
             'situacionesHabitacionales',
-            'medida'
+            'medida',
+            'denuncias'
         ));
     }
     
