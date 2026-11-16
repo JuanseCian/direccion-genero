@@ -34,9 +34,9 @@
                             <td class="fw-bold">
                                 {{ $denuncia->fecha ? \Carbon\Carbon::parse($denuncia->fecha)->format('d/m/Y') : 'S/D' }}
                             </td>
-                            <td>{{ $denuncia->atendido_por ?: 'S/D' }}</td>
+                            <td class="text-uppercase">{{ $denuncia->atendido_por ?: 'S/D' }}</td>
                             <td>
-                                <div>{{ $denuncia->denunciante ?: 'S/D' }}</div>
+                                <div class="text-uppercase">{{ $denuncia->denunciante ?: 'S/D' }}</div>
                                 <span class="text-muted">DNI: {{ $denuncia->dni ?: 'S/D' }}</span>
                             </td>
                             <td>
@@ -48,7 +48,7 @@
                                     <span class="text-muted">{{ $denuncia->barrio }}</span>
                                 @endif
                             </td>
-                            <td>{{ $denuncia->agresor ?: 'S/D' }}</td>
+                            <td class="text-uppercase">{{ $denuncia->agresor ?: 'S/D' }}</td>
                             <td>{{ $denuncia->tipo_violencia ?: 'S/D' }}</td>
                             <td>{{ \Illuminate\Support\Str::limit($denuncia->observaciones ?? '', 80) ?: 'S/D' }}</td>
                             <td class="text-end">

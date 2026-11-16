@@ -25,7 +25,7 @@
 
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Atendido por</label>
-                        <input type="text" name="atendido_por" class="form-control">
+                        <input type="text" name="atendido_por" class="form-control text-uppercase">
                     </div>
 
                 </div>
@@ -47,7 +47,7 @@
 
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Nombre Completo</label>
-                        <input type="text" name="denunciante" class="form-control">
+                        <input type="text" name="denunciante" class="form-control text-uppercase">
                     </div>
 
                     <div class="col-md-3 mb-3">
@@ -91,7 +91,7 @@
 
                 <div class="mb-3">
                     <label class="form-label">Agresor</label>
-                    <input type="text" name="agresor" class="form-control">
+                    <input type="text" name="agresor" class="form-control text-uppercase">
                 </div>
 
                 <div class="mb-3">

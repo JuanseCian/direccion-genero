@@ -190,20 +190,13 @@ class IveCasoController extends Controller
         $user = auth()->user();
 
         $buscar = $request->buscar;
+        $buscarNormalizado = $this->normalizarBusqueda($buscar);
 
         if ($user->rol_id == 2 || $user->areas->contains('nombre','ive')) {
 
             $casos = IveCaso::with('persona')
-                ->when($buscar, function($query, $buscar){
-
-                    $query->whereHas('persona', function($q) use ($buscar){
-
-                        $q->where('nombre', 'like', "%{$buscar}%")
-                        ->orWhere('apellido', 'like', "%{$buscar}%")
-                        ->orWhere('dni', 'like', "%{$buscar}%");
-
-                    });
-
+                ->when($buscarNormalizado !== '', function ($query) use ($buscarNormalizado) {
+                    return $this->filtrarPorPersona($query, $buscarNormalizado);
                 })
                 ->orderBy('created_at','desc')
                 ->paginate(10)
@@ -213,16 +206,8 @@ class IveCasoController extends Controller
 
             $casos = $user->iveCasos()
                 ->with('persona')
-                ->when($buscar, function($query, $buscar){
-
-                    $query->whereHas('persona', function($q) use ($buscar){
-
-                        $q->where('nombre', 'like', "%{$buscar}%")
-                        ->orWhere('apellido', 'like', "%{$buscar}%")
-                        ->orWhere('dni', 'like', "%{$buscar}%");
-
-                    });
-
+                ->when($buscarNormalizado !== '', function ($query) use ($buscarNormalizado) {
+                    return $this->filtrarPorPersona($query, $buscarNormalizado);
                 })
                 ->orderBy('created_at','desc')
                 ->paginate(10)

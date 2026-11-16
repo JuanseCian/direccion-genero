@@ -23,7 +23,7 @@
 
                     <div class="col-md-4 mb-3">
                         <label>Atendido por</label>
-                        <input type="text" name="atendido_por" value="{{ $denuncia->atendido_por }}" class="form-control">
+                        <input type="text" name="atendido_por" value="{{ $denuncia->atendido_por }}" class="form-control text-uppercase">
                     </div>
 
                 </div>
@@ -41,7 +41,7 @@
 
                     <div class="col-md-4 mb-3">
                         <label>Nombre</label>
-                        <input type="text" name="denunciante" value="{{ $denuncia->denunciante }}" class="form-control">
+                        <input type="text" name="denunciante" value="{{ $denuncia->denunciante }}" class="form-control text-uppercase">
                     </div>
 
                     <div class="col-md-3 mb-3">
@@ -83,7 +83,7 @@
 
                 <div class="mb-3">
                     <label>Agresor</label>
-                    <input type="text" name="agresor" value="{{ $denuncia->agresor }}" class="form-control">
+                    <input type="text" name="agresor" value="{{ $denuncia->agresor }}" class="form-control text-uppercase">
                 </div>
 
                 <div class="mb-3">

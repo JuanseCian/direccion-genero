@@ -20,7 +20,7 @@
                     <input type="text"
                         name="buscar"
                         class="form-control form-control-sm"
-                        placeholder="Buscar por nombre, apellido o DNI..."
+                        placeholder="Nombre, apellido o DNI (con o sin coma)..."
                         value="{{ request('buscar') }}">
 
                     <button class="btn btn-light btn-sm ms-2">

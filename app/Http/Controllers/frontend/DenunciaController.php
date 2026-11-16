@@ -11,11 +11,21 @@ class DenunciaController extends Controller
     public function index(Request $request)
     {
         $buscar = $request->buscar;
+        $buscarNormalizado = $this->normalizarBusqueda($buscar);
 
-        $denuncias = Denuncia::when($buscar, function ($query, $buscar) {
-                $query->where('denunciante', 'like', '%' . $buscar . '%');
+        $denuncias = Denuncia::when($buscarNormalizado !== '', function ($query) use ($buscarNormalizado) {
+                $like = "%{$buscarNormalizado}%";
+
+                $query->whereRaw(
+                    "LOWER(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(denunciante, ''), ',', ''), ' ', ''), '.', ''), '-', '')) LIKE ?",
+                    [$like]
+                )->orWhereRaw(
+                    "LOWER(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(dni, ''), ',', ''), ' ', ''), '.', ''), '-', '')) LIKE ?",
+                    [$like]
+                );
             })
-            ->orderByDesc('fecha')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->paginate(10)
             ->withQueryString();
 

@@ -24,18 +24,11 @@ class MasculinidadesCasoController extends Controller
     public function listado(Request $request)
     {
         $buscar = $request->buscar;
+        $buscarNormalizado = $this->normalizarBusqueda($buscar);
 
         $casos = MasculinidadesCaso::with('persona', 'encargado')
-            ->when($buscar, function($query, $buscar){
-
-                $query->whereHas('persona', function($q) use ($buscar){
-
-                    $q->where('nombre', 'like', "%{$buscar}%")
-                    ->orWhere('apellido', 'like', "%{$buscar}%")
-                    ->orWhere('dni', 'like', "%{$buscar}%");
-
-                });
-
+            ->when($buscarNormalizado !== '', function ($query) use ($buscarNormalizado) {
+                return $this->filtrarPorPersona($query, $buscarNormalizado);
             })
             ->orderBy('created_at','desc')
             ->paginate(15)

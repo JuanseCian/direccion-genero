@@ -21,7 +21,7 @@
                     <input type="text"
                         name="buscar"
                         class="form-control form-control-sm me-2"
-                        placeholder="Buscar denunciante..."
+                        placeholder="Buscar denunciante o DNI..."
                         value="{{ request('buscar') }}">
 
                     <button class="btn btn-light btn-sm">
@@ -65,7 +65,7 @@
                             </td>
 
                             <td>
-                                <div class="fw-bold text-primary">
+                                <div class="fw-bold text-primary text-uppercase">
                                     {{ $d->denunciante }}
                                 </div>
                                 <small class="text-muted">DNI: {{ $d->dni }}</small>
@@ -84,7 +84,7 @@
                                 </div>
                             </td>
 
-                            <td>{{ $d->agresor }}</td>
+                            <td class="text-uppercase">{{ $d->agresor }}</td>
 
                             <td>
                                 <span class="badge bg-secondary">

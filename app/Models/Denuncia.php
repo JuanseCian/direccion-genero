@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Builder;
 
 class Denuncia extends Model
@@ -25,6 +26,29 @@ class Denuncia extends Model
         'observaciones'
     ];
 
+    protected function atendidoPor(): Attribute
+    {
+        return $this->nombreEnMayusculas();
+    }
+
+    protected function denunciante(): Attribute
+    {
+        return $this->nombreEnMayusculas();
+    }
+
+    protected function agresor(): Attribute
+    {
+        return $this->nombreEnMayusculas();
+    }
+
+    private function nombreEnMayusculas(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value === null ? null : mb_strtoupper($value, 'UTF-8'),
+            set: fn (?string $value) => $value === null ? null : mb_strtoupper(trim($value), 'UTF-8'),
+        );
+    }
+
     public function scopeForDni(Builder $query, ?string $dni): Builder
     {
         $dniNormalizado = preg_replace('/\D+/', '', (string) $dni);
@@ -39,6 +63,7 @@ class Denuncia extends Model
                 "REPLACE(REPLACE(REPLACE(dni, '.', ''), '-', ''), ' ', '') = ?",
                 [$dniNormalizado]
             )
-            ->orderByDesc('fecha');
+            ->orderByDesc('created_at')
+            ->orderByDesc('id');
     }
 }

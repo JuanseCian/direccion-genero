@@ -22,6 +22,7 @@ class DireccionGeneroController extends Controller
     public function listado(Request $request)
     {
         $buscar = $request->buscar;
+        $buscarNormalizado = $this->normalizarBusqueda($buscar);
 
         $legajos = DireccionGeneroCaso::with([
             'persona',
@@ -30,16 +31,8 @@ class DireccionGeneroController extends Controller
             'nivelEstudio',
             'encargado'
         ])
-        ->when($buscar, function($query, $buscar){
-
-            $query->whereHas('persona', function($q) use ($buscar){
-
-                $q->where('nombre', 'like', "%{$buscar}%")
-                ->orWhere('apellido', 'like', "%{$buscar}%")
-                ->orWhere('dni', 'like', "%{$buscar}%");
-
-            });
-
+        ->when($buscarNormalizado !== '', function ($query) use ($buscarNormalizado) {
+            return $this->filtrarPorPersona($query, $buscarNormalizado);
         })
         ->orderBy('nivel_gravedad', 'desc')
         ->paginate(10)
