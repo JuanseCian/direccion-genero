@@ -55,6 +55,11 @@
                         <input type="text" name="dni" class="form-control">
                     </div>
 
+                    <div class="col-md-2 mb-3">
+                        <label class="form-label">Edad</label>
+                        <input type="number" name="edad" min="0" max="120" class="form-control">
+                    </div>
+
                     <div class="col-md-3 mb-3">
                         <label class="form-label">Teléfono</label>
                         <input type="text" name="telefono" class="form-control">
@@ -97,6 +102,11 @@
                 <div class="mb-3">
                     <label class="form-label">Tipo de Violencia</label>
                     <input type="text" name="tipo_violencia" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tipo de Amenaza</label>
+                    <input type="text" name="tipo_amenaza" class="form-control" placeholder="Ej: verbal, arma de fuego, digital">
                 </div>
 
                 <div class="mb-3">

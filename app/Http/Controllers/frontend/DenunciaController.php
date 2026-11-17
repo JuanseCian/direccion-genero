@@ -82,11 +82,13 @@ class DenunciaController extends Controller
             'atendido_por' => 'nullable|string|max:150',
             'denunciante' => 'nullable|string|max:150',
             'dni' => 'nullable|string|max:20',
+            'edad' => 'nullable|integer|min:0|max:120',
             'telefono' => 'nullable|string|max:50',
             'direccion' => 'nullable|string|max:255',
             'barrio' => 'nullable|string|max:150',
             'agresor' => 'nullable|string|max:150',
             'tipo_violencia' => 'nullable|string|max:150',
+            'tipo_amenaza' => 'nullable|string|max:150',
             'observaciones' => 'nullable|string',
         ]);
     }

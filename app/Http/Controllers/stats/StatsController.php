@@ -10,6 +10,7 @@ use App\Models\Persona;
 use Illuminate\Http\Request;
 use App\Models\MasculinidadesCaso;
 use App\Models\IveCaso;
+use App\Models\Denuncia;
 use App\Exports\GeneroCasosExport;
 use App\Exports\MasculinidadesCasosExport;
 use App\Exports\IntervencionesExport;
@@ -373,6 +374,137 @@ class StatsController extends Controller
             new IveCasosExport($request->desde, $request->hasta),
             'reporte_ive.xlsx'
         );
+    }
+
+    public function denuncias(Request $request)
+    {
+        $desde = $request->input('desde');
+        $hasta = $request->input('hasta');
+        $tipoViolencia = $request->input('tipo_violencia');
+        $rangoEdad = $request->input('rango_edad');
+        $barrio = $request->input('barrio');
+        $tipoAmenaza = $request->input('tipo_amenaza');
+
+        $rangosEdad = [
+            'menor_18' => ['label' => 'Menor de 18', 'desde' => 0, 'hasta' => 17],
+            '18_25' => ['label' => '18 a 25', 'desde' => 18, 'hasta' => 25],
+            '26_35' => ['label' => '26 a 35', 'desde' => 26, 'hasta' => 35],
+            '36_50' => ['label' => '36 a 50', 'desde' => 36, 'hasta' => 50],
+            '51_mas' => ['label' => '51 o más', 'desde' => 51, 'hasta' => null],
+            'sin_datos' => ['label' => 'Sin datos', 'desde' => null, 'hasta' => null],
+        ];
+
+        $aplicarFiltros = function ($query) use (
+            $desde,
+            $hasta,
+            $tipoViolencia,
+            $rangoEdad,
+            $barrio,
+            $tipoAmenaza,
+            $rangosEdad
+        ) {
+            if ($desde) {
+                $query->whereDate('fecha', '>=', $desde);
+            }
+
+            if ($hasta) {
+                $query->whereDate('fecha', '<=', $hasta);
+            }
+
+            if ($tipoViolencia !== null && trim($tipoViolencia) !== '') {
+                $query->whereRaw('LOWER(TRIM(tipo_violencia)) = ?', [mb_strtolower(trim($tipoViolencia), 'UTF-8')]);
+            }
+
+            if ($barrio !== null && trim($barrio) !== '') {
+                $query->whereRaw('LOWER(TRIM(barrio)) = ?', [mb_strtolower(trim($barrio), 'UTF-8')]);
+            }
+
+            if ($tipoAmenaza !== null && trim($tipoAmenaza) !== '') {
+                $query->whereRaw('LOWER(TRIM(tipo_amenaza)) = ?', [mb_strtolower(trim($tipoAmenaza), 'UTF-8')]);
+            }
+
+            if (isset($rangosEdad[$rangoEdad])) {
+                $rango = $rangosEdad[$rangoEdad];
+
+                if ($rangoEdad === 'sin_datos') {
+                    $query->whereNull('edad');
+                } elseif ($rango['hasta'] === null) {
+                    $query->where('edad', '>=', $rango['desde']);
+                } else {
+                    $query->whereBetween('edad', [$rango['desde'], $rango['hasta']]);
+                }
+            }
+
+            return $query;
+        };
+
+        $query = $aplicarFiltros(Denuncia::query());
+        $totalDenuncias = (clone $query)->count();
+
+        $porTipoViolencia = (clone $query)
+            ->selectRaw("UPPER(COALESCE(NULLIF(TRIM(tipo_violencia), ''), 'SIN DATOS')) as nombre, COUNT(*) as total")
+            ->groupBy('nombre')
+            ->orderByDesc('total')
+            ->get();
+
+        $porEdad = (clone $query)
+            ->selectRaw("CASE
+                WHEN edad IS NULL THEN 'SIN DATOS'
+                WHEN edad < 18 THEN 'MENOR DE 18'
+                WHEN edad BETWEEN 18 AND 25 THEN '18 A 25'
+                WHEN edad BETWEEN 26 AND 35 THEN '26 A 35'
+                WHEN edad BETWEEN 36 AND 50 THEN '36 A 50'
+                ELSE '51 O MÁS'
+            END as nombre, COUNT(*) as total")
+            ->groupBy('nombre')
+            ->orderBy('nombre')
+            ->get();
+
+        $porBarrio = (clone $query)
+            ->selectRaw("UPPER(COALESCE(NULLIF(TRIM(barrio), ''), 'SIN DATOS')) as nombre, COUNT(*) as total")
+            ->groupBy('nombre')
+            ->orderByDesc('total')
+            ->get();
+
+        $porTipoAmenaza = (clone $query)
+            ->selectRaw("UPPER(COALESCE(NULLIF(TRIM(tipo_amenaza), ''), 'SIN DATOS')) as nombre, COUNT(*) as total")
+            ->groupBy('nombre')
+            ->orderByDesc('total')
+            ->get();
+
+        $opciones = function (string $campo) {
+            return Denuncia::query()
+                ->whereNotNull($campo)
+                ->where($campo, '<>', '')
+                ->pluck($campo)
+                ->map(fn ($valor) => mb_strtoupper(trim($valor), 'UTF-8'))
+                ->filter()
+                ->unique()
+                ->sort()
+                ->values();
+        };
+
+        $tiposViolencia = $opciones('tipo_violencia');
+        $barrios = $opciones('barrio');
+        $tiposAmenaza = $opciones('tipo_amenaza');
+
+        return view('frontend.stats.denuncias', compact(
+            'totalDenuncias',
+            'porTipoViolencia',
+            'porEdad',
+            'porBarrio',
+            'porTipoAmenaza',
+            'tiposViolencia',
+            'barrios',
+            'tiposAmenaza',
+            'rangosEdad',
+            'desde',
+            'hasta',
+            'tipoViolencia',
+            'rangoEdad',
+            'barrio',
+            'tipoAmenaza'
+        ));
     }
 
     public function intervenciones(Request $request)

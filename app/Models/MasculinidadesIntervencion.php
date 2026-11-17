@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MasculinidadesIntervencion extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'masculinidades_intervenciones';
 
@@ -17,6 +18,8 @@ class MasculinidadesIntervencion extends Model
         'tipo_intervencion_id',
         'encargado_id',
         'detalle',
+        'deleted_by',
+        'motivo_eliminacion',
     ];
 
     protected $casts = [

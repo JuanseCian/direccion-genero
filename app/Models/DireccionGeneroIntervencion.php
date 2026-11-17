@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DireccionGeneroIntervencion extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'direccion_genero_intervenciones';
 
@@ -17,6 +18,8 @@ class DireccionGeneroIntervencion extends Model
         'fecha_intervencion',
         'detalle',
         'encargado_id',
+        'deleted_by',
+        'motivo_eliminacion',
     ];
 
     protected $casts = [

@@ -49,6 +49,11 @@
                         <input type="text" name="dni" value="{{ $denuncia->dni }}" class="form-control">
                     </div>
 
+                    <div class="col-md-2 mb-3">
+                        <label>Edad</label>
+                        <input type="number" name="edad" min="0" max="120" value="{{ $denuncia->edad }}" class="form-control">
+                    </div>
+
                     <div class="col-md-3 mb-3">
                         <label>Teléfono</label>
                         <input type="text" name="telefono" value="{{ $denuncia->telefono }}" class="form-control">
@@ -89,6 +94,11 @@
                 <div class="mb-3">
                     <label>Tipo de Violencia</label>
                     <input type="text" name="tipo_violencia" value="{{ $denuncia->tipo_violencia }}" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label>Tipo de Amenaza</label>
+                    <input type="text" name="tipo_amenaza" value="{{ $denuncia->tipo_amenaza }}" class="form-control">
                 </div>
 
                 <div class="mb-3">

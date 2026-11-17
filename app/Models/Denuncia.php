@@ -18,11 +18,13 @@ class Denuncia extends Model
         'atendido_por',
         'denunciante',
         'dni',
+        'edad',
         'telefono',
         'direccion',
         'barrio',
         'agresor',
         'tipo_violencia',
+        'tipo_amenaza',
         'observaciones'
     ];
 

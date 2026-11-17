@@ -286,11 +286,13 @@ CREATE TABLE `denuncias` (
   `atendido_por` varchar(150) DEFAULT NULL,
   `denunciante` varchar(150) DEFAULT NULL,
   `dni` varchar(20) DEFAULT NULL,
+  `edad` tinyint UNSIGNED DEFAULT NULL,
   `telefono` varchar(50) DEFAULT NULL,
   `direccion` varchar(255) DEFAULT NULL,
   `barrio` varchar(150) DEFAULT NULL,
   `agresor` varchar(150) DEFAULT NULL,
   `tipo_violencia` varchar(150) DEFAULT NULL,
+  `tipo_amenaza` varchar(150) DEFAULT NULL,
   `observaciones` text,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -417,7 +419,10 @@ CREATE TABLE `direccion_genero_intervenciones` (
   `detalle` text NOT NULL COMMENT 'Desarrollo o evolución de la intervención',
   `encargado_id` bigint UNSIGNED NOT NULL COMMENT 'Profesional que interviene',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint UNSIGNED DEFAULT NULL,
+  `motivo_eliminacion` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -666,7 +671,10 @@ CREATE TABLE `ive_intervenciones` (
   `detalle` text NOT NULL COMMENT 'Desarrollo o evolución de la intervención',
   `encargado_id` bigint UNSIGNED NOT NULL COMMENT 'Profesional que interviene',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint UNSIGNED DEFAULT NULL,
+  `motivo_eliminacion` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -1040,7 +1048,10 @@ CREATE TABLE `masculinidades_intervenciones` (
   `detalle` text NOT NULL COMMENT 'Desarrollo o evolución de la intervención',
   `encargado_id` bigint UNSIGNED NOT NULL COMMENT 'Profesional que interviene',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` bigint UNSIGNED DEFAULT NULL,
+  `motivo_eliminacion` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------

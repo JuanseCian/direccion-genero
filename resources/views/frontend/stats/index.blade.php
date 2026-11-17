@@ -12,6 +12,7 @@ $esAdmin = $user->rol_id == 2;
 $tieneGenero = $esAdmin || $user->areas->contains('nombre','direccion_genero');
 $tieneMasc = $esAdmin || $user->areas->contains('nombre','masculinidades');
 $tieneIVE = $esAdmin || $user->areas->contains('nombre','ive');
+$tieneDenuncias = $esAdmin || $user->areas->contains('nombre','direccion_genero');
 @endphp
 
 
@@ -173,6 +174,25 @@ $tieneIVE = $esAdmin || $user->areas->contains('nombre','ive');
         </a>
         @endif
 
+    </div>
+
+    <!-- DENUNCIAS -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        @if($tieneDenuncias)
+        <a href="{{ route('stats.denuncias') }}" class="text-decoration-none">
+        @endif
+
+        <div class="card card-soft p-4 h-100 area-card area-denuncias
+        {{ !$tieneDenuncias ? 'bloqueado' : '' }}">
+            <div class="liston">Solo personal autorizado</div>
+            <i class="bi bi-exclamation-triangle area-icon"></i>
+            <h4 class="mt-3">Estadísticas de Denuncias</h4>
+            <p class="text-muted">Violencias, edades, barrios y amenazas</p>
+        </div>
+
+        @if($tieneDenuncias)
+        </a>
+        @endif
     </div>
 
 </div>

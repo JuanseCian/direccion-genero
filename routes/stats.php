@@ -10,6 +10,7 @@ Route::prefix('estadisticas')->name('stats.')->group(function () {
     
     Route::get('/masculinidades', [StatsController::class, 'masculinidades'])->name('masculinidades');
     Route::get('/ive', [StatsController::class, 'ive'])->name('ive');
+    Route::get('/denuncias', [StatsController::class, 'denuncias'])->name('denuncias');
 
     Route::get('/genero/imprimir', [StatsController::class, 'generoPrint'])->name('genero.print');
 

@@ -460,6 +460,14 @@
                                 class="btn btn-sm btn-outline-secondary shadow-sm">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
+                            <button type="button"
+                                class="btn btn-sm btn-outline-danger shadow-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalEliminarIntervencion"
+                                data-action="{{ route('genero.intervenciones.destroy', $intervencion->id) }}"
+                                title="Eliminar intervención">
+                                <i class="bi bi-trash"></i>
+                            </button>
 
                         </td>
 
@@ -522,6 +530,8 @@
 
     </form>
 </div>
+
+@include('frontend.areas.partials.modal-eliminar-intervencion')
 
 {{-- MODAL BUSCAR AGRESORES --}}
 <div class="modal fade" id="modalAgresores" tabindex="-1">

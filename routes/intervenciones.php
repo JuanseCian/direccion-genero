@@ -57,9 +57,14 @@ Route::get(
 )->name('genero.intervenciones.edit');
 
 Route::put(
-'/genero/intervenciones/{id}',
-[DireccionGeneroIntervencionController::class, 'update']
+    '/genero/intervenciones/{id}',
+    [DireccionGeneroIntervencionController::class, 'update']
 )->name('genero.intervenciones.update');
+
+Route::delete(
+    '/genero/intervenciones/{id}',
+    [DireccionGeneroIntervencionController::class, 'destroy']
+)->name('genero.intervenciones.destroy');
 
 //masculinidades
 Route::get(
@@ -91,3 +96,8 @@ Route::put(
 '/masculinidades/intervenciones/{id}',
 [MasculinidadesIntervencionController::class,'update']
 )->name('masculinidades.intervenciones.update');
+
+Route::delete(
+'/masculinidades/intervenciones/{id}',
+[MasculinidadesIntervencionController::class,'destroy']
+)->name('masculinidades.intervenciones.destroy');

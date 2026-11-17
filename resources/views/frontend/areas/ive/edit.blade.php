@@ -1151,6 +1151,16 @@
                                                 <i class="bi bi-pencil-square"></i>
 
                                             </a>
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-outline-danger"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modalEliminarIntervencion"
+                                                data-action="{{ route('ive.intervenciones.destroy', ['id' => $intervencion->id]) }}"
+                                                title="Eliminar intervención"
+                                            >
+                                                <i class="bi bi-trash"></i>
+                                            </button>
 
                                         </div>
 
@@ -1220,6 +1230,8 @@
     </form>
 
 </div>
+
+@include('frontend.areas.partials.modal-eliminar-intervencion')
 
 
 

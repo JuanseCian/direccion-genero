@@ -177,18 +177,23 @@ class IveIntervencionController extends Controller
         );
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $request->validate([
+            'motivo_eliminacion' => 'required|string|min:10|max:1000',
+        ], [
+            'motivo_eliminacion.required' => 'Indique por qué se elimina la intervención.',
+            'motivo_eliminacion.min' => 'El motivo debe tener al menos 10 caracteres.',
+        ]);
+
         $intervencion = IveIntervencion::findOrFail($id);
-
-        $this->eliminarAdjuntos(
-            $intervencion->id
-        );
-
+        $intervencion->deleted_by = auth()->id();
+        $intervencion->motivo_eliminacion = $request->motivo_eliminacion;
+        $intervencion->save();
         $intervencion->delete();
 
         return redirect()
-            ->back()
+            ->route('frontend.areas.ive.edit', $intervencion->ive_caso_id)
             ->with(
                 'success',
                 'Intervención eliminada correctamente.'

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Adjunto;
 class IveIntervencion extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'ive_intervenciones';
 
@@ -16,7 +17,9 @@ class IveIntervencion extends Model
         'tipo_intervencion_id',
         'fecha_intervencion',
         'detalle',
-        'encargado_id'
+        'encargado_id',
+        'deleted_by',
+        'motivo_eliminacion',
     ];
 
     public function caso() {
