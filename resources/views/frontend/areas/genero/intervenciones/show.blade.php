@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="container py-4">
+<div class="container py-4" id="intervencion-detalle">
 
     {{-- ENCABEZADO --}}
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
@@ -29,7 +29,7 @@
             </p>
         </div>
 
-        <div class="d-flex flex-wrap gap-2 d-print-none">
+        <div class="d-flex flex-wrap gap-2 d-print-none" data-ocultar-en-modal>
 
             <button type="button"
                     class="btn btn-outline-secondary"
@@ -396,7 +396,7 @@
 
 </div>
 
-<style>
+<style data-intervencion-estilos>
     .card {
         border-radius: 16px;
     }

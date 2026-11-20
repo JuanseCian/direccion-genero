@@ -1125,9 +1125,7 @@
                                                         'intervencion' => $intervencion->id
                                                     ]
                                                 ) }}"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                class="btn btn-sm btn-outline-primary"
+                                                class="btn btn-sm btn-outline-primary js-ver-intervencion"
                                                 title="Visualizar intervención"
                                             >
 
@@ -1232,6 +1230,7 @@
 </div>
 
 @include('frontend.areas.partials.modal-eliminar-intervencion')
+@include('frontend.areas.partials.modal-ver-intervencion')
 
 
 

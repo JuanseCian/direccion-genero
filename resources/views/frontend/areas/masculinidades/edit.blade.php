@@ -576,9 +576,7 @@
                                     'caso' => $intervencion->caso_id,
                                     'intervencion' => $intervencion->id,
                                 ]) }}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="btn btn-sm btn-outline-primary"
+                            class="btn btn-sm btn-outline-primary js-ver-intervencion"
                             title="Visualizar intervención">
 
                                 <i class="bi bi-eye"></i>
@@ -650,6 +648,7 @@
 </div>
 
 @include('frontend.areas.partials.modal-eliminar-intervencion')
+@include('frontend.areas.partials.modal-ver-intervencion')
 
 {{-- --- MODALES --- --}}
 
